@@ -1,17 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Quizine.Api.Hubs;
+using Quizine.Api.Interfaces;
+using Quizine.Api.Services;
 
 namespace Quizine.Api
 {
@@ -29,10 +24,11 @@ namespace Quizine.Api
         {
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Quizine.Api", Version = "v1" });
-            });
+            //services.AddSwaggerGen(c =>
+            //{
+            //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Quizine.Api", Version = "v1" });
+            //});
+            services.AddSingleton<ISessionRepository, SessionRepository>();
             services.AddSignalR();
             services.AddCors(options =>
             {
@@ -53,10 +49,9 @@ namespace Quizine.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quizine.Api v1"));
+                //app.UseSwagger();
+                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quizine.Api v1"));
             }
-
             app.UseHttpsRedirection();
 
             app.UseCors("ClientPermission");
@@ -68,7 +63,7 @@ namespace Quizine.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<ChatHub>("/hubs/chat");
+                endpoints.MapHub<QuizHub>("/hubs/quiz");
             });
         }
     }
