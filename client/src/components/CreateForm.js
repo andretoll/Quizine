@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { makeStyles } from '@material-ui/core';
 import Select from '@material-ui/core/Select';
@@ -63,20 +63,25 @@ const categories = [
     },
 ]
 
-function Form(props) {
+function CreateForm(props) {
 
     const classes = useStyles();
 
     const [playerCount, setPlayerCount] = useState(2);
     const [questionCount, setQuestionCount] = useState(10);
 
-    const { register, handleSubmit, control, formState: { errors } } = useForm({ mode: 'onChange' });
+    const { register, setValue, handleSubmit, control, formState: { errors } } = useForm({ mode: 'onChange' });
     const myForm = useRef(null);
+
+    useEffect(() => {
+        register("playerCount", { required: true, value: 2 });
+        register("questionCount", { required: true, value: 10 });
+    }, [register])
 
     return (
         <form onSubmit={handleSubmit(props.onSubmit)} className={classes.form} ref={myForm}>
             <FormControl margin="dense" fullWidth className={classes.formControl}>
-                <TextField size="small" color="primary" label="Hostname" {...register("hostName", { required: true })} />
+                <TextField size="small" color="primary" label="Username" {...register("hostName", { required: true })} />
                 {errors.title && <p>A man needs a name.</p>}
             </FormControl>
             <FormControl margin="dense" fullWidth className={classes.formControl}>
@@ -87,44 +92,32 @@ function Form(props) {
                 <FormLabel>
                     Number of players: {playerCount}
                 </FormLabel>
-                <Controller
-                    name="playerCount"
-                    control={control}
+                <Slider
+                    onChange={(_, value) => {
+                        setPlayerCount(value);
+                        setValue("playerCount", value);
+                    }}
+                    valueLabelDisplay="auto"
                     defaultValue={2}
-                    render={() => (
-                        <Slider
-                            onChange={(_, value) => {
-                                setPlayerCount(value);
-                            }}
-                            valueLabelDisplay="auto"
-                            defaultValue={2}
-                            min={1}
-                            max={4}
-                            step={1}
-                        />
-                    )}
+                    min={1}
+                    max={4}
+                    step={1}
                 />
             </FormControl>
             <FormControl margin="dense" fullWidth className={classes.formControl}>
                 <FormLabel>
                     Number of questions: {questionCount}
                 </FormLabel>
-                <Controller
-                    name="questionCount"
-                    control={control}
+                <Slider
+                    onChange={(_, value) => {
+                        setQuestionCount(value);
+                        setValue("questionCount", value);
+                    }}
+                    valueLabelDisplay="auto"
                     defaultValue={10}
-                    render={() => (
-                        <Slider
-                            onChange={(_, value) => {
-                                setQuestionCount(value);
-                            }}
-                            valueLabelDisplay="auto"
-                            defaultValue={10}
-                            min={1}
-                            max={50}
-                            step={1}
-                        />
-                    )}
+                    min={1}
+                    max={50}
+                    step={1}
                 />
             </FormControl>
             <FormControl margin="dense" fullWidth className={classes.formControl}>
@@ -174,4 +167,4 @@ function Form(props) {
     )
 }
 
-export default Form;
+export default CreateForm;

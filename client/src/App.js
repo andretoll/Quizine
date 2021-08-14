@@ -39,6 +39,8 @@ const GlobalCss = withStyles(theme => ({
 
     'ul, ol': {
       margin: '0',
+      padding: '0',
+      listStyle: 'none',
     },
 
     '.primary-color': {

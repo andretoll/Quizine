@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { makeStyles } from "@material-ui/core";
@@ -41,10 +42,23 @@ function JoinPage() {
     const classes = useStyles();
     const history = useHistory();
 
+    const [sessionId, setSessionId] = useState(null);
+
     const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onChange' });
 
+    const hash = history.location.hash.replace('#', '');
+
+    useEffect(() => {
+
+        if (hash)
+            setSessionId(hash);
+    }, [hash,]);
+
     function onHandleSubmit(data) {
-        history.push(`/quiz/${data.sessionId}`, { sessionId: data.sessionId, username: data.username });
+
+        const validSessionId = sessionId ? sessionId : data.sessionId;
+
+        history.push(`/quiz/${validSessionId}`, { sessionId: validSessionId, username: data.username });
     }
 
     return (
@@ -54,10 +68,13 @@ function JoinPage() {
                     <Paper elevation={10} style={{ padding: '30px' }}>
                         <Typography variant="h3" style={{ textAlign: 'center' }}>Join quiz</Typography>
                         <form onSubmit={handleSubmit(onHandleSubmit)} className={classes.form}>
-                            <FormControl margin="dense" fullWidth>
-                                <TextField label="Session ID" {...register("sessionId", { required: true })} />
-                                {errors.sessionId && <p>Session ID is required.</p>}
-                            </FormControl>
+                            {!sessionId &&
+                                <FormControl margin="dense" fullWidth>
+                                    <TextField label="Session ID" {...register("sessionId", { required: true })} />
+                                    {errors.sessionId && <p>Session ID is required.</p>}
+                                </FormControl>
+                            }
+
                             <FormControl margin="dense" fullWidth>
                                 <TextField label="Username" {...register("username", { required: true })} />
                                 {errors.username && <p>A man needs a name.</p>}

@@ -8,7 +8,8 @@ import Paper from '@material-ui/core/Paper';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
 import SuccessIcon from '@material-ui/icons/Check';
-import Form from '../components/Form';
+import ShareQuiz from '../components/ShareQuiz';
+import CreateForm from '../components/CreateForm';
 
 const useStyles = makeStyles(theme => ({
 
@@ -60,7 +61,7 @@ function CreatePage() {
         try {
             setErrorMessage(null);
             setContent(contentStates.IN_PROGRESS);
-
+            
             await fetch('https://localhost:5001/quiz/create', {
                 method: 'POST',
                 body: JSON.stringify(data),
@@ -88,7 +89,7 @@ function CreatePage() {
         switch (contentStates) {
             case 1:
                 return (
-                    <Form onSubmit={handleOnSubmit} />
+                    <CreateForm onSubmit={handleOnSubmit} />
                 )
             case 2:
                 return (
@@ -103,17 +104,14 @@ function CreatePage() {
                         <div className={classes.successIconWrapper}>
                             <SuccessIcon />
                         </div>
-                        <Typography color="primary" style={{ textAlign: 'center', margin: '10px' }} variant="h4">Quiz created!</Typography>
-                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
-                            <Typography color="primary" style={{ textAlign: 'center', marginRight: '10px' }} variant="h6">Code: <span style={{textDecoration: 'underline'}}>{sessionId}</span></Typography>
-                            <Button variant="outlined" color="primary" onClick={() => {navigator.clipboard.writeText(sessionId)}}>Copy</Button>
-                        </div>
+                        <Typography color="primary" style={{ textAlign: 'center', margin: '20px 0' }} variant="h4">Quiz created!</Typography>
+                        <ShareQuiz sessionId={sessionId} />
                         <div style={{ textAlign: 'center', marginTop: '50px' }}>
                             <Link to={{
                                 pathname: `/quiz/${sessionId}`,
                                 state: { sessionId: sessionId, username: hostName }
                             }}>
-                                <Button variant="contained" color="primary" size="large">Start</Button>
+                                <Button variant="contained" color="primary" size="large">Join</Button>
                             </Link>
                         </div>
                     </div>
