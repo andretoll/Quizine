@@ -6,6 +6,8 @@ namespace Quizine.Api.Dtos
     public class ConnectConfirmationDto
     {
         public bool Connected { get; set; }
+        public int ExpectedUsers { get; set; }
+        public string QuizTitle { get; set; }
         public string[] Users { get; set; }
         public string ErrorMessage { get; set; }
 
@@ -16,7 +18,13 @@ namespace Quizine.Api.Dtos
 
         public static ConnectConfirmationDto CreateSuccessResponse(IQuizSession session)
         {
-            return new ConnectConfirmationDto { Connected = true, Users = session.GetUsers().Select(x => x.Username).ToArray() };
+            return new ConnectConfirmationDto 
+            { 
+                Connected = true, 
+                QuizTitle = session.SessionParameters.Title, 
+                ExpectedUsers = session.SessionParameters.PlayerCount,
+                Users = session.GetUsers().Select(x => x.Username).ToArray() 
+            };
         }
     }
 }

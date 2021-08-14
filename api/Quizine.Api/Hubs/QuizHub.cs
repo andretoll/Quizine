@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Quizine.Api.Dtos;
 using Quizine.Api.Interfaces;
-using Quizine.Api.Models;
 using System;
 using System.Threading.Tasks;
 
@@ -9,12 +8,22 @@ namespace Quizine.Api.Hubs
 {
     public class QuizHub : Hub<IQuizHub>, IQuizApi
     {
-        private readonly ISessionRepository _sessionRepository;
+        #region Private Members
+
+        private readonly ISessionRepository _sessionRepository; 
+
+        #endregion
+
+        #region Constructor
 
         public QuizHub(ISessionRepository sessionRepository)
         {
             _sessionRepository = sessionRepository;
         }
+
+        #endregion
+
+        #region Overriden Methods
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
@@ -30,6 +39,22 @@ namespace Quizine.Api.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
+        #endregion
+
+        #region Private Methods
+
+        private async Task AddConnection(string sessionId, string connectionId, string username)
+        {
+            
+
+            _sessionRepository.AddUser(sessionId, connectionId, username);
+            await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
+        }
+
+        #endregion
+
+        #region IQuizApi Implementation
+
         public async Task Connect(string sessionId, string username)
         {
             if (!_sessionRepository.SessionExists(sessionId))
@@ -42,15 +67,32 @@ namespace Quizine.Api.Hubs
                 await Clients.Caller.ConfirmConnect(ConnectConfirmationDto.CreateErrorResponse("Session is full."));
                 return;
             }
+            else if (_sessionRepository.SessionStarted(sessionId))
+            {
+                await Clients.Caller.ConfirmConnect(ConnectConfirmationDto.CreateErrorResponse("Session already started."));
+                return;
+            }
+            else if (_sessionRepository.UserExists(sessionId, username))
+            {
+                await Clients.Caller.ConfirmConnect(ConnectConfirmationDto.CreateErrorResponse("A player with this username already joined."));
+                return;
+            }
 
             await AddConnection(sessionId, Context.ConnectionId, username);
             await Clients.Group(sessionId).ConfirmConnect(ConnectConfirmationDto.CreateSuccessResponse(_sessionRepository.GetSessionBySessionId(sessionId)));
         }
 
-        private async Task AddConnection(string sessionId, string connectionId, string username)
+        public async Task Disconnect()
         {
-            _sessionRepository.GetSessionBySessionId(sessionId).AddUser(new User { ConnectionID = connectionId, Username = username });
-            await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
+            await OnDisconnectedAsync(null);
         }
+
+        public async Task Start(string sessionId)
+        {
+            _sessionRepository.StartSession(sessionId);
+            await Clients.Group(sessionId).ConfirmStart(true);
+        }
+
+        #endregion
     }
 }

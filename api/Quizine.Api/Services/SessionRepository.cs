@@ -7,12 +7,23 @@ namespace Quizine.Api.Services
 {
     public class SessionRepository : ISessionRepository
     {
+        #region Private Members
+
         private readonly List<QuizSession> _quizSessions;
+
+
+        #endregion
+
+        #region Constructor
 
         public SessionRepository()
         {
             _quizSessions = new List<QuizSession>();
         }
+
+        #endregion
+
+        #region ISessionRepository Implementation
 
         public void AddSession(SessionParameters sessionParameters)
         {
@@ -39,5 +50,37 @@ namespace Quizine.Api.Services
             var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
             return quizSession.GetUsers().Count() >= quizSession.SessionParameters.PlayerCount;
         }
+
+        public bool SessionStarted(string sessionId)
+        {
+            var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
+            return quizSession.IsStarted;
+        }
+
+        public string GetFirstConnectionId(string sessionId)
+        {
+            var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
+            return quizSession.GetUsers().First().ConnectionID;
+        }
+
+        public void AddUser(string sessionId, string connectionId, string username)
+        {
+            var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
+            quizSession.AddUser(new User { ConnectionID = connectionId, Username = username });
+        }
+
+        public bool UserExists(string sessionId, string username)
+        {
+            var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
+            return quizSession.GetUsers().Any(x => x.Username == username);
+        }
+
+        public void StartSession(string sessionId)
+        {
+            var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
+            quizSession.Start();
+        }
+
+        #endregion
     }
 }
