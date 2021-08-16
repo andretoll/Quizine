@@ -6,11 +6,19 @@ namespace Quizine.Api.Dtos
 {
     public class DisconnectConfirmationDto
     {
-        public string[] Users { get; set; }
+        #region Public Properties
+
+        public string[] Users { get; }
+
+        #endregion
+
+        #region Constructor
 
         public DisconnectConfirmationDto(IEnumerable<User> users)
         {
             Users = users.Select(x => x.Username).ToArray();
-        }
+        } 
+
+        #endregion
     }
 }

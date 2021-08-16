@@ -12,10 +12,12 @@ namespace Quizine.Api.Controllers
     public class QuizController : ControllerBase
     {
         private readonly ISessionRepository _sessionRepository;
+        private readonly ITriviaRespository _triviaRepository;
 
-        public QuizController(ISessionRepository sessionRepository)
+        public QuizController(ISessionRepository sessionRepository, ITriviaRespository triviaRespository)
         {
             _sessionRepository = sessionRepository;
+            _triviaRepository = triviaRespository;
         }
 
         [HttpPost("create")]
@@ -23,9 +25,23 @@ namespace Quizine.Api.Controllers
         {
             string sessionId = UIDGenerator.Generate();
             parameters.SessionID = sessionId;
-            _sessionRepository.AddSession(parameters);
+
+            var quizItems = await _triviaRepository.GetTrivia(parameters.QuestionCount, parameters.Category, parameters.Difficulty);
+
+            _sessionRepository.AddSession(parameters, quizItems);
 
             return Ok(JsonSerializer.Serialize(sessionId));
+        }
+
+        [HttpGet("categories")]
+        public async Task<ActionResult> Get()
+        {
+            var response = await _triviaRepository.GetCategoriesJsonString();
+
+            if (string.IsNullOrEmpty(response))
+                return BadRequest();
+            else
+                return Ok(response);
         }
     }
 }

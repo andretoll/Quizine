@@ -11,5 +11,7 @@ namespace Quizine.Api.Interfaces
         Task ConfirmConnect(ConnectConfirmationDto dto);
         Task ConfirmDisconnect(DisconnectConfirmationDto dto);
         Task ConfirmStart(bool success);
+        Task ValidateAnswer(string correctAnswerId);
+        Task NextQuestion(NextQuestionDto dto);
     }
 }

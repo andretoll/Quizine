@@ -10,5 +10,7 @@ namespace Quizine.Api.Interfaces
         Task Connect(string sessionId, string username);
         Task Disconnect();
         Task Start(string sessionId);
+        Task SubmitAnswer(string sessionId, string questionId, string answerId);
+        Task NextQuestion(string sessionId);
     }
 }

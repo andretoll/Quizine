@@ -25,9 +25,9 @@ namespace Quizine.Api.Services
 
         #region ISessionRepository Implementation
 
-        public void AddSession(SessionParameters sessionParameters)
+        public void AddSession(SessionParameters sessionParameters, IEnumerable<QuizItem> quizItems)
         {
-            _quizSessions.Add(new QuizSession(sessionParameters));
+            _quizSessions.Add(new QuizSession(sessionParameters, quizItems));
         }
 
         public QuizSession GetSessionBySessionId(string sessionId)
@@ -57,12 +57,6 @@ namespace Quizine.Api.Services
             return quizSession.IsStarted;
         }
 
-        public string GetFirstConnectionId(string sessionId)
-        {
-            var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
-            return quizSession.GetUsers().First().ConnectionID;
-        }
-
         public void AddUser(string sessionId, string connectionId, string username)
         {
             var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
@@ -79,6 +73,26 @@ namespace Quizine.Api.Services
         {
             var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
             quizSession.Start();
+        }
+
+        public QuizItem GetFirstQuestion(string sessionId)
+        {
+            var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
+            return quizSession.GetFirstQuestion();
+        }
+
+        public QuizItem GetNextQuestion(string sessionId, string connectionId, out bool lastQuestion)
+        {
+            var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
+
+            var nextQuestion = quizSession.GetNextQuestion(connectionId, out lastQuestion);
+            return nextQuestion;
+        }
+
+        public string SubmitAnswer(string sessionId, string connectionId, string questionId, string answerId)
+        {
+            var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
+            return quizSession.SubmitAnswer(connectionId, questionId, answerId);
         }
 
         #endregion

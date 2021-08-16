@@ -28,8 +28,10 @@ namespace Quizine.Api
             //{
             //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Quizine.Api", Version = "v1" });
             //});
-            services.AddSingleton<ISessionRepository, SessionRepository>();
             services.AddSignalR();
+            services.AddSingleton<ISessionRepository, SessionRepository>();
+            services.AddSingleton<ITriviaRespository, TriviaRepository>();
+            services.AddHttpClient<ITriviaRespository, TriviaRepository>();
             services.AddCors(options =>
             {
                 options.AddPolicy("ClientPermission", policy =>

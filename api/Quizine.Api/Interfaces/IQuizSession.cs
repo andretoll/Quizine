@@ -17,9 +17,14 @@ namespace Quizine.Api.Interfaces
 
         void AddUser(User name);
         void RemoveUser(string connectionId);
-        void Start();
         IEnumerable<User> GetUsers();
-        
+
+        QuizItem GetFirstQuestion();
+        QuizItem GetNextQuestion(string connectionId, out bool lastQuestion);
+        string SubmitAnswer(string connectionId, string questionId, string answerId);
+
+        void Start();
+
         #endregion
     }
 }

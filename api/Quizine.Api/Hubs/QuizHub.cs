@@ -91,6 +91,21 @@ namespace Quizine.Api.Hubs
         {
             _sessionRepository.StartSession(sessionId);
             await Clients.Group(sessionId).ConfirmStart(true);
+
+            var firstQuestion = _sessionRepository.GetFirstQuestion(sessionId);
+            await Clients.Group(sessionId).NextQuestion(new NextQuestionDto(firstQuestion));
+        }
+
+        public async Task SubmitAnswer(string sessionId, string questionId, string answerId)
+        {
+            string correctAnswerId = _sessionRepository.SubmitAnswer(sessionId, Context.ConnectionId, questionId, answerId);
+            await Clients.Caller.ValidateAnswer(correctAnswerId);
+        }
+
+        public async Task NextQuestion(string sessionId)
+        {
+            var nextQuestion = _sessionRepository.GetNextQuestion(sessionId, Context.ConnectionId, out bool lastQuestion);
+            await Clients.Caller.NextQuestion(new NextQuestionDto(nextQuestion, lastQuestion));
         }
 
         #endregion
