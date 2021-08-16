@@ -50,12 +50,17 @@ function JoinPage() {
 
     useEffect(() => {
 
-        if (hash)
+        // If user was directed with a link, store sessionID
+        if (hash) {
             setSessionId(hash);
+        }
+
     }, [hash,]);
 
+    // Handle form submission
     function onHandleSubmit(data) {
 
+        // Get sessionID from URL or form
         const validSessionId = sessionId ? sessionId : data.sessionId;
 
         history.push(`/quiz/${validSessionId}`, { sessionId: validSessionId, username: data.username });
@@ -77,7 +82,7 @@ function JoinPage() {
 
                             <FormControl margin="dense" fullWidth>
                                 <TextField label="Username" {...register("username", { required: true })} />
-                                {errors.username && <p>A man needs a name.</p>}
+                                {errors.username && <p>Username is required.</p>}
                             </FormControl>
                             <div style={{ textAlign: 'center', marginTop: '30px ' }}>
                                 <Button variant="contained" color="primary" type="submit" size="large">

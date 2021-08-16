@@ -14,7 +14,9 @@ import ShareIcon from '@material-ui/icons/Share';
 import ShareQuiz from '../components/ShareQuiz';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
-import PlayerList from "../components/PlayerList";
+import { Connect, Start, SubmitAnswer, NextQuestion } from '../services/QuizService';
+import PlayerList from '../components/PlayerList';
+import Quiz from '../components/Quiz';
 
 const useStyles = makeStyles(theme => ({
 
@@ -66,21 +68,44 @@ function QuizPage() {
 
     const classes = useStyles();
 
+    // SignalR connection state
     const [connection, setConnection] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(null);
+
+    // Quiz state
+    const [sessionId, setSessionId] = useState();
+    const [quizTitle, setQuizTitle] = useState();
     const [username, setUsername] = useState();
     const [expectedPlayers, setExpectedPlayers] = useState();
     const [players, setPlayers] = useState([]);
-    const [quizTitle, setQuizTitle] = useState();
+    const [correctAnswer, setCorrectAnswer] = useState(null);
+
+    // UI state
     const [content, setContent] = useState(contentStates.CONNECTING);
     const [shareDialogOpen, setShareDialogOpen] = useState(false);
+    const [quizContent, setQuizContent] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
 
     const history = useHistory();
     const location = useLocation();
-    const sessionId = location.state.sessionId;
 
     useEffect(() => {
 
+        // Redirect to /join if state is undefined
+        if (!location.state) {
+            history.push("/join");
+            return;
+        }
+        // Else, set sessionID and username stored in the state
+        else {
+            setSessionId(location.state.sessionId);
+            setUsername(location.state.username);
+        }
+
+    }, [location, history])
+
+    useEffect(() => {
+
+        // Create new connection
         const newConnection = new HubConnectionBuilder()
             .withUrl('https://localhost:5001/hubs/quiz')
             .withAutomaticReconnect()
@@ -92,41 +117,39 @@ function QuizPage() {
 
     useEffect(() => {
 
-        if (!location.state)
-            history.push("/join");
-
         if (connection) {
             connection.start()
                 .then(_ => {
 
-                    setUsername(location.state.username);
+                    // Connect to quiz
+                    Connect(connection, sessionId, username);
 
+                    // Subscribe to all events
                     connection.on('ConfirmConnect', (response) => {
 
                         if (response.connected) {
                             setQuizTitle(response.quizTitle);
                             setExpectedPlayers(response.expectedUsers);
                             setPlayers(response.users);
-                            setContent(contentStates.IN_PROGRESS);
+                            setContent(contentStates.WAITING);
                         } else {
                             reportError(response.errorMessage);
                         }
                     });
-
-                    connection.send('Connect', location.state.sessionId, location.state.username);
-
                     connection.on('ConfirmDisconnect', (response) => {
                         setPlayers(response.users);
                     });
-
-                    connection.on('ConfirmStart', (response) => {
-                        
-                        if (response) {
-                            setContent(contentStates.IN_PROGRESS);
-                        }
+                    connection.on('ConfirmStart', (_) => {
+                        setContent(contentStates.IN_PROGRESS);
                     });
-
-                    connection.onclose(function (e) {
+                    connection.on('NextQuestion', (response) => {
+                        setCorrectAnswer(null);
+                        setQuizContent(response);
+                    })
+                    connection.on('ValidateAnswer', (response) => {
+                        setCorrectAnswer(response);
+                    })
+                    connection.onclose(function () {
                         reportError("Lost server connection.");
                     })
                 })
@@ -136,35 +159,40 @@ function QuizPage() {
                 });
         }
 
-        window.onpopstate = ((e) => {
+        // Disconnect from quiz session when navigating back or forward
+        window.onpopstate = (() => {
 
             if (connection && connection.connectionState === "Connected")
                 connection.send('Disconnect');
         });
 
-    }, [connection, history, location]);
+    }, [connection, sessionId, username]);
 
+    // Report error
     function reportError(message) {
         console.log(message);
         setContent(contentStates.ERROR);
         setErrorMessage(message);
     }
 
+    // Open share dialog
     function handleOnOpenShareDialog() {
         setShareDialogOpen(true);
     }
 
+    // Close share dialog
     function handleOnCloseShareDialog() {
         setShareDialogOpen(false);
     }
 
+    // Start quiz
     function handleOnStart() {
 
         const ready = ((expectedPlayers === players.length) || (expectedPlayers !== players.length && window.confirm("Not all players connected. Continue?")));
 
         if (ready) {
             try {
-                connection.send('Start', sessionId);
+                Start(connection, sessionId);
             } catch (error) {
                 console.log(error);
                 reportError("Failed to start quiz.");
@@ -172,6 +200,32 @@ function QuizPage() {
         }
     }
 
+    // Submit answer
+    function handleOnSubmitAnswer(answer) {
+        console.log(answer);
+        try {
+            SubmitAnswer(connection, sessionId, quizContent.id, answer);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    // Next question
+    function handleNextQuestion() {
+
+        try {
+            NextQuestion(connection, sessionId);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    // See results
+    function handleOnFinal() {
+        setContent(contentStates.RESULTS);
+    }
+
+    // Controls the content to be displayed
     function getContent(state) {
 
         switch (state) {
@@ -201,14 +255,14 @@ function QuizPage() {
                         <Container maxWidth="sm">
                             <Paper elevation={10}>
                                 <div style={{ padding: '20px' }}>
-                                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                         <Typography variant="h3" style={{ textAlign: 'center' }} gutterBottom>{quizTitle}</Typography>
-                                        <IconButton onClick={handleOnOpenShareDialog} style={{height: 'fit-content'}}>
+                                        <IconButton onClick={handleOnOpenShareDialog} style={{ height: 'fit-content' }}>
                                             <ShareIcon />
                                         </IconButton>
                                         <Dialog open={shareDialogOpen} onClose={handleOnCloseShareDialog}>
                                             <DialogTitle>Share Quiz</DialogTitle>
-                                            <DialogContent dividers> 
+                                            <DialogContent dividers>
                                                 <DialogContentText>
                                                     Share the quiz to your friends (or rivals) so that they may join this EPIC battle!
                                                 </DialogContentText>
@@ -220,7 +274,7 @@ function QuizPage() {
                                     <hr />
                                     <PlayerList expectedPlayers={expectedPlayers} players={players} username={username} />
                                     <hr />
-                                    <div style={{textAlign: 'center'}}>
+                                    <div style={{ textAlign: 'center' }}>
                                         {players[0] === username && <Button onClick={handleOnStart} variant="contained" color="primary">Start</Button>}
                                     </div>
                                 </div>
@@ -230,7 +284,17 @@ function QuizPage() {
                 )
             case contentStates.IN_PROGRESS:
                 return (
-                    <div>In progress!</div>
+                    <div>
+                        {quizContent &&
+                            <Quiz 
+                            content={quizContent} 
+                            correctAnswer={correctAnswer}
+                            onSubmit={handleOnSubmitAnswer} 
+                            onNext={handleNextQuestion} 
+                            onFinal={handleOnFinal}
+                            />
+                        }
+                    </div>
                 )
             case contentStates.RESULTS:
                 return (

@@ -1,11 +1,11 @@
 import CheckIcon from '@material-ui/icons/CheckCircleOutline';
 import Typography from '@material-ui/core/Typography';
 
-function PlayerList(params) {
+function PlayerList(props) {
 
-    const expectedPlayers = params.expectedPlayers;
-    const players = params.players;
-    const username = params.username;
+    const expectedPlayers = props.expectedPlayers;
+    const players = props.players;
+    const username = props.username;
 
     return (
         <div style={{ display: 'flex' }}>

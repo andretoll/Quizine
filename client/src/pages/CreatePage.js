@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 import Container from '@material-ui/core/Container';
@@ -42,6 +42,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const contentStates = Object.freeze({
+    LOADING: 0,
     FORM: 1,
     IN_PROGRESS: 2,
     SUCCESS: 3
@@ -51,17 +52,56 @@ function CreatePage() {
 
     const classes = useStyles();
 
+    const [categories, setCategories] = useState([]);
     const [errorMessage, setErrorMessage] = useState();
-    const [content, setContent] = useState(contentStates.FORM);
+    const [content, setContent] = useState(contentStates.LOADING);
     const [sessionId, setSessionId] = useState();
     const [hostName, setHostName] = useState();
 
+    useEffect(() => {
+
+        fetchCategories();
+
+    }, []);
+
+    // Gets the available categories from the server
+    async function fetchCategories() {
+
+        try {
+
+            await fetch('https://localhost:5001/quiz/categories', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                response.json().then(result => {
+
+                    // Add 'any' category
+                    result.trivia_categories.unshift({ id: 0, name: 'Any' });
+                    setCategories(result.trivia_categories);
+
+                    // Switch to form
+                    setContent(contentStates.FORM);
+                })
+            }).catch(error => {
+                console.log(error);
+                setErrorMessage("Failed to fetch categories. Refresh to try again.");
+            })
+        } catch (error) {
+            console.log(error);
+            setErrorMessage("Failed to fetch categories. Refresh to try again.");
+        }
+    }
+
+    // Handle form submission
     async function handleOnSubmit(data) {
 
         try {
             setErrorMessage(null);
             setContent(contentStates.IN_PROGRESS);
-            
+
+            // Create session and accept sessionID
             await fetch('https://localhost:5001/quiz/create', {
                 method: 'POST',
                 body: JSON.stringify(data),
@@ -84,21 +124,29 @@ function CreatePage() {
         }
     }
 
-    function getContent(contentStates) {
+    // Controls the content to be displayed
+    function getContent(state) {
 
-        switch (contentStates) {
-            case 1:
+        switch (state) {
+            case contentStates.LOADING:
                 return (
-                    <CreateForm onSubmit={handleOnSubmit} />
+                    <div style={{ margin: '40px 0', textAlign: 'center' }}>
+                        <CircularProgress color="secondary" />
+                        <Typography variant="h6">Loading...</Typography>
+                    </div>
                 )
-            case 2:
+            case contentStates.FORM:
+                return (
+                    <CreateForm onSubmit={handleOnSubmit} categories={categories} />
+                )
+            case contentStates.IN_PROGRESS:
                 return (
                     <div style={{ margin: '40px 0', textAlign: 'center' }}>
                         <CircularProgress color="secondary" />
                         <Typography variant="h6">Generating session...</Typography>
                     </div>
                 )
-            case 3:
+            case contentStates.SUCCESS:
                 return (
                     <div className={classes.successContainer}>
                         <div className={classes.successIconWrapper}>

@@ -32,47 +32,21 @@ const difficulties = [
     "Hard",
 ]
 
-const categories = [
-    {
-        "label": "Any category",
-        "value": 0
-    },
-    {
-        "label": "Animals",
-        "value": 27
-    },
-    {
-        "label": "General knowledge",
-        "value": 9
-    },
-    {
-        "label": "History",
-        "value": 23
-    },
-    {
-        "label": "Mythology",
-        "value": 20
-    },
-    {
-        "label": "Science & Nature",
-        "value": 17
-    },
-    {
-        "label": "Sports",
-        "value": 21
-    },
-]
-
 function CreateForm(props) {
 
     const classes = useStyles();
 
+    // Categories from parent
+    const categories = props.categories;
+
+    // Used for labeling
     const [playerCount, setPlayerCount] = useState(2);
     const [questionCount, setQuestionCount] = useState(10);
 
     const { register, setValue, handleSubmit, control, formState: { errors } } = useForm({ mode: 'onChange' });
     const myForm = useRef(null);
 
+    // Register custom fields
     useEffect(() => {
         register("playerCount", { required: true, value: 2 });
         register("questionCount", { required: true, value: 10 });
@@ -125,12 +99,12 @@ function CreateForm(props) {
                     Categories
                 </FormLabel>
                 <Controller
-                    defaultValue={categories[0].value}
+                    defaultValue={categories[0]?.id}
                     render={({ field }) => (
                         <Select {...field}>
                             {categories.map((category) => {
                                 return (
-                                    <MenuItem key={category.value} value={category.value}>{category.label}</MenuItem>
+                                    <MenuItem key={category.id} value={category.id}>{category.name}</MenuItem>
                                 )
                             })}
                         </Select>
