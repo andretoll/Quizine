@@ -38,6 +38,8 @@ const useStyles = makeStyles(theme => ({
             display: 'inline-block',
             verticalAlign: 'bottom',
             '-webkit-animation': '$ellipsis steps(14, end) 900ms infinite',
+            '-moz-animation': '$ellipsis steps(14, end) 900ms infinite',
+            '-o-animation': '$ellipsis steps(14, end) 900ms infinite',
             animation: '$ellipsis steps(14, end) 900ms infinite',
             content: '"\\2026"',
             width: '0px'
@@ -202,7 +204,6 @@ function QuizPage() {
 
     // Submit answer
     function handleOnSubmitAnswer(answer) {
-        console.log(answer);
         try {
             SubmitAnswer(connection, sessionId, quizContent.id, answer);
         } catch (error) {
@@ -286,12 +287,12 @@ function QuizPage() {
                 return (
                     <div>
                         {quizContent &&
-                            <Quiz 
-                            content={quizContent} 
-                            correctAnswer={correctAnswer}
-                            onSubmit={handleOnSubmitAnswer} 
-                            onNext={handleNextQuestion} 
-                            onFinal={handleOnFinal}
+                            <Quiz
+                                content={quizContent}
+                                correctAnswer={correctAnswer}
+                                onSubmit={handleOnSubmitAnswer}
+                                onNext={handleNextQuestion}
+                                onFinal={handleOnFinal}
                             />
                         }
                     </div>

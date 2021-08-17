@@ -7,7 +7,6 @@ export function Start(connection, sessionId) {
 }
 
 export function SubmitAnswer(connection, sessionId, quizId, answerId) {
-    console.log(answerId);
     connection.send('SubmitAnswer', sessionId, quizId, answerId);
 }
 
