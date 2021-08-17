@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
 import { MuiThemeProvider, createTheme, withStyles, responsiveFontSizes, CssBaseline } from '@material-ui/core';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import NotFoundPage from './pages/error/NotFoundPage';
 import HomePage from './pages/HomePage';
 import CreatePage from './pages/CreatePage';
@@ -21,17 +22,6 @@ const GlobalCss = withStyles(theme => ({
       overflow: 'hidden',
     },
 
-    '::-webkit-scrollbar': {
-      width: '10px',
-    },
-    '::-webkit-scrollbar-track': {
-      background: theme.palette.secondary.main,
-    },
-    '::-webkit-scrollbar-thumb': {
-      background: theme.palette.gradient.main,
-      borderRadius: '1em',
-    },
-
     a: {
       color: theme.palette.text.primary,
       textDecoration: 'none'
@@ -44,29 +34,35 @@ const GlobalCss = withStyles(theme => ({
     },
 
     '.primary-color': {
-      color: theme.palette.primary.light
+      color: theme.palette.primary.main
     },
   },
 }))(() => null);
 
 function App() {
 
+  // Get user preference
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  const [darkMode, setDarkMode] = useState(prefersDarkMode);
+
+  useEffect(() => {
+    setDarkMode(prefersDarkMode);
+  }, [prefersDarkMode]);
+
   const theme = responsiveFontSizes(createTheme({
     palette: {
-      type: 'light',
+      type: darkMode ? 'dark' : 'light',
       primary: {
-        main: '#6f5656',
+        main: '#daa520',
       },
       secondary: {
         main: '#1F2833',
       },
       primaryBackground: {
-        main: '#FE6B8B',
-        dark: '#d85671'
+        main: '#fe6b6b ',
       },
       secondaryBackground: {
         main: '#2196F3',
-        dark: '#007ee4',
       },
       gradient: {
         main: 'linear-gradient(45deg, #6f5656 30%, #1F2833 90%)',

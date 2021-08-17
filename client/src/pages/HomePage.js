@@ -10,13 +10,23 @@ const useStyles = makeStyles(theme => ({
 
     container: {
         display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
         minHeight: '100vh',
-        paddingTop: '100px',
         textAlign: 'center',
-        background: `linear-gradient(90deg, ${theme.palette.primaryBackground.dark} 0%, ${theme.palette.primaryBackground.main} 50%, ${theme.palette.secondaryBackground.main} 50%, ${theme.palette.secondaryBackground.dark} 100%)`,
+        background: `linear-gradient(115deg, #000 -15%, ${theme.palette.primaryBackground.main} 50%, ${theme.palette.secondaryBackground.main} 50%, #000 115%)`,
 
         '& button': {
-            fontSize: '1.5em'
+            width: '200px',
+            fontSize: '2em',
+            padding: '0.5em 0.7em',
+            transition: 'transform .5s',
+            letterSpacing: '5px',
+
+            '&:hover': {
+                transform: 'translateY(-5px)',
+                color: theme.palette.primary.main
+            },
         }
     },
 }))
@@ -40,7 +50,7 @@ function HomePage() {
                         <Slide in timeout={2000} direction="right">
                             <Grid item xs={12} sm={6}>
                                 <Link to="/create">
-                                    <Button variant="contained" color="primary" size="large">
+                                    <Button variant="contained" color="secondary">
                                         Create
                                     </Button>
                                 </Link>
@@ -49,7 +59,7 @@ function HomePage() {
                         <Slide in timeout={2000} direction="left">
                             <Grid item xs={12} sm={6}>
                                 <Link to="/join">
-                                    <Button variant="contained" color="primary" size="large">
+                                    <Button variant="contained" color="secondary">
                                         Join
                                     </Button>
                                 </Link>

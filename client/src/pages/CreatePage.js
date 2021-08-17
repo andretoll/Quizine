@@ -10,14 +10,16 @@ import Button from '@material-ui/core/Button';
 import SuccessIcon from '@material-ui/icons/Check';
 import ShareQuiz from '../components/ShareQuiz';
 import CreateForm from '../components/CreateForm';
+import GoHome from '../components/GoHome';
 
 const useStyles = makeStyles(theme => ({
 
     container: {
         minHeight: '100vh',
-        paddingTop: '100px',
-        paddingBottom: '100px',
         background: theme.palette.primaryBackground.main,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
     },
 
     wrapper: {
@@ -80,7 +82,7 @@ function CreatePage() {
                     // Add 'any' category
                     result.trivia_categories.unshift({ id: 0, name: 'Any' });
                     setCategories(result.trivia_categories);
-
+                    
                     // Switch to form
                     setContent(contentStates.FORM);
                 })
@@ -152,7 +154,7 @@ function CreatePage() {
                         <div className={classes.successIconWrapper}>
                             <SuccessIcon />
                         </div>
-                        <Typography color="primary" style={{ textAlign: 'center', margin: '20px 0' }} variant="h4">Quiz created!</Typography>
+                        <Typography style={{ textAlign: 'center', margin: '20px 0' }} variant="h4">Quiz created!</Typography>
                         <ShareQuiz sessionId={sessionId} />
                         <div style={{ textAlign: 'center', marginTop: '50px' }}>
                             <Link to={{
@@ -174,6 +176,7 @@ function CreatePage() {
             <Container className={classes.wrapper}>
                 <Fade in timeout={1500}>
                     <Paper elevation={10} style={{ padding: '30px' }}>
+                        <GoHome />
                         {content < 3 && <Typography variant="h3" style={{ textAlign: 'center' }}>Create quiz</Typography>}
                         <Typography style={{ textAlign: 'center' }} color="error">{errorMessage}</Typography>
                         {getContent(content)}

@@ -5,19 +5,22 @@ import Logo from '../assets/logo/logo_white.png';
 const useStyles = makeStyles(theme => ({
 
     outerContainer: {
-        border: `5px solid ${theme.palette.primary.main}`,
+        border: `5px solid ${theme.palette.secondary.main}`,
         borderRadius: '7%',
-        padding: '4px'
-    },
-
-    innerContainer: {
-        background: theme.palette.primary.main,
-        borderRadius: '5%',
         padding: '5px'
     },
 
+    innerContainer: {
+        background: theme.palette.secondary.main,
+        borderRadius: '5%',
+        padding: '15px'
+    },
+
     text: {
-        fontWeight: 'bold', letterSpacing: '2px', color: '#fff', textTransform: 'uppercase'
+        fontWeight: 'bold', 
+        letterSpacing: '2px', 
+        textTransform: 'uppercase',
+        color: theme.palette.primary.main,
     }
 }))
 
@@ -29,7 +32,7 @@ function Brand(props) {
         <div className={classes.outerContainer}>
             <div className={classes.innerContainer}>
                 <img height={props.size} src={Logo} alt="quizine logo" />
-                <Typography className={classes.text} variant="h2">
+                <Typography className={classes.text} variant="h3">
                     Quizine
                 </Typography>
             </div>

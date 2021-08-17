@@ -56,11 +56,11 @@ function CreateForm(props) {
         <form onSubmit={handleSubmit(props.onSubmit)} className={classes.form} ref={myForm}>
             <FormControl margin="dense" fullWidth className={classes.formControl}>
                 <TextField size="small" color="primary" label="Username" {...register("hostName", { required: true })} />
-                {errors.title && <p>A man needs a name.</p>}
+                {errors.title && <p>Hostname is required.</p>}
             </FormControl>
             <FormControl margin="dense" fullWidth className={classes.formControl}>
                 <TextField size="small" color="primary" label="Title" {...register("title", { required: true })} />
-                {errors.title && <p>Quiz needs a title!</p>}
+                {errors.title && <p>Title is required.</p>}
             </FormControl>
             <FormControl margin="dense" fullWidth className={classes.formControl}>
                 <FormLabel>
@@ -74,7 +74,7 @@ function CreateForm(props) {
                     valueLabelDisplay="auto"
                     defaultValue={2}
                     min={1}
-                    max={4}
+                    max={10}
                     step={1}
                 />
             </FormControl>

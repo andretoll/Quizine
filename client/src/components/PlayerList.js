@@ -1,4 +1,4 @@
-import CheckIcon from '@material-ui/icons/CheckCircleOutline';
+import CheckIcon from '@material-ui/icons/CheckCircle';
 import Typography from '@material-ui/core/Typography';
 
 function PlayerList(props) {
@@ -13,7 +13,7 @@ function PlayerList(props) {
                 {[...Array(expectedPlayers)].map((_, i) => {
                     return (
                         <li key={i}>
-                            <Typography style={{ fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
+                            <Typography style={{ textTransform: 'uppercase', letterSpacing: '0.2em' }}>
                                 Player {i + 1}:
                             </Typography>
                         </li>
@@ -24,7 +24,7 @@ function PlayerList(props) {
                 {players.map((player) => {
                     return (
                         <li key={player} style={{ display: 'flex', alignItems: 'center' }}>
-                            <CheckIcon style={{ color: 'green', marginRight: '5px' }} />
+                            <CheckIcon className="primary-color" style={{ marginRight: '5px' }} />
                             <Typography style={username === player ? { fontWeight: 'bold' } : {}}>
                                 {player}
                             </Typography>

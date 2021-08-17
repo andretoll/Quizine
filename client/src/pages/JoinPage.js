@@ -9,13 +9,15 @@ import Fade from '@material-ui/core/Fade';
 import Paper from '@material-ui/core/Paper';
 import FormControl from '@material-ui/core/FormControl';
 import Typography from '@material-ui/core/Typography';
+import GoHome from '../components/GoHome';
 
 const useStyles = makeStyles(theme => ({
 
     container: {
         minHeight: '100vh',
-        paddingTop: '100px',
-        paddingBottom: '100px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
         background: theme.palette.secondaryBackground.main,
     },
 
@@ -71,6 +73,7 @@ function JoinPage() {
             <Container className={classes.wrapper}>
                 <Fade in timeout={1500}>
                     <Paper elevation={10} style={{ padding: '30px' }}>
+                        <GoHome />
                         <Typography variant="h3" style={{ textAlign: 'center' }}>Join quiz</Typography>
                         <form onSubmit={handleSubmit(onHandleSubmit)} className={classes.form}>
                             {!sessionId &&

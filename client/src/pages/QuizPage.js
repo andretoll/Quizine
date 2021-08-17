@@ -274,7 +274,7 @@ function QuizPage() {
                                     <hr />
                                     <PlayerList expectedPlayers={expectedPlayers} players={players} username={username} />
                                     <hr />
-                                    <div style={{ textAlign: 'center' }}>
+                                    <div style={{ textAlign: 'center', marginTop: '20px' }}>
                                         {players[0] === username && <Button onClick={handleOnStart} variant="contained" color="primary">Start</Button>}
                                     </div>
                                 </div>
