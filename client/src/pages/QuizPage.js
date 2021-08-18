@@ -79,12 +79,15 @@ function QuizPage() {
     const [username, setUsername] = useState();
     const [expectedPlayers, setExpectedPlayers] = useState();
     const [players, setPlayers] = useState([]);
+    const [questionTimeout, setQuestionTimeout] = useState();
+
+    // Quiz current state
     const [correctAnswer, setCorrectAnswer] = useState(null);
+    const [quizContent, setQuizContent] = useState(null);
 
     // UI state
     const [content, setContent] = useState(contentStates.CONNECTING);
     const [shareDialogOpen, setShareDialogOpen] = useState(false);
-    const [quizContent, setQuizContent] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
 
     const history = useHistory();
@@ -133,6 +136,7 @@ function QuizPage() {
                             setQuizTitle(response.quizTitle);
                             setExpectedPlayers(response.expectedUsers);
                             setPlayers(response.users);
+                            setQuestionTimeout(response.questionTimeout);
                             setContent(contentStates.WAITING);
                         } else {
                             reportError(response.errorMessage);
@@ -288,6 +292,7 @@ function QuizPage() {
                     <div>
                         {quizContent &&
                             <Quiz
+                                questionTimeout={questionTimeout}
                                 content={quizContent}
                                 correctAnswer={correctAnswer}
                                 onSubmit={handleOnSubmitAnswer}

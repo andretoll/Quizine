@@ -8,6 +8,7 @@
         public string Title { get; set; }
         public int PlayerCount { get; set; }
         public int QuestionCount { get; set; }
+        public int QuestionTimeout { get; set; }
         public int Category { get; set; }
         public string Difficulty { get; set; } 
 

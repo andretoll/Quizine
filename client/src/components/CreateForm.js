@@ -42,6 +42,7 @@ function CreateForm(props) {
     // Used for labeling
     const [playerCount, setPlayerCount] = useState(2);
     const [questionCount, setQuestionCount] = useState(10);
+    const [questionTimeout, setQuestionTimeout] = useState(30);
 
     const { register, setValue, handleSubmit, control, formState: { errors } } = useForm({ mode: 'onChange' });
     const myForm = useRef(null);
@@ -50,6 +51,7 @@ function CreateForm(props) {
     useEffect(() => {
         register("playerCount", { required: true, value: 2 });
         register("questionCount", { required: true, value: 10 });
+        register("questionTimeout", { required: true, value: 30 });
     }, [register])
 
     return (
@@ -71,7 +73,6 @@ function CreateForm(props) {
                         setPlayerCount(value);
                         setValue("playerCount", value);
                     }}
-                    valueLabelDisplay="auto"
                     defaultValue={2}
                     min={1}
                     max={10}
@@ -87,11 +88,25 @@ function CreateForm(props) {
                         setQuestionCount(value);
                         setValue("questionCount", value);
                     }}
-                    valueLabelDisplay="auto"
                     defaultValue={10}
                     min={1}
                     max={50}
                     step={1}
+                />
+            </FormControl>
+            <FormControl margin="dense" fullWidth className={classes.formControl}>
+                <FormLabel>
+                Question timeout: {questionTimeout > 0 ? `${questionTimeout} seconds` : `Disabled`}
+                </FormLabel>
+                <Slider
+                    onChange={(_, value) => {
+                        setQuestionTimeout(value);
+                        setValue("questionTimeout", value);
+                    }}
+                    defaultValue={30}
+                    min={0}
+                    max={120}
+                    step={5}
                 />
             </FormControl>
             <FormControl margin="dense" fullWidth className={classes.formControl}>

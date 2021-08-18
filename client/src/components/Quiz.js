@@ -124,7 +124,7 @@ function Quiz(props) {
     }, [remainingTime, onSubmitFunction]);
 
     // Render time and update remaining time
-    function renderTime ({ remainingTime }) {
+    function renderTime({ remainingTime }) {
         setRemainingTime(remainingTime);
 
         return (
@@ -136,22 +136,25 @@ function Quiz(props) {
 
     return (
         <div className={classes.container}>
-            <div className={classes.timerContainer}>
-                <Slide in={timerPlaying} timeout={500}>
-                    <div>
-                        <CountdownCircleTimer
-                            key={timer}
-                            size={100}
-                            isPlaying={timerPlaying}
-                            duration={3}
-                            strokeWidth={5}
-                            strokeLinecap="square"
-                            colors={[["#26a300", 0.33], ["#F7B801", 0.33], ["#A30000"]]}>
-                            {renderTime}
-                        </CountdownCircleTimer>
-                    </div>
-                </Slide>
-            </div>
+            {props.questionTimeout > 0 &&
+                <div className={classes.timerContainer}>
+                    <Slide in={timerPlaying} timeout={500}>
+                        <div>
+                            <CountdownCircleTimer
+                                key={timer}
+                                size={100}
+                                isPlaying={timerPlaying}
+                                duration={props.questionTimeout}
+                                strokeWidth={5}
+                                strokeLinecap="square"
+                                colors={[["#26a300", 0.33], ["#F7B801", 0.33], ["#A30000"]]}>
+                                {renderTime}
+                            </CountdownCircleTimer>
+                        </div>
+                    </Slide>
+                </div>
+            }
+
             <Container className={classes.quizContentWrapper} disableGutters maxWidth="md">
                 <Slide in={slide} timeout={500} direction={slide ? 'left' : 'right'}>
                     <Paper className={classes.quizContent} elevation={5}>
