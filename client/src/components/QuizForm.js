@@ -93,7 +93,7 @@ function QuizForm(props) {
                     </Button>
                 }
             </div>
-            <Grid container xs={12}>
+            <Grid container>
                 {answers.map((answer) => {
                     const disabledClass = props.correctAnswer ? classes.disabled : null;
                     const correctAnswerClass = props.correctAnswer === answer.id ? classes.correct : null;

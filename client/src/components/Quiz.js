@@ -1,4 +1,5 @@
 import { useEffect, useState, Fragment } from 'react';
+import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import { makeStyles } from '@material-ui/core';
 import Container from '@material-ui/core/Container';
 import Slide from '@material-ui/core/Slide';
@@ -14,14 +15,17 @@ const useStyles = makeStyles(theme => ({
         height: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
     },
 
     quizContentWrapper: {
-        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
+
+        [theme.breakpoints.down('xs')]: {
+            height: '100%',
+        },
     },
 
     quizContent: {
@@ -34,21 +38,29 @@ const useStyles = makeStyles(theme => ({
             height: '100%',
         },
     },
+
+    timerContainer: {
+        padding: '20px',
+        display: 'flex',
+        justifyContent: 'center',
+    },
 }))
 
 function Quiz(props) {
 
     const classes = useStyles();
 
-    const [slide, setSlide] = useState(false);
-
     const content = props.content;
 
-    useEffect(() => {
+    // Quiz slider
+    const [slide, setSlide] = useState(true);
 
-        // Trigger slide animation
-        setSlide(true);
-    }, []);
+    // Timer
+    const [timer, setTimer] = useState(0);
+    const [timerPlaying, setTimerPlaying] = useState(true);
+    const [remainingTime, setRemainingTime] = useState();
+
+    const onSubmitFunction = props.onSubmit;
 
     function getDifficultyContent() {
 
@@ -85,25 +97,67 @@ function Quiz(props) {
     // On next question
     function onNext() {
 
-        // Trigger slide animation, and call parent function
+        // Trigger slide animation (out)
         setSlide(false);
+
         setTimeout(() => {
-            props.onNext();
-            setSlide(true);
+            props.onNext(); // Request next question
+            setSlide(true); // Trigger slide animation (in)
+            setTimer(prevState => prevState + 1); // Activate new timer
+            setTimerPlaying(true); // Set timer status
         }, 1000);
+    }
+
+    // On submitting answer manually, pause timer
+    function onSubmit() {
+
+        setTimerPlaying(false);
+        onSubmitFunction();
+    }
+
+    // Send incorrect answer on timeout
+    useEffect(() => {
+
+        if (remainingTime === 0)
+            onSubmitFunction(null);
+
+    }, [remainingTime, onSubmitFunction]);
+
+    // Render time and update remaining time
+    function renderTime ({ remainingTime }) {
+        setRemainingTime(remainingTime);
+
+        return (
+            <div>
+                <Typography variant="h3">{remainingTime}</Typography>
+            </div>
+        );
     }
 
     return (
         <div className={classes.container}>
-            <div style={{ height: '100px', background: 'black' }}>
-                TIME
+            <div className={classes.timerContainer}>
+                <Slide in={timerPlaying} timeout={500}>
+                    <div>
+                        <CountdownCircleTimer
+                            key={timer}
+                            size={100}
+                            isPlaying={timerPlaying}
+                            duration={3}
+                            strokeWidth={5}
+                            strokeLinecap="square"
+                            colors={[["#26a300", 0.33], ["#F7B801", 0.33], ["#A30000"]]}>
+                            {renderTime}
+                        </CountdownCircleTimer>
+                    </div>
+                </Slide>
             </div>
             <Container className={classes.quizContentWrapper} disableGutters maxWidth="md">
                 <Slide in={slide} timeout={500} direction={slide ? 'left' : 'right'}>
                     <Paper className={classes.quizContent} elevation={5}>
                         <div style={{ padding: '20px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Typography style={{fontSize: '1.1em'}} variant="overline">{content.category}</Typography>
+                                <Typography style={{ fontSize: '1.1em' }} variant="overline">{content.category}</Typography>
                                 <Typography variant="overline" style={{ display: 'flex', alignItems: 'center' }}>{getDifficultyContent()}</Typography>
                             </div>
                             <hr />
@@ -114,7 +168,7 @@ function Quiz(props) {
                         <QuizForm
                             answers={content.answers}
                             correctAnswer={props.correctAnswer}
-                            onSubmit={props.onSubmit}
+                            onSubmit={onSubmit}
                             onNext={onNext}
                             onFinal={props.onFinal}
                             lastQuestion={content.lastQuestion} />
