@@ -30,7 +30,7 @@ namespace Quizine.Api.Models
         public void AddResult(string questionId, string answerId)
         {
             var quizResult = QuizResults.First(x => x.Question.ID == questionId);
-            quizResult.SetAnswer(quizResult.Question.Answers.First(x => x.ID == answerId));
+            quizResult.SetAnswer(quizResult.Question.Answers.FirstOrDefault(x => x.ID == answerId));
 
             var nextQuestionIndex = QuizResults.IndexOf(quizResult) + 1;
 
