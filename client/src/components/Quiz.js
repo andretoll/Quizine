@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
         flexDirection: 'column',
         justifyContent: 'space-between',
 
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down('xs')]: {
             height: '100%',
         },
     },
@@ -122,9 +122,6 @@ function Quiz(props) {
                 </Slide>
 
             </Container>
-            <div style={{ height: '100px', background: 'black' }}>
-                PROGRESS
-            </div>
         </div>
     )
 }

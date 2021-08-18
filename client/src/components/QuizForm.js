@@ -101,20 +101,19 @@ function QuizForm(props) {
                     var icon;
 
                     if (correctAnswerClass) {
-                        icon = <CheckIcon fontSize="large" />
+                        icon = <CheckIcon />
                     } else if (incorrectAnswerClass) {
                         icon = <ClearIcon />
                     }
 
                     return (
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={6} key={answer.id}>
                             <Button
                                 startIcon={icon}
                                 className={`${classes.answerButton} ${disabledClass} ${correctAnswerClass} ${incorrectAnswerClass}`}
                                 fullWidth
                                 variant="contained"
                                 color="secondary"
-                                key={answer.id}
                                 onClick={() => handleOnClick(answer.id)}>
                                 {answer.value}
                             </Button>
