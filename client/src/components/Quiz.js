@@ -146,6 +146,7 @@ function Quiz(props) {
                                 isPlaying={timerPlaying}
                                 duration={props.questionTimeout}
                                 strokeWidth={5}
+                                trailColor={remainingTime === 0 ? '#A30000' : '#d9d9d9'}
                                 strokeLinecap="square"
                                 colors={[["#26a300", 0.33], ["#F7B801", 0.33], ["#A30000"]]}>
                                 {renderTime}

@@ -58,7 +58,7 @@ function CreateForm(props) {
         <form onSubmit={handleSubmit(props.onSubmit)} className={classes.form} ref={myForm}>
             <FormControl margin="dense" fullWidth className={classes.formControl}>
                 <TextField size="small" color="primary" label="Username" {...register("hostName", { required: true })} />
-                {errors.title && <p>Hostname is required.</p>}
+                {errors.title && <p>Username is required.</p>}
             </FormControl>
             <FormControl margin="dense" fullWidth className={classes.formControl}>
                 <TextField size="small" color="primary" label="Title" {...register("title", { required: true })} />
