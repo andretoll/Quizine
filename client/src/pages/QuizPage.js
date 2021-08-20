@@ -14,9 +14,10 @@ import ShareIcon from '@material-ui/icons/Share';
 import ShareQuiz from '../components/ShareQuiz';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
-import { Connect, Start, SubmitAnswer, NextQuestion } from '../services/QuizService';
+import { Connect, Start, SubmitAnswer, NextQuestion, GetResults } from '../services/QuizService';
 import PlayerList from '../components/PlayerList';
 import Quiz from '../components/Quiz';
+import Results from '../components/Results';
 
 const useStyles = makeStyles(theme => ({
 
@@ -80,6 +81,8 @@ function QuizPage() {
     const [expectedPlayers, setExpectedPlayers] = useState();
     const [players, setPlayers] = useState([]);
     const [questionTimeout, setQuestionTimeout] = useState();
+    const [quizCompleted, setQuizCompleted] = useState(false);
+    const [finalScore, setFinalScore] = useState([]);
 
     // Quiz current state
     const [correctAnswer, setCorrectAnswer] = useState(null);
@@ -109,6 +112,13 @@ function QuizPage() {
     }, [location, history])
 
     useEffect(() => {
+
+        window.onbeforeunload = (e) => {
+            var confirmationMessage = 'Leaving this page will remove you from the ongoing quiz session.';
+
+            (e || window.event).returnValue = confirmationMessage;
+            return confirmationMessage;
+        };
 
         // Create new connection
         const newConnection = new HubConnectionBuilder()
@@ -146,6 +156,7 @@ function QuizPage() {
                         setPlayers(response.users);
                     });
                     connection.on('ConfirmStart', (_) => {
+                        NextQuestion(connection, sessionId);
                         setContent(contentStates.IN_PROGRESS);
                     });
                     connection.on('NextQuestion', (response) => {
@@ -154,6 +165,10 @@ function QuizPage() {
                     })
                     connection.on('ValidateAnswer', (response) => {
                         setCorrectAnswer(response);
+                    })
+                    connection.on('Results', (response) => {
+                        setQuizCompleted(response.sessionCompleted);
+                        setFinalScore(response.scores);
                     })
                     connection.onclose(function () {
                         reportError("Lost server connection.");
@@ -208,8 +223,9 @@ function QuizPage() {
 
     // Submit answer
     function handleOnSubmitAnswer(answer) {
+
         try {
-            SubmitAnswer(connection, sessionId, quizContent.id, answer);
+            SubmitAnswer(connection, sessionId, quizContent.id, answer?.id);
         } catch (error) {
             console.log(error);
         }
@@ -227,7 +243,13 @@ function QuizPage() {
 
     // See results
     function handleOnFinal() {
-        setContent(contentStates.RESULTS);
+
+        try {
+            GetResults(connection, sessionId);
+            setContent(contentStates.RESULTS);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     // Controls the content to be displayed
@@ -304,7 +326,9 @@ function QuizPage() {
                 )
             case contentStates.RESULTS:
                 return (
-                    <div>Results</div>
+                    <div>
+                        <Results quizCompleted={quizCompleted} finalScore={finalScore} />
+                    </div>
                 )
             default:
                 return null;
