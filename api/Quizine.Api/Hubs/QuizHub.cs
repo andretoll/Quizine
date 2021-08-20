@@ -91,9 +91,6 @@ namespace Quizine.Api.Hubs
         {
             _sessionRepository.StartSession(sessionId);
             await Clients.Group(sessionId).ConfirmStart(true);
-
-            var firstQuestion = _sessionRepository.GetFirstQuestion(sessionId);
-            await Clients.Group(sessionId).NextQuestion(new NextQuestionDto(firstQuestion));
         }
 
         public async Task SubmitAnswer(string sessionId, string questionId, string answerId)
@@ -106,6 +103,13 @@ namespace Quizine.Api.Hubs
         {
             var nextQuestion = _sessionRepository.GetNextQuestion(sessionId, Context.ConnectionId, out bool lastQuestion);
             await Clients.Caller.NextQuestion(new NextQuestionDto(nextQuestion, lastQuestion));
+        }
+
+        public async Task GetResults(string sessionId)
+        {
+            var rule = _sessionRepository.GetSessionRule(sessionId);
+            var results = _sessionRepository.GetResults(sessionId, out bool sessionCompleted);
+            await Clients.Group(sessionId).Results(new ResultsDto(results, sessionCompleted, rule));
         }
 
         #endregion

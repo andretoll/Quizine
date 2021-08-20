@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Quizine.Api.Enums;
 using Quizine.Api.Helpers;
 using Quizine.Api.Interfaces;
 using Quizine.Api.Models;
+using System;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -34,7 +36,7 @@ namespace Quizine.Api.Controllers
         }
 
         [HttpGet("categories")]
-        public async Task<ActionResult> Get()
+        public async Task<ActionResult> GetCategories()
         {
             var response = await _triviaRepository.GetCategoriesJsonString();
 
@@ -42,6 +44,12 @@ namespace Quizine.Api.Controllers
                 return BadRequest();
             else
                 return Ok(response);
+        }
+
+        [HttpGet("rules")]
+        public ActionResult GetRules()
+        {
+            return Ok(Enum.GetNames<Rule>());
         }
     }
 }

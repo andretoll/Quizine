@@ -1,4 +1,5 @@
-﻿using Quizine.Api.Interfaces;
+﻿using Quizine.Api.Enums;
+using Quizine.Api.Interfaces;
 using Quizine.Api.Models;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace Quizine.Api.Services
 
         private readonly List<QuizItem> _questions;
         private readonly List<User> _members;
-        private readonly List<QuizProgress> _progress;
+        private readonly List<QuizProgress> _progressList;
         private bool _isStarted;
 
         #endregion
@@ -30,7 +31,7 @@ namespace Quizine.Api.Services
         {
             SessionParameters = sessionParameters;
             _members = new List<User>();
-            _progress = new List<QuizProgress>();
+            _progressList = new List<QuizProgress>();
             _questions = new List<QuizItem>(quizItems);
         }
 
@@ -41,7 +42,7 @@ namespace Quizine.Api.Services
         public void AddUser(User user)
         {
             _members.Add(user);
-            _progress.Add(new QuizProgress(user, _questions));
+            _progressList.Add(new QuizProgress(user, _questions));
         }
 
         public IEnumerable<User> GetUsers()
@@ -52,7 +53,7 @@ namespace Quizine.Api.Services
         public void RemoveUser(string connectionId)
         {
             _members.RemoveAll(x => x.ConnectionID == connectionId);
-            _progress.RemoveAll(x => x.User.ConnectionID == connectionId);
+            _progressList.RemoveAll(x => x.User.ConnectionID == connectionId);
         }
 
         public void Start()
@@ -66,14 +67,9 @@ namespace Quizine.Api.Services
             _isStarted = true;
         }
 
-        public QuizItem GetFirstQuestion()
-        {
-            return _questions.First();
-        }
-
         public QuizItem GetNextQuestion(string connectionId, out bool lastQuestion)
         {
-            var progress = _progress.First(x => x.User.ConnectionID == connectionId);
+            var progress = _progressList.First(x => x.User.ConnectionID == connectionId);
             lastQuestion = progress.IsLastQuestion;
 
             return progress.NextQuestion;
@@ -81,10 +77,16 @@ namespace Quizine.Api.Services
 
         public string SubmitAnswer(string connectionId, string questionId, string answerId)
         {
-            var progress = _progress.First(x => x.User.ConnectionID == connectionId);
+            var progress = _progressList.First(x => x.User.ConnectionID == connectionId);
             progress.AddResult(questionId, answerId);
 
             return _questions.First(x => x.ID == questionId).CorrectAnswer.ID;
+        }
+
+        public IEnumerable<QuizProgress> GetResults(out bool sessionCompleted)
+        {
+            sessionCompleted = _progressList.All(x => x.HasCompleted);
+            return _progressList.Where(x => x.HasCompleted);
         }
 
         #endregion

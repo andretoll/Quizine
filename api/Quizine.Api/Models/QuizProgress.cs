@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Quizine.Api.Enums;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Quizine.Api.Models
@@ -11,6 +13,7 @@ namespace Quizine.Api.Models
         public QuizItem NextQuestion { get; private set; }
         public List<QuizResult> QuizResults { get; }
         public bool IsLastQuestion => NextQuestion == QuizResults.Last().Question;
+        public bool HasCompleted => NextQuestion == null;
 
         #endregion
 
@@ -35,9 +38,21 @@ namespace Quizine.Api.Models
             var nextQuestionIndex = QuizResults.IndexOf(quizResult) + 1;
 
             if (nextQuestionIndex >= QuizResults.Count)
+            {
+                NextQuestion = null;
                 return;
+            }
 
             NextQuestion = QuizResults[nextQuestionIndex].Question;
+        }
+
+        public int CalculatePoints(Rule rule)
+        {
+            return rule switch
+            {
+                Rule.Standard => QuizResults.Where(x => x.Question.CorrectAnswer.ID == x.Answer.ID).Count() * 1,
+                _ => throw new InvalidOperationException("Ruleset not supported."),
+            };
         }
 
         #endregion

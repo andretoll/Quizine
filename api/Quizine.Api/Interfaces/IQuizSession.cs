@@ -19,9 +19,9 @@ namespace Quizine.Api.Interfaces
         void RemoveUser(string connectionId);
         IEnumerable<User> GetUsers();
 
-        QuizItem GetFirstQuestion();
         QuizItem GetNextQuestion(string connectionId, out bool lastQuestion);
         string SubmitAnswer(string connectionId, string questionId, string answerId);
+        IEnumerable<QuizProgress> GetResults(out bool sessionCompleted);
 
         void Start();
 

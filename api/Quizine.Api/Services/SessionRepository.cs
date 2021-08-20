@@ -1,4 +1,5 @@
-﻿using Quizine.Api.Interfaces;
+﻿using Quizine.Api.Enums;
+using Quizine.Api.Interfaces;
 using Quizine.Api.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,12 +76,6 @@ namespace Quizine.Api.Services
             quizSession.Start();
         }
 
-        public QuizItem GetFirstQuestion(string sessionId)
-        {
-            var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
-            return quizSession.GetFirstQuestion();
-        }
-
         public QuizItem GetNextQuestion(string sessionId, string connectionId, out bool lastQuestion)
         {
             var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
@@ -93,6 +88,20 @@ namespace Quizine.Api.Services
         {
             var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
             return quizSession.SubmitAnswer(connectionId, questionId, answerId);
+        }
+
+        public IEnumerable<QuizProgress> GetResults(string sessionId, out bool sessionCompleted)
+        {
+            var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
+            var rule = quizSession.SessionParameters.Rule;
+            var results = quizSession.GetResults(out sessionCompleted);
+            return results;
+        }
+
+        public Rule GetSessionRule(string sessionId)
+        {
+            var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
+            return quizSession.SessionParameters.Rule;
         }
 
         #endregion

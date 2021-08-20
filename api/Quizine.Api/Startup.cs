@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using Quizine.Api.Hubs;
 using Quizine.Api.Interfaces;
 using Quizine.Api.Services;
+using System.Text.Json.Serialization;
 
 namespace Quizine.Api
 {
@@ -23,7 +24,10 @@ namespace Quizine.Api
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(opt =>
+            {
+                opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
             //services.AddSwaggerGen(c =>
             //{
             //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Quizine.Api", Version = "v1" });

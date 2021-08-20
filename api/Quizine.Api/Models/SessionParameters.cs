@@ -1,9 +1,13 @@
-﻿namespace Quizine.Api.Models
+﻿using Quizine.Api.Enums;
+using System.Text.Json.Serialization;
+
+namespace Quizine.Api.Models
 {
     public class SessionParameters
     {
         #region Public Properties
 
+        public Rule Rule { get; set; }
         public string SessionID { get; set; }
         public string Title { get; set; }
         public int PlayerCount { get; set; }

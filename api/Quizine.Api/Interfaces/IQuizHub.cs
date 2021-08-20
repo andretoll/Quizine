@@ -13,5 +13,6 @@ namespace Quizine.Api.Interfaces
         Task ConfirmStart(bool success);
         Task ValidateAnswer(string correctAnswerId);
         Task NextQuestion(NextQuestionDto dto);
+        Task Results(ResultsDto dto);
     }
 }
