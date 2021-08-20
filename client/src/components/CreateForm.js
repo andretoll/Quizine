@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     },
 
     formControl: {
-        margin: '15px 0',
+        margin: '10px 0',
     }
 }))
 
@@ -36,8 +36,9 @@ function CreateForm(props) {
 
     const classes = useStyles();
 
-    // Categories from parent
+    // Data from parent
     const categories = props.categories;
+    const rules = props.rules;
 
     // Used for labeling
     const [playerCount, setPlayerCount] = useState(2);
@@ -96,7 +97,7 @@ function CreateForm(props) {
             </FormControl>
             <FormControl margin="dense" fullWidth className={classes.formControl}>
                 <FormLabel>
-                Question timeout: {questionTimeout > 0 ? `${questionTimeout} seconds` : `Disabled`}
+                    Question timeout: {questionTimeout > 0 ? `${questionTimeout} seconds` : `Disabled`}
                 </FormLabel>
                 <Slider
                     onChange={(_, value) => {
@@ -144,6 +145,25 @@ function CreateForm(props) {
                         </Select>
                     )}
                     name="difficulty"
+                    control={control}
+                />
+            </FormControl>
+            <FormControl margin="dense" fullWidth className={classes.formControl}>
+                <FormLabel>
+                    Rules
+                </FormLabel>
+                <Controller
+                    defaultValue={rules ? rules[0]: null}
+                    render={({ field }) => (
+                        <Select {...field}>
+                            {rules.map((rule) => {
+                                return (
+                                    <MenuItem key={rule} value={rule}>{rule}</MenuItem>
+                                )
+                            })}
+                        </Select>
+                    )}
+                    name="rule"
                     control={control}
                 />
             </FormControl>

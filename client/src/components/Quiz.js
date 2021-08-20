@@ -109,10 +109,10 @@ function Quiz(props) {
     }
 
     // On submitting answer manually, pause timer
-    function onSubmit() {
+    function onSubmit(answer) {
 
         setTimerPlaying(false);
-        onSubmitFunction();
+        onSubmitFunction(answer);
     }
 
     // Send incorrect answer on timeout

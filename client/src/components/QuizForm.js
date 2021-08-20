@@ -74,7 +74,7 @@ function QuizForm(props) {
         if (props.correctAnswer)
             return;
 
-        setSelectedAnswer(answer);
+        setSelectedAnswer(answer.id);
         props.onSubmit(answer);
     }
 
@@ -114,7 +114,7 @@ function QuizForm(props) {
                                 fullWidth
                                 variant="contained"
                                 color="secondary"
-                                onClick={() => handleOnClick(answer.id)}>
+                                onClick={() => handleOnClick(answer)}>
                                 {answer.value}
                             </Button>
                         </Grid>

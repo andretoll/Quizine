@@ -26,6 +26,11 @@ const useStyles = makeStyles(theme => ({
         maxWidth: '600px',
     },
 
+    content: {
+        background: theme.palette.secondary.main,
+        padding: '20px',
+    },
+
     successIconWrapper: {
         display: 'flex',
         margin: 'auto',
@@ -55,6 +60,7 @@ function CreatePage() {
     const classes = useStyles();
 
     const [categories, setCategories] = useState([]);
+    const [rules, setRules] = useState([]);
     const [errorMessage, setErrorMessage] = useState();
     const [content, setContent] = useState(contentStates.LOADING);
     const [sessionId, setSessionId] = useState();
@@ -63,8 +69,15 @@ function CreatePage() {
     useEffect(() => {
 
         fetchCategories();
-
+        fetchRules();
     }, []);
+
+    useEffect(() => {
+
+        if (categories.length > 0 && rules.length > 0)
+            setContent(contentStates.FORM);
+
+    }, [categories, rules])
 
     // Gets the available categories from the server
     async function fetchCategories() {
@@ -82,9 +95,6 @@ function CreatePage() {
                     // Add 'any' category
                     result.trivia_categories.unshift({ id: 0, name: 'Any' });
                     setCategories(result.trivia_categories);
-                    
-                    // Switch to form
-                    setContent(contentStates.FORM);
                 })
             }).catch(error => {
                 console.log(error);
@@ -96,9 +106,33 @@ function CreatePage() {
         }
     }
 
+    // Gets the available categories from the server
+    async function fetchRules() {
+
+        try {
+
+            await fetch('https://localhost:5001/quiz/rules', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                response.json().then(result => {
+                    setRules(result);
+                })
+            }).catch(error => {
+                console.log(error);
+                setErrorMessage("Failed to fetch rules. Refresh to try again.");
+            })
+        } catch (error) {
+            console.log(error);
+            setErrorMessage("Failed to fetch rules. Refresh to try again.");
+        }
+    }
+
     // Handle form submission
     async function handleOnSubmit(data) {
-
+        
         try {
             setErrorMessage(null);
             setContent(contentStates.IN_PROGRESS);
@@ -139,7 +173,7 @@ function CreatePage() {
                 )
             case contentStates.FORM:
                 return (
-                    <CreateForm onSubmit={handleOnSubmit} categories={categories} />
+                    <CreateForm onSubmit={handleOnSubmit} categories={categories} rules={rules} />
                 )
             case contentStates.IN_PROGRESS:
                 return (
@@ -175,7 +209,7 @@ function CreatePage() {
         <div className={classes.container}>
             <Container className={classes.wrapper}>
                 <Fade in timeout={1500}>
-                    <Paper elevation={10} style={{ padding: '30px' }}>
+                    <Paper elevation={10} className={classes.content}>
                         <GoHome />
                         {content < 3 && <Typography variant="h3" style={{ textAlign: 'center' }}>Create quiz</Typography>}
                         <Typography style={{ textAlign: 'center' }} color="error">{errorMessage}</Typography>

@@ -25,6 +25,11 @@ const useStyles = makeStyles(theme => ({
         maxWidth: '600px',
     },
 
+    content: {
+        background: theme.palette.secondary.main,
+        padding: '20px',
+    },
+
     form: {
         alignContent: 'center',
 
@@ -72,7 +77,7 @@ function JoinPage() {
         <div className={classes.container}>
             <Container className={classes.wrapper}>
                 <Fade in timeout={1500}>
-                    <Paper elevation={10} style={{ padding: '30px' }}>
+                    <Paper elevation={10} className={classes.content}>
                         <GoHome />
                         <Typography variant="h3" style={{ textAlign: 'center' }}>Join quiz</Typography>
                         <form onSubmit={handleSubmit(onHandleSubmit)} className={classes.form}>

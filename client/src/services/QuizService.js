@@ -13,3 +13,7 @@ export function SubmitAnswer(connection, sessionId, quizId, answerId) {
 export function NextQuestion(connection, sessionId) {
     connection.send('NextQuestion', sessionId);
 }
+
+export function GetResults(connection, sessionId) {
+    connection.send('GetResults', sessionId);
+}
