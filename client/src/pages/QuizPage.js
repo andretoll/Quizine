@@ -14,7 +14,7 @@ import ShareIcon from '@material-ui/icons/Share';
 import ShareQuiz from '../components/ShareQuiz';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
-import { Connect, Start, SubmitAnswer, NextQuestion, GetResults } from '../services/QuizService';
+import { Connect, Disconnect, Start, SubmitAnswer, NextQuestion, GetResults } from '../services/QuizService';
 import PlayerList from '../components/PlayerList';
 import Quiz from '../components/Quiz';
 import Results from '../components/Results';
@@ -113,13 +113,6 @@ function QuizPage() {
 
     useEffect(() => {
 
-        window.onbeforeunload = (e) => {
-            var confirmationMessage = 'Leaving this page will remove you from the ongoing quiz session.';
-
-            (e || window.event).returnValue = confirmationMessage;
-            return confirmationMessage;
-        };
-
         // Create new connection
         const newConnection = new HubConnectionBuilder()
             .withUrl('https://localhost:5001/hubs/quiz')
@@ -178,14 +171,24 @@ function QuizPage() {
                     console.log(e);
                     reportError("Failed to connect to server.");
                 });
+
+            window.addEventListener("beforeunload", handleBeforeUnload);
+
+            function handleBeforeUnload(e) {
+
+                var confirmationMessage = 'Leaving this page will remove you from the ongoing quiz session.';
+
+                (e || window.event).returnValue = confirmationMessage;
+                return confirmationMessage;
+            }
+
+            return () => {
+                window.removeEventListener("beforeunload", handleBeforeUnload);
+                if (connection && connection.connectionState === "Connected") {
+                    Disconnect(connection);
+                }
+            }
         }
-
-        // Disconnect from quiz session when navigating back or forward
-        window.onpopstate = (() => {
-
-            if (connection && connection.connectionState === "Connected")
-                connection.send('Disconnect');
-        });
 
     }, [connection, sessionId, username]);
 

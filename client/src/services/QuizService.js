@@ -2,6 +2,10 @@ export function Connect(connection, sessionId, user) {
     connection.send('Connect', sessionId, user);
 }
 
+export function Disconnect(connection) {
+    connection.send('Disconnect');
+}
+
 export function Start(connection, sessionId) {
     connection.send('Start', sessionId);
 }
