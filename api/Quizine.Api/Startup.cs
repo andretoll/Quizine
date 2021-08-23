@@ -48,17 +48,17 @@ namespace Quizine.Api
                 //app.UseSwagger();
                 //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quizine.Api v1"));
             }
-            app.UseHttpsRedirection();
+            app.UseRouting();
 
             app.UseCors(policy =>
             {
                 policy
-                .WithOrigins("https://quizine-app.web.app/")
+                .WithOrigins("https://quizine-app.web.app")
                 .AllowAnyMethod()
                 .AllowAnyHeader();
             });
 
-            app.UseRouting();
+            app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
