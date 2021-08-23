@@ -32,11 +32,11 @@ namespace Quizine.Api
             //{
             //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Quizine.Api", Version = "v1" });
             //});
+            services.AddCors();
             services.AddSignalR();
             services.AddSingleton<ISessionRepository, SessionRepository>();
             services.AddSingleton<ITriviaRespository, TriviaRepository>();
             services.AddHttpClient<ITriviaRespository, TriviaRepository>();
-            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,7 +53,7 @@ namespace Quizine.Api
             app.UseCors(policy =>
             {
                 policy
-                .AllowAnyOrigin()
+                .WithOrigins("https://quizine-app.web.app/")
                 .AllowAnyMethod()
                 .AllowAnyHeader();
             });
