@@ -55,7 +55,8 @@ namespace Quizine.Api
                 policy
                 .WithOrigins("https://quizine-app.web.app/")
                 .AllowAnyMethod()
-                .AllowAnyHeader();
+                .AllowAnyHeader()
+                .AllowCredentials();
             });
 
             app.UseRouting();
