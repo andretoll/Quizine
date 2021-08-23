@@ -283,7 +283,7 @@ function QuizPage() {
                 return (
                     <div className={classes.centeredContent}>
                         <Container maxWidth="sm">
-                            <Paper elevation={10}>
+                            <Paper elevation={10} className="secondary-background">
                                 <div style={{ padding: '20px' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                         <Typography variant="h3" style={{ textAlign: 'center' }} gutterBottom>{quizTitle}</Typography>
@@ -305,7 +305,11 @@ function QuizPage() {
                                     <PlayerList expectedPlayers={expectedPlayers} players={players} username={username} />
                                     <hr />
                                     <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                                        {players[0] === username && <Button onClick={handleOnStart} variant="contained" color="primary">Start</Button>}
+                                        {players[0] === username &&
+                                            <Button onClick={handleOnStart} variant={(expectedPlayers === players.length) ? 'contained' : 'outlined'} color="primary">
+                                                Start
+                                            </Button>
+                                        }
                                     </div>
                                 </div>
                             </Paper>
@@ -330,7 +334,7 @@ function QuizPage() {
             case contentStates.RESULTS:
                 return (
                     <div>
-                        <Results quizCompleted={quizCompleted} finalScore={finalScore} />
+                        <Results quizCompleted={quizCompleted} finalScore={finalScore} username={username} />
                     </div>
                 )
             default:

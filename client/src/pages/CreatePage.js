@@ -22,10 +22,6 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
     },
 
-    wrapper: {
-        maxWidth: '600px',
-    },
-
     content: {
         background: theme.palette.secondary.main,
         padding: '20px',
@@ -207,7 +203,7 @@ function CreatePage() {
 
     return (
         <div className={classes.container}>
-            <Container className={classes.wrapper}>
+            <Container className={classes.wrapper} maxWidth="sm">
                 <Fade in timeout={1500}>
                     <Paper elevation={10} className={classes.content}>
                         <GoHome />

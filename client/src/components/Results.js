@@ -14,6 +14,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TrophyIcon from '@material-ui/icons/EmojiEvents';
+import Container from '@material-ui/core/Container';
 
 const useStyles = makeStyles(theme => ({
 
@@ -53,6 +54,11 @@ const useStyles = makeStyles(theme => ({
 
         [theme.breakpoints.down('xs')]: {
             padding: '15px',
+        },
+
+        [theme.breakpoints.up('sm')]: {
+            height: '350px',
+            width: '350px',
         },
     },
 
@@ -100,6 +106,7 @@ function Results(props) {
 
     const quizCompleted = props.quizCompleted;
     const finalScore = props.finalScore;
+    const username = props.username;
 
     const classes = useStyles();
 
@@ -130,69 +137,74 @@ function Results(props) {
     return (
         <div className={classes.container}>
             <div className={classes.header}>
-                <Typography variant="h2" >Results</Typography>
+                <Typography variant="h2">Results</Typography>
                 <Link to="/">
                     <Button variant="text" color="primary">Go Home</Button>
                 </Link>
             </div>
-            <Tabs value={tabValue} onChange={handleTabChange} indicatorColor="primary" style={{ margin: '20px auto' }}>
+            <Tabs value={tabValue} onChange={handleTabChange} indicatorColor="primary" style={{ margin: '30px auto' }}>
                 <Tab tabIndex={0} label="Top players" />
                 <Tab tabIndex={1} label="All players" />
             </Tabs>
-            <div style={{ display: 'flex', flex: '1', justifyContent: 'center', alignItems: 'center' }}>
+            <div style={{ display: 'flex', flex: '1', justifyContent: 'center', alignItems: 'flex-start' }}>
                 {tabValue === 0 &&
-                    <Grid container className={classes.cardsContainer}>
-                        {finalScore.slice(0, 3).map((score) => {
+                    <Container>
+                        <Grid container className={classes.cardsContainer} spacing={1}>
+                            {finalScore.slice(0, 3).map((score) => {
 
-                            return (
-                                <Grid key={score.username} item className={classes.scoreWrapper} xs={12} sm={12} md={4}>
-                                    <Paper className={classes.scoreContainer} elevation={10} variant="outlined">
-                                        <div className={`${getTrophyStyle(score)} ${classes.trophyContainer}`}>
-                                            <TrophyIcon />
-                                        </div>
-                                        <Typography variant="h3">{score.username}</Typography>
-                                        <hr className={getTrophyStyle(score)} style={{ borderRadius: '100%' }} />
-                                        <div>
-                                            <Typography variant="h4">{score.points} pts</Typography>
-                                        </div>
-                                    </Paper>
-                                </Grid>
-                            )
-                        })}
-                    </Grid>
+                                return (
+                                    <Grid key={score.username} item className={classes.scoreWrapper} xs={12} sm={12} md={4}>
+                                        <Paper className={classes.scoreContainer} variant="outlined">
+                                            <div className={`${getTrophyStyle(score)} ${classes.trophyContainer}`}>
+                                                <TrophyIcon />
+                                            </div>
+                                            <Typography variant="h3" color={score.username === username ? 'primary' : 'inherit'}>{score.username}</Typography>
+                                            <hr className={getTrophyStyle(score)} style={{ borderRadius: '100%' }} />
+                                            <div>
+                                                <Typography variant="h4">{score.points} pts</Typography>
+                                            </div>
+                                        </Paper>
+                                    </Grid>
+                                )
+                            })}
+                        </Grid>
+                    </Container>
+
                 }
                 {tabValue === 1 &&
-                    <Paper>
-                        <TableContainer>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Place</TableCell>
-                                        <TableCell>Player</TableCell>
-                                        <TableCell>Points</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {finalScore.map((score) => {
+                    <Container maxWidth="sm">
+                        <Paper className="secondary-background" elevation={10}>
+                            <TableContainer>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell align="center" width="10%">Place</TableCell>
+                                            <TableCell align="left">Player</TableCell>
+                                            <TableCell align="center" width="10%">Points</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {finalScore.map((score) => {
 
-                                        return (
-                                            <TableRow key={score.username}>
-                                                <TableCell align="center">
-                                                    {finalScore.indexOf(score) + 1}
-                                                </TableCell>
-                                                <TableCell align="center">
-                                                    {score.username}
-                                                </TableCell>
-                                                <TableCell align="center">
-                                                    {score.points}
-                                                </TableCell>
-                                            </TableRow>
-                                        )
-                                    })}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Paper>
+                                            return (
+                                                <TableRow key={score.username}>
+                                                    <TableCell className={score.username === username ? 'primary-color' : ''} align="center">
+                                                        {finalScore.indexOf(score) + 1}
+                                                    </TableCell>
+                                                    <TableCell className={score.username === username ? 'primary-color' : ''} align="left">
+                                                        {score.username}
+                                                    </TableCell>
+                                                    <TableCell className={score.username === username ? 'primary-color' : ''} align="center">
+                                                        {score.points}
+                                                    </TableCell>
+                                                </TableRow>
+                                            )
+                                        })}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </Paper>
+                    </Container>
                 }
             </div>
 

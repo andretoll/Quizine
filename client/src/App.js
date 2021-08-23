@@ -27,6 +27,17 @@ const GlobalCss = withStyles(theme => ({
       textDecoration: 'none'
     },
 
+    '::-webkit-scrollbar': {
+      width: '5px',
+    },
+    '::-webkit-scrollbar-track': {
+      background: theme.palette.secondary.dark,
+    },
+    '::-webkit-scrollbar-thumb': {
+      background: theme.palette.primary.main,
+      borderRadius: '1em',
+    },
+
     'ul, ol': {
       margin: '0',
       padding: '0',
@@ -35,6 +46,10 @@ const GlobalCss = withStyles(theme => ({
 
     '.primary-color': {
       color: theme.palette.primary.main
+    },
+
+    '.secondary-background': {
+      background: theme.palette.secondary.main
     },
   },
 }))(() => null);
