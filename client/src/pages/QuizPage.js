@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useHistory } from 'react-router';
 import { useLocation } from "react-router-dom";
-import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
+import { HubConnectionBuilder, LogLevel, HttpTransportType } from '@microsoft/signalr';
 import { makeStyles } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -115,7 +115,10 @@ function QuizPage() {
 
         // Create new connection
         const newConnection = new HubConnectionBuilder()
-            .withUrl(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}hubs/quiz`)
+            .withUrl(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}hubs/quiz`, {
+                skipNegotiation: true,
+                transport: HttpTransportType.WebSockets
+            })
             .withAutomaticReconnect()
             .configureLogging(LogLevel.Error)
             .build();
