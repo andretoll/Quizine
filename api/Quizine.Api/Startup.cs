@@ -36,17 +36,7 @@ namespace Quizine.Api
             services.AddSingleton<ISessionRepository, SessionRepository>();
             services.AddSingleton<ITriviaRespository, TriviaRepository>();
             services.AddHttpClient<ITriviaRespository, TriviaRepository>();
-            services.AddCors(options =>
-            {
-                options.AddPolicy("ClientPermission", policy =>
-                {
-                    policy
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .WithOrigins("http://localhost:3000")
-                    .AllowCredentials();
-                });
-            });
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,7 +50,13 @@ namespace Quizine.Api
             }
             app.UseHttpsRedirection();
 
-            app.UseCors("ClientPermission");
+            app.UseCors(policy =>
+            {
+                policy
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+            });
 
             app.UseRouting();
 
