@@ -6,7 +6,7 @@ name: Deploy to Firebase Hosting
   push:
     branches:
       - master
-    paths: ["client/**"]
+    paths: ["./client/**"]
 
 defaults:
   run:
@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: client
+        working-directory: ./client
     steps:
       - uses: actions/checkout@v2
       - run: npm ci && npm run build
