@@ -53,7 +53,7 @@ namespace Quizine.Api
             app.UseCors(policy =>
             {
                 policy
-                .AllowAnyOrigin()
+                .WithOrigins("https://quizine-app.web.app/")
                 .AllowAnyMethod()
                 .AllowAnyHeader();
             });
