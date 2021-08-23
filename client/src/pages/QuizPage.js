@@ -115,7 +115,7 @@ function QuizPage() {
 
         // Create new connection
         const newConnection = new HubConnectionBuilder()
-            .withUrl(`${process.env.REACT_APP_QUIZINE_API_BASE_URL_DEV}hubs/quiz`)
+            .withUrl(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}hubs/quiz`)
             .withAutomaticReconnect()
             .configureLogging(LogLevel.Error)
             .build();

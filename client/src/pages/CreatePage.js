@@ -63,7 +63,7 @@ function CreatePage() {
     const [hostName, setHostName] = useState();
 
     useEffect(() => {
-
+        console.log(process.env.REACT_APP_QUIZINE_API_BASE_URL);
         fetchCategories();
         fetchRules();
     }, []);
@@ -79,7 +79,7 @@ function CreatePage() {
     async function fetchCategories() {
 
         try {
-            await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL_DEV}quiz/categories`, {
+            await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/categories`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -106,7 +106,7 @@ function CreatePage() {
 
         try {
 
-            await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL_DEV}quiz/rules`, {
+            await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/rules`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -133,7 +133,7 @@ function CreatePage() {
             setContent(contentStates.IN_PROGRESS);
 
             // Create session and accept sessionID
-            await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL_DEV}quiz/create`, {
+            await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/create`, {
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {
