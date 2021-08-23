@@ -79,8 +79,7 @@ function CreatePage() {
     async function fetchCategories() {
 
         try {
-
-            await fetch('https://localhost:5001/quiz/categories', {
+            await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL_DEV}quiz/categories`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -107,7 +106,7 @@ function CreatePage() {
 
         try {
 
-            await fetch('https://localhost:5001/quiz/rules', {
+            await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL_DEV}quiz/rules`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -134,7 +133,7 @@ function CreatePage() {
             setContent(contentStates.IN_PROGRESS);
 
             // Create session and accept sessionID
-            await fetch('https://localhost:5001/quiz/create', {
+            await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL_DEV}quiz/create`, {
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {

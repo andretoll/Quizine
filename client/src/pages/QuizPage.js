@@ -115,7 +115,7 @@ function QuizPage() {
 
         // Create new connection
         const newConnection = new HubConnectionBuilder()
-            .withUrl('https://localhost:5001/hubs/quiz')
+            .withUrl(`${process.env.REACT_APP_QUIZINE_API_BASE_URL_DEV}hubs/quiz`)
             .withAutomaticReconnect()
             .configureLogging(LogLevel.Error)
             .build();
@@ -267,7 +267,7 @@ function QuizPage() {
         } else if (players[0] !== username) {
             return (
                 <Typography variant="h6" className={classes.loadingAnimation}>
-                    All players ready. <br />Waiting for host to start
+                    Waiting for host to start
                 </Typography>
             )
         }
