@@ -31,13 +31,37 @@ const useStyles = makeStyles(theme => ({
         textTransform: 'uppercase',
         background: theme.palette.secondary.main,
         padding: '20px',
+
+        [theme.breakpoints.down('md')]: {
+            display: 'flex',
+            justifyContent: 'space-between',
+        }
+    },
+
+    tabs: {
+        margin: '20px auto',
+
+        [theme.breakpoints.down('xs')]: {
+            margin: '10px auto',
+        }
+    },
+
+    tabItemContainer: {
+        display: 'flex', 
+        flex: '1', 
+        justifyContent: 'center', 
+        alignItems: 'flex-start',
+
+        [theme.breakpoints.up('md')]: {
+            marginTop: '50px',
+        }
     },
 
     cardsContainer: {
         alignItems: 'center',
         justifyContent: 'center',
 
-        [theme.breakpoints.down('xs')]: {
+        [theme.breakpoints.down('sm')]: {
             flexDirection: 'column',
         },
     },
@@ -52,13 +76,8 @@ const useStyles = makeStyles(theme => ({
         width: '300px',
         background: theme.palette.secondary.main,
 
-        [theme.breakpoints.down('xs')]: {
+        [theme.breakpoints.down('sm')]: {
             padding: '15px',
-        },
-
-        [theme.breakpoints.up('sm')]: {
-            height: '350px',
-            width: '350px',
         },
     },
 
@@ -68,7 +87,7 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
         width: '100px',
         height: '100px',
-        margin: 'auto',
+        margin: '0 auto',
         border: '5px double transparent',
         color: 'transparent',
         borderRadius: '50%',
@@ -137,16 +156,16 @@ function Results(props) {
     return (
         <div className={classes.container}>
             <div className={classes.header}>
-                <Typography variant="h2">Results</Typography>
+                <Typography variant="h3">Results</Typography>
                 <Link to="/">
                     <Button variant="text" color="primary">Go Home</Button>
                 </Link>
             </div>
-            <Tabs value={tabValue} onChange={handleTabChange} indicatorColor="primary" style={{ margin: '30px auto' }}>
+            <Tabs value={tabValue} onChange={handleTabChange} indicatorColor="primary" className={classes.tabs}>
                 <Tab tabIndex={0} label="Top players" />
                 <Tab tabIndex={1} label="All players" />
             </Tabs>
-            <div style={{ display: 'flex', flex: '1', justifyContent: 'center', alignItems: 'flex-start' }}>
+            <div className={classes.tabItemContainer}>
                 {tabValue === 0 &&
                     <Container>
                         <Grid container className={classes.cardsContainer} spacing={1}>
@@ -155,7 +174,7 @@ function Results(props) {
                                 return (
                                     <Grid key={score.username} item className={classes.scoreWrapper} xs={12} sm={12} md={4}>
                                         <Paper className={classes.scoreContainer} variant="outlined">
-                                            <div className={`${getTrophyStyle(score)} ${classes.trophyContainer}`}>
+                                            <div className={`${getTrophyStyle(score)} ${classes.trophyContainer}`} style={{margin: 'auto'}}>
                                                 <TrophyIcon />
                                             </div>
                                             <Typography variant="h3" color={score.username === username ? 'primary' : 'inherit'}>{score.username}</Typography>

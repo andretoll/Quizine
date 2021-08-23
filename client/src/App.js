@@ -23,7 +23,7 @@ const GlobalCss = withStyles(theme => ({
     },
 
     a: {
-      color: theme.palette.text.primary,
+      color: theme.palette.primary.main,
       textDecoration: 'none'
     },
 

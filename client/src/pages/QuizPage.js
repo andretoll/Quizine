@@ -255,6 +255,24 @@ function QuizPage() {
         }
     }
 
+    // Get message during waiting state
+    function getWaitingMessage() {
+
+        if (expectedPlayers !== players.length) {
+            return (
+                <Typography variant="h6" className={classes.loadingAnimation}>
+                    Waiting for other players
+                </Typography>
+            );
+        } else if (players[0] !== username) {
+            return (
+                <Typography variant="h6" className={classes.loadingAnimation}>
+                    All players ready. <br />Waiting for host to start
+                </Typography>
+            )
+        }
+    }
+
     // Controls the content to be displayed
     function getContent(state) {
 
@@ -285,7 +303,7 @@ function QuizPage() {
                         <Container maxWidth="sm">
                             <Paper elevation={10} className="secondary-background">
                                 <div style={{ padding: '20px' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <div className="primary-color" style={{ display: 'flex', justifyContent: 'space-between' }}>
                                         <Typography variant="h3" style={{ textAlign: 'center' }} gutterBottom>{quizTitle}</Typography>
                                         <IconButton onClick={handleOnOpenShareDialog} style={{ height: 'fit-content' }}>
                                             <ShareIcon />
@@ -300,7 +318,7 @@ function QuizPage() {
                                             </DialogContent>
                                         </Dialog>
                                     </div>
-                                    {expectedPlayers !== players.length && <Typography variant="h6" className={classes.loadingAnimation}>Waiting for other players</Typography>}
+                                    {getWaitingMessage()}
                                     <hr />
                                     <PlayerList expectedPlayers={expectedPlayers} players={players} username={username} />
                                     <hr />
@@ -333,9 +351,7 @@ function QuizPage() {
                 )
             case contentStates.RESULTS:
                 return (
-                    <div>
-                        <Results quizCompleted={quizCompleted} finalScore={finalScore} username={username} />
-                    </div>
+                    <Results quizCompleted={quizCompleted} finalScore={finalScore} username={username} />
                 )
             default:
                 return null;

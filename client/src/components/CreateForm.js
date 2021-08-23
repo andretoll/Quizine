@@ -23,10 +23,10 @@ const useStyles = makeStyles(theme => ({
     formControlWrapper: {
         overflowX: 'hidden',
         overflowY: 'auto',
+        padding: '0 20px',
 
         [theme.breakpoints.down('sm')]: {
             maxHeight: '450px',
-            padding: '0 20px',
         },
     },
 

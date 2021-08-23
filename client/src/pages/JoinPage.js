@@ -51,7 +51,7 @@ function JoinPage() {
 
     const [sessionId, setSessionId] = useState(null);
 
-    const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onChange' });
+    const { register, handleSubmit, setValue, formState: { errors } } = useForm({ mode: 'onChange' });
 
     const hash = history.location.hash.replace('#', '');
 
@@ -60,9 +60,10 @@ function JoinPage() {
         // If user was directed with a link, store sessionID
         if (hash) {
             setSessionId(hash);
+            setValue("sessionId", hash);
         }
 
-    }, [hash,]);
+    }, [hash, setValue]);
 
     // Handle form submission
     function onHandleSubmit(data) {
@@ -81,15 +82,13 @@ function JoinPage() {
                         <GoHome />
                         <Typography variant="h3" style={{ textAlign: 'center' }}>Join quiz</Typography>
                         <form onSubmit={handleSubmit(onHandleSubmit)} className={classes.form}>
-                            {!sessionId &&
-                                <FormControl margin="dense" fullWidth>
-                                    <TextField label="Session ID" {...register("sessionId", { required: true })} />
-                                    {errors.sessionId && <p>Session ID is required.</p>}
-                                </FormControl>
-                            }
+                            <FormControl margin="dense" fullWidth>
+                                <TextField label="Session ID" value={sessionId} autoFocus disabled={sessionId} {...register("sessionId", { required: true })} />
+                                {errors.sessionId && <p>Session ID is required.</p>}
+                            </FormControl>
 
                             <FormControl margin="dense" fullWidth>
-                                <TextField label="Username" {...register("username", { required: true })} />
+                                <TextField label="Username" autoFocus={hash} {...register("username", { required: true })} />
                                 {errors.username && <p>Username is required.</p>}
                             </FormControl>
                             <div style={{ textAlign: 'center', marginTop: '30px ' }}>
