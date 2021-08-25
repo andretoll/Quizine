@@ -8,6 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
 import SuccessIcon from '@material-ui/icons/Check';
+import useTitle from '../hooks/useTitle';
 import ShareQuiz from '../components/ShareQuiz';
 import CreateForm from '../components/CreateForm';
 import GoHome from '../components/GoHome';
@@ -16,7 +17,7 @@ const useStyles = makeStyles(theme => ({
 
     container: {
         minHeight: '100vh',
-        background: theme.palette.primaryBackground.main,
+        background: theme.palette.background.main,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -54,6 +55,7 @@ const contentStates = Object.freeze({
 function CreatePage() {
 
     const classes = useStyles();
+    useTitle("Create quiz");
 
     const [categories, setCategories] = useState([]);
     const [rules, setRules] = useState([]);

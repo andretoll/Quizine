@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     answerButton: {
         borderRadius: '0',
         border: '1px solid rgba(255, 255, 255, 0.2)',
-        fontSize: '1.1em',
+        fontSize: '1.3em',
         letterSpacing: '1px',
         lineHeight: 'normal',
         height: '80px',
@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
 
     "@keyframes ellipsis": {
         "50%": {
-            background: '#228b22',
+            background: '#61b861',
         }
     },
     "@-webkit-keyframes ellipsis": {
@@ -101,9 +101,9 @@ function QuizForm(props) {
                     var icon;
 
                     if (correctAnswerClass) {
-                        icon = <CheckIcon />
+                        icon = <CheckIcon style={{fontSize: '1.5em'}} />
                     } else if (incorrectAnswerClass) {
-                        icon = <ClearIcon />
+                        icon = <ClearIcon style={{fontSize: '1.5em'}}/>
                     }
 
                     return (

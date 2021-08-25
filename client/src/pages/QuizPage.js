@@ -14,6 +14,7 @@ import ShareIcon from '@material-ui/icons/Share';
 import ShareQuiz from '../components/ShareQuiz';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
+import useTitle from '../hooks/useTitle';
 import { Connect, Disconnect, Start, SubmitAnswer, NextQuestion, GetResults } from '../services/QuizService';
 import PlayerList from '../components/PlayerList';
 import Quiz from '../components/Quiz';
@@ -22,7 +23,7 @@ import Results from '../components/Results';
 const useStyles = makeStyles(theme => ({
 
     container: {
-        background: theme.palette.gradient.main,
+        background: theme.palette.background.main,
     },
 
     centeredContent: {
@@ -94,6 +95,7 @@ function QuizPage() {
     const [shareDialogOpen, setShareDialogOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
 
+    useTitle(quizTitle);
     const history = useHistory();
     const location = useLocation();
 

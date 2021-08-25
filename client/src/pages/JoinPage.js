@@ -9,6 +9,7 @@ import Fade from '@material-ui/core/Fade';
 import Paper from '@material-ui/core/Paper';
 import FormControl from '@material-ui/core/FormControl';
 import Typography from '@material-ui/core/Typography';
+import useTitle from '../hooks/useTitle';
 import GoHome from '../components/GoHome';
 
 const useStyles = makeStyles(theme => ({
@@ -18,7 +19,7 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        background: theme.palette.secondaryBackground.main,
+        background: theme.palette.background.main,
     },
 
     wrapper: {
@@ -48,6 +49,7 @@ function JoinPage() {
 
     const classes = useStyles();
     const history = useHistory();
+    useTitle("Join quiz");
 
     const [sessionId, setSessionId] = useState(null);
 

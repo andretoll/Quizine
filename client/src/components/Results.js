@@ -24,6 +24,7 @@ const useStyles = makeStyles(theme => ({
         flexDirection: 'column',
         justifyContent: 'center',
         textAlign: 'center',
+        background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.5) 10%, transparent 70%)',
     },
 
     header: {
@@ -178,7 +179,7 @@ function Results(props) {
                                                 <TrophyIcon />
                                             </div>
                                             <hr className={getTrophyStyle(score)} />
-                                            <Typography variant="h3" color={score.username === username ? 'primary' : 'inherit'}>{score.username}</Typography>
+                                            <Typography variant="h4" color={score.username === username ? 'primary' : 'inherit'} style={{overflow: 'hidden', textOverflow: 'ellipsis'}}>{score.username}</Typography>
                                             <div>
                                                 <Typography variant="h4">{score.points} pts</Typography>
                                             </div>

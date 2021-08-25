@@ -4,6 +4,7 @@ import Slide from '@material-ui/core/Slide';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Button from '@material-ui/core/Button';
+import useTitle from '../hooks/useTitle';
 import Brand from '../components/Brand';
 
 const useStyles = makeStyles(theme => ({
@@ -37,6 +38,7 @@ const useStyles = makeStyles(theme => ({
 function HomePage() {
 
     const classes = useStyles();
+    useTitle("Home");
 
     return (
         <div>

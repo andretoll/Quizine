@@ -18,6 +18,7 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
+        background: 'rgba(0, 0, 0, 0.7)',
     },
 
     quizContentWrapper: {
@@ -39,6 +40,7 @@ const useStyles = makeStyles(theme => ({
 
         [theme.breakpoints.down('xs')]: {
             height: '100%',
+            borderRadius: '0',
         },
     },
 
@@ -150,16 +152,16 @@ function Quiz(props) {
         <div className={classes.container}>
             <Container className={classes.quizContentWrapper} disableGutters maxWidth="md">
                 <Slide in={slide} timeout={500} direction={slide ? 'left' : 'right'}>
-                    <Paper className={classes.quizContent} elevation={5}>
+                    <Paper className={classes.quizContent} elevation={10}>
                         <div style={{ padding: '10px' }}>
                             <Grid container alignItems="center">
-                                <Grid xs={4} sm={4} style={{ textAlign: 'left' }}>
+                                <Grid item xs={4} sm={4} style={{ textAlign: 'left' }}>
                                     <Typography variant="overline">{content.category}</Typography>
                                 </Grid>
-                                <Grid xs={4} sm={4} style={{ textAlign: 'center' }}>
+                                <Grid item xs={4} sm={4} style={{ textAlign: 'center' }}>
                                     <Typography variant="overline">{content.questionIndex} / {props.questionCount}</Typography>
                                 </Grid>
-                                <Grid xs={4} sm={4} style={{ textAlign: 'right' }}>
+                                <Grid item xs={4} sm={4} style={{ textAlign: 'right' }}>
                                     {getDifficultyContent()}
                                 </Grid>
                             </Grid>

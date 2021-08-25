@@ -64,6 +64,9 @@ function App() {
       secondary: {
         main: '#1F2833',
       },
+      background: {
+        main: 'linear-gradient(115deg, #000 -15%, #fe6b6b 50%, #2196F3 50%, #000 115%)'
+      },
       primaryBackground: {
         main: '#fe6b6b ',
       },
