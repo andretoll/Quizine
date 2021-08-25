@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
 import { MuiThemeProvider, createTheme, withStyles, responsiveFontSizes, CssBaseline } from '@material-ui/core';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 import NotFoundPage from './pages/error/NotFoundPage';
 import HomePage from './pages/HomePage';
 import CreatePage from './pages/CreatePage';
@@ -56,17 +55,9 @@ const GlobalCss = withStyles(theme => ({
 
 function App() {
 
-  // Get user preference
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-  const [darkMode, setDarkMode] = useState(prefersDarkMode);
-
-  useEffect(() => {
-    setDarkMode(prefersDarkMode);
-  }, [prefersDarkMode]);
-
   const theme = responsiveFontSizes(createTheme({
     palette: {
-      type: darkMode ? 'dark' : 'light',
+      type: 'dark',
       primary: {
         main: '#daa520',
       },
@@ -81,6 +72,11 @@ function App() {
       },
       gradient: {
         main: 'linear-gradient(45deg, #6f5656 30%, #1F2833 90%)',
+      },
+    },
+    typography: {
+      overline: {
+        fontSize: '1rem',
       },
     }
   }))

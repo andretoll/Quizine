@@ -85,8 +85,8 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        width: '100px',
-        height: '100px',
+        width: '75px',
+        height: '75px',
         margin: '0 auto',
         border: '5px double transparent',
         color: 'transparent',
@@ -94,7 +94,7 @@ const useStyles = makeStyles(theme => ({
         marginBottom: '20px',
 
         '& svg': {
-            fontSize: '5em',
+            fontSize: '3em',
 
             [theme.breakpoints.down('xs')]: {
                 fontSize: '1.5em',
@@ -177,8 +177,8 @@ function Results(props) {
                                             <div className={`${getTrophyStyle(score)} ${classes.trophyContainer}`} style={{margin: 'auto'}}>
                                                 <TrophyIcon />
                                             </div>
+                                            <hr className={getTrophyStyle(score)} />
                                             <Typography variant="h3" color={score.username === username ? 'primary' : 'inherit'}>{score.username}</Typography>
-                                            <hr className={getTrophyStyle(score)} style={{ borderRadius: '100%' }} />
                                             <div>
                                                 <Typography variant="h4">{score.points} pts</Typography>
                                             </div>

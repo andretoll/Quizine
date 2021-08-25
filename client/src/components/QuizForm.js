@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     answerButton: {
         borderRadius: '0',
         border: '1px solid rgba(255, 255, 255, 0.2)',
-        fontSize: '1.3em',
+        fontSize: '1.1em',
         letterSpacing: '1px',
         lineHeight: 'normal',
         height: '80px',

@@ -81,6 +81,7 @@ function QuizPage() {
     const [expectedPlayers, setExpectedPlayers] = useState();
     const [players, setPlayers] = useState([]);
     const [questionTimeout, setQuestionTimeout] = useState();
+    const [questionCount, setQuestionCount] = useState();
     const [quizCompleted, setQuizCompleted] = useState(false);
     const [finalScore, setFinalScore] = useState([]);
 
@@ -143,6 +144,7 @@ function QuizPage() {
                             setExpectedPlayers(response.expectedUsers);
                             setPlayers(response.users);
                             setQuestionTimeout(response.questionTimeout);
+                            setQuestionCount(response.questionCount);
                             setContent(contentStates.WAITING);
                         } else {
                             reportError(response.errorMessage);
@@ -343,6 +345,7 @@ function QuizPage() {
                         {quizContent &&
                             <Quiz
                                 questionTimeout={questionTimeout}
+                                questionCount={questionCount}
                                 content={quizContent}
                                 correctAnswer={correctAnswer}
                                 onSubmit={handleOnSubmitAnswer}

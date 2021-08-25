@@ -3,8 +3,10 @@ import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import { makeStyles } from '@material-ui/core';
 import Container from '@material-ui/core/Container';
 import Slide from '@material-ui/core/Slide';
+import Fade from '@material-ui/core/Fade';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
 import StarIcon from '@material-ui/icons/Star';
 import StarEmptyIcon from '@material-ui/icons/StarBorder';
 import QuizForm from './QuizForm';
@@ -33,9 +35,19 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
+        background: theme.palette.gradient.main,
 
         [theme.breakpoints.down('xs')]: {
             height: '100%',
+        },
+    },
+
+    questionText: {
+        fontSize: '1.2em',
+        textAlign: 'center',
+
+        [theme.breakpoints.up('md')]: {
+            fontSize: '1.5em',
         },
     },
 
@@ -129,45 +141,51 @@ function Quiz(props) {
 
         return (
             <div>
-                <Typography variant="h3">{remainingTime}</Typography>
+                <Typography variant="h5">{remainingTime}</Typography>
             </div>
         );
     }
 
     return (
         <div className={classes.container}>
-            {props.questionTimeout > 0 &&
-                <div className={classes.timerContainer}>
-                    <Slide in={timerPlaying} timeout={500}>
-                        <div>
-                            <CountdownCircleTimer
-                                key={timer}
-                                size={100}
-                                isPlaying={timerPlaying}
-                                duration={props.questionTimeout}
-                                strokeWidth={5}
-                                trailColor={remainingTime === 0 ? '#A30000' : '#d9d9d9'}
-                                strokeLinecap="square"
-                                colors={[["#26a300", 0.33], ["#F7B801", 0.33], ["#A30000"]]}>
-                                {renderTime}
-                            </CountdownCircleTimer>
-                        </div>
-                    </Slide>
-                </div>
-            }
-
             <Container className={classes.quizContentWrapper} disableGutters maxWidth="md">
                 <Slide in={slide} timeout={500} direction={slide ? 'left' : 'right'}>
                     <Paper className={classes.quizContent} elevation={5}>
-                        <div style={{ padding: '20px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <Typography style={{ fontSize: '1.1em' }} variant="overline">{content.category}</Typography>
-                                <Typography variant="overline" style={{ display: 'flex', alignItems: 'center' }}>{getDifficultyContent()}</Typography>
-                            </div>
+                        <div style={{ padding: '10px' }}>
+                            <Grid container alignItems="center">
+                                <Grid xs={4} sm={4} style={{ textAlign: 'left' }}>
+                                    <Typography variant="overline">{content.category}</Typography>
+                                </Grid>
+                                <Grid xs={4} sm={4} style={{ textAlign: 'center' }}>
+                                    <Typography variant="overline">{content.questionIndex} / {props.questionCount}</Typography>
+                                </Grid>
+                                <Grid xs={4} sm={4} style={{ textAlign: 'right' }}>
+                                    {getDifficultyContent()}
+                                </Grid>
+                            </Grid>
                             <hr />
+                            {props.questionTimeout > 0 &&
+                                <div className={classes.timerContainer}>
+                                    <Fade in={timerPlaying} timeout={500}>
+                                        <div>
+                                            <CountdownCircleTimer
+                                                key={timer}
+                                                size={60}
+                                                isPlaying={timerPlaying}
+                                                duration={props.questionTimeout}
+                                                strokeWidth={3}
+                                                trailColor={remainingTime === 0 ? '#A30000' : '#d9d9d9'}
+                                                strokeLinecap="square"
+                                                colors={[["#26a300", 0.33], ["#F7B801", 0.33], ["#A30000"]]}>
+                                                {renderTime}
+                                            </CountdownCircleTimer>
+                                        </div>
+                                    </Fade>
+                                </div>
+                            }
                         </div>
-                        <div style={{ padding: '20px' }}>
-                            <Typography variant="h5" style={{ textAlign: 'center' }}>{content.question}</Typography>
+                        <div style={{ padding: '10px' }}>
+                            <Typography variant="body1" className={classes.questionText}>{content.question}</Typography>
                         </div>
                         <QuizForm
                             answers={content.answers}
