@@ -10,6 +10,7 @@ namespace Quizine.Api.Interfaces
 
         SessionParameters SessionParameters { get; }
         bool IsStarted { get; }
+        int QuestionCount { get;  }
 
         #endregion
 

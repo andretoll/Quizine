@@ -11,6 +11,7 @@ namespace Quizine.Api.Dtos
         public string Question { get; }
         public string Category { get; }
         public string Difficulty { get; }
+        public int QuestionIndex { get; }
         public QuizAnswer[] Answers { get; }
         public bool LastQuestion { get; }
 
@@ -24,6 +25,7 @@ namespace Quizine.Api.Dtos
             Question = quizItem.Question;
             Category = quizItem.Category;
             Difficulty = quizItem.Difficulty;
+            QuestionIndex = quizItem.QuestionIndex;
             Answers = quizItem.Answers.ToArray();
             LastQuestion = lastQuestion;
         } 

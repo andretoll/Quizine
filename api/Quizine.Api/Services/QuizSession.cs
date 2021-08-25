@@ -22,6 +22,7 @@ namespace Quizine.Api.Services
 
         public SessionParameters SessionParameters { get; }
         public bool IsStarted => _isStarted;
+        public int QuestionCount => _questions.Count;
 
         #endregion
 

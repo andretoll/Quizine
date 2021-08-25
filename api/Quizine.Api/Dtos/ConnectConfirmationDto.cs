@@ -13,6 +13,7 @@ namespace Quizine.Api.Dtos
         public string[] Users { get; private set; }
         public string ErrorMessage { get; private set; }
         public int QuestionTimeout { get; private set; }
+        public int QuestionCount { get; private set; }
 
         #endregion
 
@@ -41,7 +42,8 @@ namespace Quizine.Api.Dtos
                 QuizTitle = session.SessionParameters.Title,
                 ExpectedUsers = session.SessionParameters.PlayerCount,
                 Users = session.GetUsers().Select(x => x.Username).ToArray(),
-                QuestionTimeout = session.SessionParameters.QuestionTimeout
+                QuestionTimeout = session.SessionParameters.QuestionTimeout,
+                QuestionCount = session.QuestionCount,
             };
         } 
 

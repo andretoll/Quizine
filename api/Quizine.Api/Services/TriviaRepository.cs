@@ -71,10 +71,11 @@ namespace Quizine.Api.Services
         private static IEnumerable<QuizItem> ParseTrivia(TriviaItemRoot root)
         {
             List<QuizItem> quizItems = new();
+            int index = 1;
 
             foreach (var triviaItem in root.QuizItems)
             {
-                quizItems.Add(new QuizItem(triviaItem.Category, triviaItem.Difficulty, triviaItem.Type, HttpUtility.HtmlDecode(triviaItem.Question), triviaItem.CorrectAnswer, triviaItem.IncorrectAnswers));
+                quizItems.Add(new QuizItem(triviaItem.Category, triviaItem.Difficulty, triviaItem.Type, HttpUtility.HtmlDecode(triviaItem.Question), index++, triviaItem.CorrectAnswer, triviaItem.IncorrectAnswers));
             }
 
             return quizItems;
