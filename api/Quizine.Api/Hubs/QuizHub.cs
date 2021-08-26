@@ -107,9 +107,8 @@ namespace Quizine.Api.Hubs
 
         public async Task GetResults(string sessionId)
         {
-            var rule = _sessionRepository.GetSessionRule(sessionId);
             var results = _sessionRepository.GetResults(sessionId, out bool sessionCompleted);
-            await Clients.Group(sessionId).Results(new ResultsDto(results, sessionCompleted, rule));
+            await Clients.Group(sessionId).Results(new ResultsDto(results, sessionCompleted));
         }
 
         #endregion

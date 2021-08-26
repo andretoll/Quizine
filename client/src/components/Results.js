@@ -127,6 +127,7 @@ function Results(props) {
     const quizCompleted = props.quizCompleted;
     const finalScore = props.finalScore;
     const username = props.username;
+    const maxScore = props.maxScore;
 
     const classes = useStyles();
 
@@ -201,6 +202,7 @@ function Results(props) {
                                             <TableCell align="center" width="10%">Place</TableCell>
                                             <TableCell align="left">Player</TableCell>
                                             <TableCell align="center" width="10%">Points</TableCell>
+                                            <TableCell align="center" width="20%">Max. points</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -216,6 +218,9 @@ function Results(props) {
                                                     </TableCell>
                                                     <TableCell className={score.username === username ? 'primary-color' : ''} align="center">
                                                         {score.points}
+                                                    </TableCell>
+                                                    <TableCell className={score.username === username ? 'primary-color' : ''} align="center">
+                                                        {maxScore}
                                                     </TableCell>
                                                 </TableRow>
                                             )

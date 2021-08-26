@@ -1,5 +1,4 @@
-﻿using Quizine.Api.Enums;
-using Quizine.Api.Models;
+﻿using Quizine.Api.Models;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,7 +15,7 @@ namespace Quizine.Api.Dtos
 
         #region Constructor
 
-        public ResultsDto(IEnumerable<QuizProgress> results, bool sessionCompleted, Rule rule)
+        public ResultsDto(IEnumerable<QuizProgress> results, bool sessionCompleted)
         {
             SessionCompleted = sessionCompleted;
 
@@ -24,7 +23,7 @@ namespace Quizine.Api.Dtos
 
             foreach (var result in results)
             {
-                var score = new ScoreDto(result.User.Username, result.CalculatePoints(rule));
+                var score = new ScoreDto(result.User.Username, result.Score.GetValueOrDefault());
 
                 Scores.Add(score);
             }

@@ -1,4 +1,4 @@
-﻿using Quizine.Api.Enums;
+﻿using Quizine.Api.Models.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +14,7 @@ namespace Quizine.Api.Models
         public List<QuizResult> QuizResults { get; }
         public bool IsLastQuestion => NextQuestion == QuizResults.Last().Question;
         public bool HasCompleted => NextQuestion == null;
+        public int? Score { get; private set; }
 
         #endregion
 
@@ -46,13 +47,14 @@ namespace Quizine.Api.Models
             NextQuestion = QuizResults[nextQuestionIndex].Question;
         }
 
-        public int CalculatePoints(Rule rule)
+        public void CalculateScore(Ruleset ruleset)
         {
-            return rule switch
-            {
-                Rule.Standard => QuizResults.Where(x => x.Question.CorrectAnswer.ID == x.Answer.ID).Count() * 1,
-                _ => throw new InvalidOperationException("Ruleset not supported."),
-            };
+            if (Score != null)
+                throw new InvalidOperationException("Error while calculating score: Score already set.");
+            if (!HasCompleted)
+                throw new InvalidOperationException("Error while calculating score: Quiz progress incomplete.");
+
+            Score = ruleset.CalculateScore(QuizResults);
         }
 
         #endregion

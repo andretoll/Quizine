@@ -1,6 +1,6 @@
-﻿using Quizine.Api.Enums;
-using Quizine.Api.Interfaces;
+﻿using Quizine.Api.Interfaces;
 using Quizine.Api.Models;
+using Quizine.Api.Models.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +11,12 @@ namespace Quizine.Api.Services
     {
         #region Private Members
 
+        private readonly Ruleset _ruleset;
         private readonly List<QuizItem> _questions;
         private readonly List<User> _members;
         private readonly List<QuizProgress> _progressList;
         private bool _isStarted;
+        private readonly int _maxScore;
 
         #endregion
 
@@ -23,6 +25,7 @@ namespace Quizine.Api.Services
         public SessionParameters SessionParameters { get; }
         public bool IsStarted => _isStarted;
         public int QuestionCount => _questions.Count;
+        public int MaxScore => _maxScore;
 
         #endregion
 
@@ -31,9 +34,11 @@ namespace Quizine.Api.Services
         public QuizSession(SessionParameters sessionParameters, IEnumerable<QuizItem> quizItems)
         {
             SessionParameters = sessionParameters;
+            _ruleset = Ruleset.Parse(sessionParameters.Rule);
             _members = new List<User>();
             _progressList = new List<QuizProgress>();
             _questions = new List<QuizItem>(quizItems);
+            _maxScore = _ruleset.CalculateMaxScore(quizItems);
         }
 
         #endregion
@@ -87,7 +92,14 @@ namespace Quizine.Api.Services
         public IEnumerable<QuizProgress> GetResults(out bool sessionCompleted)
         {
             sessionCompleted = _progressList.All(x => x.HasCompleted);
-            return _progressList.Where(x => x.HasCompleted);
+            var progressList = _progressList.Where(x => x.HasCompleted);
+
+            foreach (var progress in progressList)
+            {
+                progress.CalculateScore(_ruleset);
+            }
+
+            return progressList;
         }
 
         #endregion

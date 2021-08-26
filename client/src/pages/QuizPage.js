@@ -84,6 +84,7 @@ function QuizPage() {
     const [players, setPlayers] = useState([]);
     const [questionTimeout, setQuestionTimeout] = useState();
     const [questionCount, setQuestionCount] = useState();
+    const [maxScore, setMaxScore] = useState();
     const [quizCompleted, setQuizCompleted] = useState(false);
     const [finalScore, setFinalScore] = useState([]);
 
@@ -151,6 +152,7 @@ function QuizPage() {
                             setPlayers(response.users);
                             setQuestionTimeout(response.questionTimeout);
                             setQuestionCount(response.questionCount);
+                            setMaxScore(response.maxScore);
                             setContent(contentStates.WAITING);
                         } else {
                             reportError(response.errorMessage);
@@ -394,7 +396,7 @@ function QuizPage() {
                 )
             case contentStates.RESULTS:
                 return (
-                    <Results quizCompleted={quizCompleted} finalScore={finalScore} username={username} />
+                    <Results quizCompleted={quizCompleted} finalScore={finalScore} maxScore={maxScore} username={username} />
                 )
             default:
                 return null;

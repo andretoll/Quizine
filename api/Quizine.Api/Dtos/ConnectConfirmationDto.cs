@@ -14,6 +14,7 @@ namespace Quizine.Api.Dtos
         public string ErrorMessage { get; private set; }
         public int QuestionTimeout { get; private set; }
         public int QuestionCount { get; private set; }
+        public int MaxScore { get; private set; }
 
         #endregion
 
@@ -44,6 +45,7 @@ namespace Quizine.Api.Dtos
                 Users = session.GetUsers().Select(x => x.Username).ToArray(),
                 QuestionTimeout = session.SessionParameters.QuestionTimeout,
                 QuestionCount = session.QuestionCount,
+                MaxScore = session.MaxScore,
             };
         } 
 
