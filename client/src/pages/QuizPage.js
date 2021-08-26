@@ -19,6 +19,7 @@ import { Connect, Disconnect, Start, SubmitAnswer, NextQuestion, GetResults } fr
 import PlayerList from '../components/PlayerList';
 import Quiz from '../components/Quiz';
 import Results from '../components/Results';
+import Icon from '../assets/logo/logo.png';
 
 const useStyles = makeStyles(theme => ({
 
@@ -116,6 +117,9 @@ function QuizPage() {
 
     useEffect(() => {
 
+        // Request permission to send notifications
+        Notification.requestPermission();
+
         // Create new connection
         const newConnection = new HubConnectionBuilder()
             .withUrl(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}hubs/quiz`, {
@@ -198,6 +202,37 @@ function QuizPage() {
         }
 
     }, [connection, sessionId, username]);
+
+    // When any new player joins
+    useEffect(() => {
+
+        if (expectedPlayers > 1 && players.length === expectedPlayers) {
+            sendNotification("All players are ready to go!", () => {
+                window.focus();
+            });
+        }
+    }, [players, expectedPlayers])
+
+    // When quiz has completed
+    useEffect(() => {
+
+        if (quizCompleted) {
+            sendNotification("All players have submitted their results!", () => {
+                window.focus();
+            });
+        }
+    }, [quizCompleted])
+
+    // Send notifications
+    function sendNotification(message, onClick) {
+
+        // If document is not hidden (active), return without sending notification
+        if (!document.hidden)
+            return;
+
+        var notification = new Notification("Quizine", { body: message, image: Icon });
+        notification.onclick = onClick;
+    }
 
     // Report error
     function reportError(message) {
