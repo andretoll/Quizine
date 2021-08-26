@@ -163,8 +163,8 @@ function Results(props) {
                 </Link>
             </div>
             <Tabs value={tabValue} onChange={handleTabChange} indicatorColor="primary" className={classes.tabs}>
-                <Tab tabIndex={0} label="Top players" />
-                <Tab tabIndex={1} label="All players" />
+                <Tab tabIndex={0} label="Top 3" />
+                <Tab tabIndex={1} label="Standings" />
             </Tabs>
             <div className={classes.tabItemContainer}>
                 {tabValue === 0 &&

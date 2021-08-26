@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Quizine.Api.Attributes;
 using Quizine.Api.Enums;
 using Quizine.Api.Helpers;
 using Quizine.Api.Interfaces;
@@ -11,6 +12,7 @@ namespace Quizine.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [ApiKey]
     public class QuizController : ControllerBase
     {
         private readonly ISessionRepository _sessionRepository;

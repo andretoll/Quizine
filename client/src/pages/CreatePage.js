@@ -84,7 +84,8 @@ function CreatePage() {
             await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/categories`, {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
                 }
             }).then(response => {
                 response.json().then(result => {
@@ -111,7 +112,8 @@ function CreatePage() {
             await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/rules`, {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
                 }
             }).then(response => {
                 response.json().then(result => {
@@ -139,7 +141,8 @@ function CreatePage() {
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
                 }
             }).then(response => {
                 response.json().then(result => {

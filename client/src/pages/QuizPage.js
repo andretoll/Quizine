@@ -296,7 +296,7 @@ function QuizPage() {
                 return (
                     <div className={classes.centeredContent}>
                         <Container maxWidth="sm">
-                            <Paper elevation={10}>
+                            <Paper elevation={10} className="secondary-background">
                                 <div style={{ padding: '20px' }}>
                                     <Typography variant="h6" className={classes.loadingAnimation}>Connecting</Typography>
                                 </div>
