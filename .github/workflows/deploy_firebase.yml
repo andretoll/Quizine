@@ -3,6 +3,9 @@ name: Deploy to Firebase Hosting
   push:
     branches:
       - master
+      
+env: 
+  REACT_APP_QUIZINE_API_KEY: ${{ secrets.REACT_APP_QUIZINE_API_KEY }}
 
 jobs:
   build_and_deploy:
