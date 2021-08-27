@@ -97,6 +97,9 @@ namespace Quizine.Api.Services
 
             foreach (var progress in progressList)
             {
+                if (progress.Score != null)
+                    continue;
+
                 progress.CalculateScore(_ruleset);
             }
 

@@ -14,6 +14,7 @@ import ShareIcon from '@material-ui/icons/Share';
 import ShareQuiz from '../components/ShareQuiz';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
+import { useConfirm } from 'material-ui-confirm';
 import useTitle from '../hooks/useTitle';
 import { Connect, Disconnect, Start, SubmitAnswer, NextQuestion, GetResults } from '../services/QuizService';
 import PlayerList from '../components/PlayerList';
@@ -101,6 +102,7 @@ function QuizPage() {
     useTitle(quizTitle);
     const history = useHistory();
     const location = useLocation();
+    const confirm = useConfirm();
 
     useEffect(() => {
 
@@ -258,15 +260,24 @@ function QuizPage() {
     // Start quiz
     function handleOnStart() {
 
-        const ready = ((expectedPlayers === players.length) || (expectedPlayers !== players.length && window.confirm("Not all players connected. Continue?")));
+        const allReady = expectedPlayers === players.length;
 
-        if (ready) {
-            try {
+        try {
+            if (!allReady) {
+                confirm({
+                    title: 'Confirm?',
+                    description: 'Not all players are ready. Start quiz anyway?',
+                    confirmationText: 'Yes',
+                    cancellationText: 'No',
+                    dialogProps: { PaperProps: { className: "secondary-background" } }
+                }).then(() => {
+                    Start(connection, sessionId);
+                }).catch(() => { });
+            } else {
                 Start(connection, sessionId);
-            } catch (error) {
-                console.log(error);
-                reportError("Failed to start quiz.");
             }
+        } catch (error) {
+            reportError(error);
         }
     }
 
