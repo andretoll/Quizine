@@ -8,6 +8,7 @@ import Paper from '@material-ui/core/Paper';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
 import SuccessIcon from '@material-ui/icons/Check';
+import { DataProvider } from '../services/CreateFormDataContext';
 import useTitle from '../hooks/useTitle';
 import ShareQuiz from '../components/ShareQuiz';
 import CreateForm from '../components/CreateForm';
@@ -24,13 +25,15 @@ const useStyles = makeStyles(theme => ({
     },
 
     content: {
+        display: 'flex',
+        flexDirection: 'column',
         background: theme.palette.secondary.main,
         padding: '20px',
+        minHeight: '600px',
     },
 
     successIconWrapper: {
         display: 'flex',
-        margin: 'auto',
         justifyContent: 'center',
         alignItems: 'center',
         border: `10px double ${theme.palette.primary.main}`,
@@ -62,7 +65,7 @@ function CreatePage() {
     const [errorMessage, setErrorMessage] = useState();
     const [content, setContent] = useState(contentStates.LOADING);
     const [sessionId, setSessionId] = useState();
-    const [hostName, setHostName] = useState();
+    const [hostname, setHostname] = useState();
 
     useEffect(() => {
         console.log(process.env.REACT_APP_QUIZINE_API_BASE_URL);
@@ -148,7 +151,7 @@ function CreatePage() {
                 response.json().then(result => {
 
                     setSessionId(result);
-                    setHostName(data.hostName);
+                    setHostname(data.hostname);
                     setContent(contentStates.SUCCESS);
                 });
             }
@@ -184,7 +187,7 @@ function CreatePage() {
                 )
             case contentStates.SUCCESS:
                 return (
-                    <div className={classes.successContainer}>
+                    <div style={{display: 'flex', flex: '1', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
                         <div className={classes.successIconWrapper}>
                             <SuccessIcon />
                         </div>
@@ -193,7 +196,7 @@ function CreatePage() {
                         <div style={{ textAlign: 'center', marginTop: '50px' }}>
                             <Link to={{
                                 pathname: `/quiz/${sessionId}`,
-                                state: { sessionId: sessionId, username: hostName }
+                                state: { sessionId: sessionId, username: hostname }
                             }}>
                                 <Button variant="contained" color="primary" size="large">Join</Button>
                             </Link>
@@ -206,18 +209,20 @@ function CreatePage() {
     }
 
     return (
-        <div className={classes.container}>
-            <Container className={classes.wrapper} maxWidth="sm">
-                <Fade in timeout={1500}>
-                    <Paper elevation={10} className={classes.content}>
-                        <GoHome />
-                        {content < 3 && <Typography variant="h3" style={{ textAlign: 'center' }}>Create quiz</Typography>}
-                        <Typography style={{ textAlign: 'center' }} color="error">{errorMessage}</Typography>
-                        {getContent(content)}
-                    </Paper>
-                </Fade>
-            </Container>
-        </div>
+        <DataProvider>
+            <div className={classes.container}>
+                <Container className={classes.wrapper} maxWidth="sm">
+                    <Fade in timeout={1500}>
+                        <Paper elevation={10} className={classes.content}>
+                            <GoHome />
+                            {content < 3 && <Typography variant="h3" style={{ textAlign: 'center' }}>Create quiz</Typography>}
+                            <Typography style={{ textAlign: 'center' }} color="error">{errorMessage}</Typography>
+                            {getContent(content)}
+                        </Paper>
+                    </Fade>
+                </Container>
+            </div>
+        </DataProvider>
     )
 }
 
