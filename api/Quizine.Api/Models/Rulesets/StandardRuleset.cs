@@ -6,11 +6,19 @@ namespace Quizine.Api.Models.Rulesets
 {
     public class StandardRuleset : Ruleset
     {
+        public override string Description => "Play a standard game of Quiz.";
+
         public override int CalculateMaxScore(IEnumerable<QuizItem> questions)
         {
             return questions.Count() * 1;
         }
 
+        /// <summary>
+        /// Correct answer: +1
+        /// Incorrect answer: +-0
+        /// </summary>
+        /// <param name="results"></param>
+        /// <returns></returns>
         public override int CalculateScore(IEnumerable<QuizResult> results)
         {
             return results.Where(x => x.Question.CorrectAnswer.ID == x.Answer.ID).Count() * 1;

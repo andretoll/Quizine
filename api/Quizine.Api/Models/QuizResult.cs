@@ -28,7 +28,7 @@ namespace Quizine.Api.Models
             if (Answer != null)
                 throw new InvalidOperationException("Answer is already set.");
 
-            Answer = answer ?? new QuizAnswer("");
+            Answer = answer ?? new QuizAnswer();
         }
 
         #endregion

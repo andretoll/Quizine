@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Quizine.Api.Attributes;
+using Quizine.Api.Dtos;
 using Quizine.Api.Enums;
 using Quizine.Api.Helpers;
 using Quizine.Api.Interfaces;
 using Quizine.Api.Models;
+using Quizine.Api.Models.Base;
 using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -51,7 +54,18 @@ namespace Quizine.Api.Controllers
         [HttpGet("rules")]
         public ActionResult GetRules()
         {
-            return Ok(Enum.GetNames<Rule>());
+            List<RulesetDto> rulesets = new List<RulesetDto>();
+
+            foreach (var rule in Enum.GetValues<Rule>())
+            {
+                rulesets.Add(new RulesetDto()
+                {
+                    Rule = rule,
+                    Description = Ruleset.Parse(rule).Description
+                });
+            }
+
+            return Ok(rulesets);
         }
     }
 }

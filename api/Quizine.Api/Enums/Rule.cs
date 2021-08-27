@@ -2,6 +2,7 @@
 {
     public enum Rule
     {
-        Standard,
+        Standard = 0,
+        Risk = 1
     }
 }

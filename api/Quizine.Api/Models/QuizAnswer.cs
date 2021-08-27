@@ -14,10 +14,21 @@ namespace Quizine.Api.Models
 
         #region Constructor
 
+        public QuizAnswer() { }
+
         public QuizAnswer(string value)
         {
             ID = Guid.NewGuid().ToString();
             Value = value;
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public bool IsAnswerValid()
+        {
+            return !string.IsNullOrEmpty(ID) && !string.IsNullOrEmpty(Value);
         }
 
         #endregion
