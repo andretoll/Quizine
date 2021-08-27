@@ -8,6 +8,8 @@ namespace Quizine.Api.Models.Rulesets
     {
         public override string Description => "Play a standard game of Quiz.";
 
+        public override bool EnableSkip => false;
+
         public override int CalculateMaxScore(IEnumerable<QuizItem> questions)
         {
             return questions.Count() * 1;

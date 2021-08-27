@@ -5,6 +5,7 @@ import Grid from "@material-ui/core/Grid";
 import ArrowRightIcon from "@material-ui/icons/ArrowForward";
 import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
+import SkipIcon from "@material-ui/icons/SkipNext";
 
 const useStyles = makeStyles(theme => ({
 
@@ -28,6 +29,7 @@ const useStyles = makeStyles(theme => ({
 
     disabled: {
         pointerEvents: 'none',
+        background: theme.palette.secondary.dark,
     },
 
     correct: {
@@ -74,13 +76,28 @@ function QuizForm(props) {
         if (props.correctAnswer)
             return;
 
-        setSelectedAnswer(answer.id);
+        setSelectedAnswer(answer?.id);
         props.onSubmit(answer);
+    }
+
+    function handleSkip() {
+        handleOnClick(null);
     }
 
     return (
         <div>
             <div style={{ textAlign: 'right', height: '60px' }}>
+                {props.enableSkip && !props.correctAnswer &&
+                    <Button
+                        className={classes.nextQuestionButton}
+                        variant="outlined"
+                        size="large"
+                        color="primary"
+                        endIcon={<SkipIcon />}
+                        onClick={handleSkip}>
+                        Skip
+                    </Button>
+                }
                 {props.correctAnswer &&
                     <Button
                         className={classes.nextQuestionButton}
@@ -101,9 +118,9 @@ function QuizForm(props) {
                     var icon;
 
                     if (correctAnswerClass) {
-                        icon = <CheckIcon style={{fontSize: '1.5em'}} />
+                        icon = <CheckIcon style={{ fontSize: '1.5em' }} />
                     } else if (incorrectAnswerClass) {
-                        icon = <ClearIcon style={{fontSize: '1.5em'}}/>
+                        icon = <ClearIcon style={{ fontSize: '1.5em' }} />
                     }
 
                     return (

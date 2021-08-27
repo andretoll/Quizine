@@ -8,6 +8,8 @@ namespace Quizine.Api.Models.Rulesets
     {
         public override string Description => "High risk, high reward.";
 
+        public override bool EnableSkip => true;
+
         public override int CalculateMaxScore(IEnumerable<QuizItem> questions)
         {
             return questions.Count() * 1;

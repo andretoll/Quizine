@@ -15,6 +15,7 @@ namespace Quizine.Api.Dtos
         public int QuestionTimeout { get; private set; }
         public int QuestionCount { get; private set; }
         public int MaxScore { get; private set; }
+        public bool EnableSkip { get; private set; }
 
         #endregion
 
@@ -46,6 +47,7 @@ namespace Quizine.Api.Dtos
                 QuestionTimeout = session.SessionParameters.QuestionTimeout,
                 QuestionCount = session.QuestionCount,
                 MaxScore = session.MaxScore,
+                EnableSkip = session.Ruleset.EnableSkip,
             };
         } 
 

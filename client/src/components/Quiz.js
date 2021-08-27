@@ -192,6 +192,7 @@ function Quiz(props) {
                         <QuizForm
                             answers={content.answers}
                             correctAnswer={props.correctAnswer}
+                            enableSkip={props.enableSkip}
                             onSubmit={onSubmit}
                             onNext={onNext}
                             onFinal={props.onFinal}

@@ -1,4 +1,5 @@
 ﻿using Quizine.Api.Models;
+using Quizine.Api.Models.Base;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,6 +10,7 @@ namespace Quizine.Api.Interfaces
         #region Properties
 
         SessionParameters SessionParameters { get; }
+        Ruleset Ruleset { get; }
         bool IsStarted { get; }
         int QuestionCount { get;  }
         int MaxScore { get; }

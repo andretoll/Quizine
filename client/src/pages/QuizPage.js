@@ -85,6 +85,7 @@ function QuizPage() {
     const [questionTimeout, setQuestionTimeout] = useState();
     const [questionCount, setQuestionCount] = useState();
     const [maxScore, setMaxScore] = useState();
+    const [enableSkip, setEnableSkip] = useState();
     const [quizCompleted, setQuizCompleted] = useState(false);
     const [finalScore, setFinalScore] = useState([]);
 
@@ -153,6 +154,7 @@ function QuizPage() {
                             setQuestionTimeout(response.questionTimeout);
                             setQuestionCount(response.questionCount);
                             setMaxScore(response.maxScore);
+                            setEnableSkip(response.enableSkip);
                             setContent(contentStates.WAITING);
                         } else {
                             reportError(response.errorMessage);
@@ -387,6 +389,7 @@ function QuizPage() {
                                 questionCount={questionCount}
                                 content={quizContent}
                                 correctAnswer={correctAnswer}
+                                enableSkip={enableSkip}
                                 onSubmit={handleOnSubmitAnswer}
                                 onNext={handleNextQuestion}
                                 onFinal={handleOnFinal}

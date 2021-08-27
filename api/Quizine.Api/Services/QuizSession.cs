@@ -23,6 +23,7 @@ namespace Quizine.Api.Services
         #region Public Properties
 
         public SessionParameters SessionParameters { get; }
+        public Ruleset Ruleset => _ruleset;
         public bool IsStarted => _isStarted;
         public int QuestionCount => _questions.Count;
         public int MaxScore => _maxScore;
