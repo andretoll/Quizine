@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { makeStyles } from '@material-ui/core';
-import FormControl from '@material-ui/core/FormControl';
-import Button from '@material-ui/core/Button';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormLabel from '@material-ui/core/FormLabel';
-import Fade from '@material-ui/core/Fade';
-import Typography from '@material-ui/core/Typography';
 import { useData } from '../services/CreateFormDataContext';
+import { 
+    makeStyles,
+    FormControl,
+    Button,
+    Select,
+    MenuItem,
+    FormLabel,
+    Fade,
+    Typography
+} from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
 
@@ -27,10 +29,6 @@ const useStyles = makeStyles(theme => ({
 
     formControl: {
         margin: '10px 0',
-    },
-
-    rulesetDescription: {
-
     },
 }));
 
@@ -81,7 +79,7 @@ function Step3(props) {
                             control={control}
                         />
                     </FormControl>
-                    <div className={classes.rulesetDescription}>
+                    <div>
                         <Typography variant="subtitle1" color="primary">
                             {description}
                         </Typography>
@@ -90,7 +88,7 @@ function Step3(props) {
             </Fade>
             <div>
                 <Button variant="contained" color="primary" type="submit" size="large" disabled={!isValid}>
-                    Next
+                    Finish
                 </Button>
             </div>
         </form>

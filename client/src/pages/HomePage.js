@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
-import Slide from '@material-ui/core/Slide';
-import Grid from '@material-ui/core/Grid';
-import Container from '@material-ui/core/Container';
-import Button from '@material-ui/core/Button';
-import useTitle from '../hooks/useTitle';
+import { useTitle } from '../hooks/useTitle';
 import Brand from '../components/Brand';
+import {
+    makeStyles,
+    Slide,
+    Grid,
+    Container,
+    Button
+} from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
 
@@ -38,6 +40,7 @@ const useStyles = makeStyles(theme => ({
 function HomePage() {
 
     const classes = useStyles();
+    
     useTitle("Home");
 
     return (

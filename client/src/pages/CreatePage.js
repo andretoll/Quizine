@@ -1,18 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { Link } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import Fade from '@material-ui/core/Fade';
-import Paper from '@material-ui/core/Paper';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Button from '@material-ui/core/Button';
-import SuccessIcon from '@material-ui/icons/Check';
 import { DataProvider } from '../services/CreateFormDataContext';
 import useTitle from '../hooks/useTitle';
 import ShareQuiz from '../components/ShareQuiz';
 import CreateForm from '../components/CreateForm';
 import GoHome from '../components/GoHome';
+import SuccessIcon from '@material-ui/icons/Check';
+import {
+    makeStyles,
+    Container,
+    Typography,
+    Fade,
+    Paper,
+    CircularProgress,
+    Button,
+} from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
 
@@ -55,10 +57,16 @@ const contentStates = Object.freeze({
     SUCCESS: 3
 })
 
+const difficulties = [
+    "Any",
+    "Easy",
+    "Medium",
+    "Hard",
+]
+
 function CreatePage() {
 
     const classes = useStyles();
-    useTitle("Create quiz");
 
     const [categories, setCategories] = useState([]);
     const [rules, setRules] = useState([]);
@@ -67,12 +75,15 @@ function CreatePage() {
     const [sessionId, setSessionId] = useState();
     const [hostname, setHostname] = useState();
 
+    useTitle("Create quiz");
+
+    // On first render
     useEffect(() => {
-        console.log(process.env.REACT_APP_QUIZINE_API_BASE_URL);
         fetchCategories();
         fetchRules();
     }, []);
 
+    // On categories or rules state update
     useEffect(() => {
 
         if (categories.length > 0 && rules.length > 0)
@@ -107,7 +118,7 @@ function CreatePage() {
         }
     }
 
-    // Gets the available categories from the server
+    // Gets the available rules from the server
     async function fetchRules() {
 
         try {
@@ -134,7 +145,7 @@ function CreatePage() {
 
     // Handle form submission
     async function handleOnSubmit(data) {
-        
+
         try {
             setErrorMessage(null);
             setContent(contentStates.IN_PROGRESS);
@@ -159,7 +170,7 @@ function CreatePage() {
         }
         catch (e) {
             setContent(contentStates.FORM);
-            setErrorMessage("Could not connect to server. Try again.");
+            setErrorMessage("Failed to create quiz. Could not connect to the server. Please try again later.");
         }
     }
 
@@ -170,24 +181,28 @@ function CreatePage() {
             case contentStates.LOADING:
                 return (
                     <div style={{ margin: '40px 0', textAlign: 'center' }}>
-                        <CircularProgress color="secondary" />
-                        <Typography variant="h6">Loading...</Typography>
+                        {!errorMessage &&
+                            <Fragment>
+                                <CircularProgress color="primary" />
+                                <Typography variant="h6">Loading...</Typography>
+                            </Fragment>
+                        }
                     </div>
                 )
             case contentStates.FORM:
                 return (
-                    <CreateForm onSubmit={handleOnSubmit} categories={categories} rules={rules} />
+                    <CreateForm onSubmit={handleOnSubmit} categories={categories} difficulties={difficulties} rules={rules} />
                 )
             case contentStates.IN_PROGRESS:
                 return (
                     <div style={{ margin: '40px 0', textAlign: 'center' }}>
-                        <CircularProgress color="secondary" />
+                        <CircularProgress color="primary" />
                         <Typography variant="h6">Generating session...</Typography>
                     </div>
                 )
             case contentStates.SUCCESS:
                 return (
-                    <div style={{display: 'flex', flex: '1', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+                    <div style={{ display: 'flex', flex: '1', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                         <div className={classes.successIconWrapper}>
                             <SuccessIcon />
                         </div>
@@ -215,8 +230,8 @@ function CreatePage() {
                     <Fade in timeout={1500}>
                         <Paper elevation={10} className={classes.content}>
                             <GoHome />
-                            {content < 3 && <Typography variant="h3" style={{ textAlign: 'center' }}>Create quiz</Typography>}
-                            <Typography style={{ textAlign: 'center' }} color="error">{errorMessage}</Typography>
+                            {content !== contentStates.SUCCESS && <Typography variant="h3" style={{ textAlign: 'center' }}>Create quiz</Typography>}
+                            <Typography style={{ textAlign: 'center', marginTop: '10px' }} color="error">{errorMessage}</Typography>
                             {getContent(content)}
                         </Paper>
                     </Fade>

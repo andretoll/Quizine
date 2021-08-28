@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useForm } from 'react-hook-form';
-import { makeStyles } from "@material-ui/core";
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import Container from '@material-ui/core/Container';
-import Fade from '@material-ui/core/Fade';
-import Paper from '@material-ui/core/Paper';
-import FormControl from '@material-ui/core/FormControl';
-import Typography from '@material-ui/core/Typography';
-import useTitle from '../hooks/useTitle';
+import { useTitle } from '../hooks/useTitle';
 import GoHome from '../components/GoHome';
+import {
+    makeStyles,
+    TextField,
+    Button,
+    Container,
+    Fade,
+    Paper,
+    FormControl,
+    Typography,
+} from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
 
@@ -49,7 +51,6 @@ function JoinPage() {
 
     const classes = useStyles();
     const history = useHistory();
-    useTitle("Join quiz");
 
     const [sessionId, setSessionId] = useState("");
 
@@ -57,6 +58,7 @@ function JoinPage() {
 
     const hash = history.location.hash.replace('#', '');
 
+    useTitle("Join quiz");
     useEffect(() => {
 
         // If user was directed with a link, store sessionID
@@ -84,6 +86,7 @@ function JoinPage() {
                         <GoHome />
                         <Typography variant="h3" style={{ textAlign: 'center' }}>Join quiz</Typography>
                         <form onSubmit={handleSubmit(onHandleSubmit)} className={classes.form}>
+
                             <FormControl margin="dense" fullWidth>
                                 <TextField label="Session ID" value={sessionId} autoFocus disabled={sessionId?.length > 0} {...register("sessionId", { required: true })} />
                                 {errors.sessionId && <p>Session ID is required.</p>}
@@ -93,11 +96,13 @@ function JoinPage() {
                                 <TextField label="Username" autoFocus={hash.length > 0} {...register("username", { required: true })} />
                                 {errors.username && <p>Username is required.</p>}
                             </FormControl>
+
                             <div style={{ textAlign: 'center', marginTop: '30px ' }}>
                                 <Button variant="contained" color="primary" type="submit" size="large">
                                     Join
                                 </Button>
                             </div>
+
                         </form>
                     </Paper>
                 </Fade>

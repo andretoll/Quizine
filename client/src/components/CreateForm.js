@@ -1,19 +1,14 @@
 import { useState, Fragment } from 'react';
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-import Button from '@material-ui/core/Button';
 import { useData } from '../services/CreateFormDataContext';
 import Step1 from './Step1';
 import Step2 from './Step2';
 import Step3 from './Step3';
-
-const difficulties = [
-    "Any",
-    "Easy",
-    "Medium",
-    "Hard",
-]
+import { 
+    Stepper,
+    Step,
+    StepLabel,
+    Button
+} from '@material-ui/core';
 
 const steps = [
     "General",
@@ -27,6 +22,7 @@ function CreateForm(props) {
 
     // Data from parent
     const categories = props.categories;
+    const difficulties = props.difficulties;
     const rules = props.rules;
 
     const [activeStep, setActiveStep] = useState(0);
@@ -47,13 +43,7 @@ function CreateForm(props) {
             case 1:
                 return <Step2 onNextStep={handleNextStep} categories={categories} difficulties={difficulties} />
             case 2:
-                return <Step3 onNextStep={handleNextStep} rules={rules} />
-            case 3:
-                return (
-                    <div style={{ display: 'flex', flex: '1', alignItems: 'flex-end', justifyContent: 'center' }}>
-                        <Button onClick={handleSubmit} variant="contained" size="large" color="primary">Finish</Button>
-                    </div>
-                )
+                return <Step3 onNextStep={handleSubmit} rules={rules} />
             default:
                 break;
         }

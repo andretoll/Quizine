@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react'
 
-function useTitle(title, prevailOnUnmount = false) {
+export function useTitle(title, prevailOnUnmount = false) {
     const baseTitle = "Quizine - ";
     const defaultTitle = useRef(document.title);
 
@@ -15,4 +15,4 @@ function useTitle(title, prevailOnUnmount = false) {
     }, [prevailOnUnmount, ])
 }
 
-export default useTitle
+export default useTitle;

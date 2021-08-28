@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography';
+import { Typography} from '@material-ui/core';
 import Logo from '../assets/logo/logo_white.png';
 
 const useStyles = makeStyles(theme => ({

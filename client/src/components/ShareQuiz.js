@@ -1,11 +1,13 @@
-import { makeStyles } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import CodeIcon from '@material-ui/icons/CropFreeOutlined';
 import LinkIcon from '@material-ui/icons/LinkOutlined';
 import QRCode from 'qrcode.react';
+import {
+    makeStyles,
+    Typography,
+    Button
+} from '@material-ui/core';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(_ => ({
 
     linkContainer: {
         display: 'flex',

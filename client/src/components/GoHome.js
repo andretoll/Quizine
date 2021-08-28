@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import Typography from '@material-ui/core/Typography';
+import { Typography} from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 function GoHome() {

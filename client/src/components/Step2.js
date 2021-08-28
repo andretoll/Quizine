@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
-import { useData } from '../services/CreateFormDataContext';
 import { useForm, Controller } from 'react-hook-form';
-import { makeStyles } from '@material-ui/core';
-import FormControl from '@material-ui/core/FormControl';
-import Button from '@material-ui/core/Button';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import Slider from '@material-ui/core/Slider';
-import FormLabel from '@material-ui/core/FormLabel';
-import Fade from '@material-ui/core/Fade';
+import { useData } from '../services/CreateFormDataContext';
+import { 
+    makeStyles,
+    FormControl,
+    Button,
+    Select,
+    MenuItem,
+    Slider,
+    FormLabel,
+    Fade
+} from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
 

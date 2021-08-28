@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useData } from '../services/CreateFormDataContext';
 import { useForm } from 'react-hook-form';
-import { makeStyles } from '@material-ui/core';
-import FormControl from '@material-ui/core/FormControl';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Slider from '@material-ui/core/Slider';
-import FormLabel from '@material-ui/core/FormLabel';
-import Fade from '@material-ui/core/Fade';
+import { 
+    makeStyles,
+    FormControl,
+    Button,
+    TextField,
+    Slider,
+    FormLabel,
+    Fade
+} from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
 
@@ -63,8 +65,9 @@ function Step1(props) {
                         {errors.hostname && errors.hostname.type === "validate" && <p>Invalid username.</p>}
                     </FormControl>
                     <FormControl fullWidth className={classes.formControl}>
-                        <TextField autoComplete="off" size="small" color="primary" label="Title" {...register("title", { required: true, validate: isOnlyWhitespace })} />
+                        <TextField autoComplete="off" size="small" color="primary" label="Title" {...register("title", { required: true, maxLength: 15, validate: isOnlyWhitespace })} />
                         {errors.title && errors.title.type === "required" && <p>Title is required.</p>}
+                        {errors.title && errors.title.type === "maxLength" && <p>Title must consist of less than 15 characters.</p>}
                         {errors.title && errors.title.type === "validate" && <p>Invalid title.</p>}
                     </FormControl>
                     <FormControl fullWidth className={classes.formControl}>
