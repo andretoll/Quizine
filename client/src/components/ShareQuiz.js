@@ -3,6 +3,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import CodeIcon from '@material-ui/icons/CropFreeOutlined';
 import LinkIcon from '@material-ui/icons/LinkOutlined';
+import QRCode from 'qrcode.react';
 
 const useStyles = makeStyles(theme => ({
 
@@ -10,7 +11,7 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '10px',
+        marginBottom: '20px',
     },
 
     linkWrapper: {
@@ -22,7 +23,17 @@ const useStyles = makeStyles(theme => ({
         '& svg': {
             marginRight: '10px',
         }
-    }
+    },
+
+    qrContainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: 'auto',
+        width: '110px',
+        height: '110px',
+        background: '#fff',
+    },
 }))
 
 function ShareQuiz(props) {
@@ -48,6 +59,9 @@ function ShareQuiz(props) {
                     <span style={{ textDecoration: 'underline' }}>{getLink()}</span>
                 </Typography>
                 <Button variant="outlined" color="primary" onClick={() => { navigator.clipboard.writeText(getLink()) }}>Copy</Button>
+            </div>
+            <div className={classes.qrContainer}>
+                <QRCode renderAs="svg" value={getLink()} size={100} />
             </div>
         </div>
     )

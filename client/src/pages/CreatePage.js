@@ -38,8 +38,8 @@ const useStyles = makeStyles(theme => ({
         alignItems: 'center',
         border: `10px double ${theme.palette.primary.main}`,
         borderRadius: '50%',
-        height: '120px',
-        width: '120px',
+        height: '100px',
+        width: '100px',
 
         '& svg': {
             color: theme.palette.primary.main,
@@ -193,7 +193,7 @@ function CreatePage() {
                         </div>
                         <Typography style={{ textAlign: 'center', margin: '20px 0' }} variant="h4">Quiz created!</Typography>
                         <ShareQuiz sessionId={sessionId} />
-                        <div style={{ textAlign: 'center', marginTop: '50px' }}>
+                        <div style={{ textAlign: 'center', marginTop: '30px' }}>
                             <Link to={{
                                 pathname: `/quiz/${sessionId}`,
                                 state: { sessionId: sessionId, username: hostname }
