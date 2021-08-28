@@ -51,7 +51,7 @@ function JoinPage() {
     const history = useHistory();
     useTitle("Join quiz");
 
-    const [sessionId, setSessionId] = useState(null);
+    const [sessionId, setSessionId] = useState("");
 
     const { register, handleSubmit, setValue, formState: { errors } } = useForm({ mode: 'onChange' });
 
@@ -85,12 +85,12 @@ function JoinPage() {
                         <Typography variant="h3" style={{ textAlign: 'center' }}>Join quiz</Typography>
                         <form onSubmit={handleSubmit(onHandleSubmit)} className={classes.form}>
                             <FormControl margin="dense" fullWidth>
-                                <TextField label="Session ID" value={sessionId} autoFocus disabled={sessionId} {...register("sessionId", { required: true })} />
+                                <TextField label="Session ID" value={sessionId} autoFocus disabled={sessionId?.length > 0} {...register("sessionId", { required: true })} />
                                 {errors.sessionId && <p>Session ID is required.</p>}
                             </FormControl>
 
                             <FormControl margin="dense" fullWidth>
-                                <TextField label="Username" autoFocus={hash} {...register("username", { required: true })} />
+                                <TextField label="Username" autoFocus={hash.length > 0} {...register("username", { required: true })} />
                                 {errors.username && <p>Username is required.</p>}
                             </FormControl>
                             <div style={{ textAlign: 'center', marginTop: '30px ' }}>

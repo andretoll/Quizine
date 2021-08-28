@@ -410,7 +410,7 @@ function QuizPage() {
                 )
             case contentStates.RESULTS:
                 return (
-                    <Results quizCompleted={quizCompleted} finalScore={finalScore} maxScore={maxScore} username={username} />
+                    <Results quizCompleted={quizCompleted} finalScore={finalScore} maxScore={maxScore} username={username} expectedPlayers={expectedPlayers} />
                 )
             default:
                 return null;

@@ -15,6 +15,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TrophyIcon from '@material-ui/icons/EmojiEvents';
 import Container from '@material-ui/core/Container';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles(theme => ({
 
@@ -23,7 +24,6 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        textAlign: 'center',
         background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.5) 10%, transparent 70%)',
     },
 
@@ -36,6 +36,7 @@ const useStyles = makeStyles(theme => ({
         [theme.breakpoints.down('md')]: {
             display: 'flex',
             justifyContent: 'space-between',
+            alignItems: 'center',
         }
     },
 
@@ -48,9 +49,9 @@ const useStyles = makeStyles(theme => ({
     },
 
     tabItemContainer: {
-        display: 'flex', 
-        flex: '1', 
-        justifyContent: 'center', 
+        display: 'flex',
+        flex: '1',
+        justifyContent: 'center',
         alignItems: 'flex-start',
 
         [theme.breakpoints.up('md')]: {
@@ -88,11 +89,10 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
         width: '75px',
         height: '75px',
-        margin: '0 auto',
+        margin: '10px auto',
         border: '5px double transparent',
         color: 'transparent',
         borderRadius: '50%',
-        marginBottom: '20px',
 
         '& svg': {
             fontSize: '3em',
@@ -105,6 +105,7 @@ const useStyles = makeStyles(theme => ({
         [theme.breakpoints.down('xs')]: {
             width: '50px',
             height: '50px',
+            margin: '5px auto',
         },
     },
 
@@ -128,15 +129,13 @@ function Results(props) {
     const finalScore = props.finalScore;
     const username = props.username;
     const maxScore = props.maxScore;
+    const expectedPlayers = props.expectedPlayers;
 
     const classes = useStyles();
 
     const [tabValue, setTabValue] = useState(0);
 
     function getTrophyStyle(score) {
-
-        if (!quizCompleted)
-            return '';
 
         const index = finalScore.indexOf(score);
         switch (index) {
@@ -158,7 +157,7 @@ function Results(props) {
     return (
         <div className={classes.container}>
             <div className={classes.header}>
-                <Typography variant="h3">Results</Typography>
+                <Typography variant="h5">{quizCompleted ? 'Final results' : `Awaiting ${expectedPlayers - finalScore.length} player(s)...`}</Typography>
                 <Link to="/">
                     <Button variant="text" color="primary">Go Home</Button>
                 </Link>
@@ -176,11 +175,10 @@ function Results(props) {
                                 return (
                                     <Grid key={score.username} item className={classes.scoreWrapper} xs={12} sm={12} md={4}>
                                         <Paper className={classes.scoreContainer} variant="outlined">
-                                            <div className={`${getTrophyStyle(score)} ${classes.trophyContainer}`} style={{margin: 'auto'}}>
-                                                <TrophyIcon />
+                                            <div className={`${getTrophyStyle(score)} ${classes.trophyContainer}`}>
+                                                {quizCompleted ? <TrophyIcon /> : <CircularProgress color="inherit" />}
                                             </div>
-                                            <hr className={getTrophyStyle(score)} />
-                                            <Typography variant="h4" color={score.username === username ? 'primary' : 'inherit'} style={{overflow: 'hidden', textOverflow: 'ellipsis'}}>{score.username}</Typography>
+                                            <Typography variant="h4" color={score.username === username ? 'primary' : 'inherit'} style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{score.username}</Typography>
                                             <div>
                                                 <Typography variant="h4">{score.points} pts</Typography>
                                             </div>

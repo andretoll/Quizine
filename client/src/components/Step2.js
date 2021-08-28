@@ -109,7 +109,7 @@ function Step2(props) {
                     </FormControl>
                     <FormControl fullWidth className={classes.formControl}>
                         <FormLabel>
-                            Difficuly
+                            Difficulty
                         </FormLabel>
                         <Controller
                             defaultValue={difficulties[0]}

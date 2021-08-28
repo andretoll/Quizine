@@ -59,7 +59,16 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
     },
 
+    textLeft: {
+        textAlign: 'center',
+
+        [theme.breakpoints.up('sm')]: {
+            textAlign: 'left',
+        },
+    },
+
     textRight: {
+        textAlign: 'center',
 
         [theme.breakpoints.up('sm')]: {
             textAlign: 'right',
@@ -162,13 +171,13 @@ function Quiz(props) {
                     <Paper className={classes.quizContent} elevation={10}>
                         <div style={{ padding: '10px' }}>
                             <Grid container alignItems="center">
-                                <Grid item xs={12} sm={5} style={{ whiteSpace: 'no-wrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                <Grid item xs={12} sm={5} className={classes.textLeft} style={{ whiteSpace: 'no-wrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                     <Typography variant="overline">{content.category}</Typography>
                                 </Grid>
-                                <Grid item xs={4} sm={2}>
+                                <Grid item xs={6} sm={2} style={{textAlign: 'center'}}>
                                     <Typography variant="overline">{content.questionIndex} / {props.questionCount}</Typography>
                                 </Grid>
-                                <Grid item xs={4} sm={5} className={classes.textRight}>
+                                <Grid item xs={6} sm={5} className={classes.textRight}>
                                     {getDifficultyContent()}
                                 </Grid>
                             </Grid>
