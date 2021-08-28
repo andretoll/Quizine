@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
+using Quizine.Api.Helpers;
 using Quizine.Api.Interfaces;
 using Quizine.Api.Models;
 using System;
@@ -75,7 +76,16 @@ namespace Quizine.Api.Services
 
             foreach (var triviaItem in root.QuizItems)
             {
-                quizItems.Add(new QuizItem(triviaItem.Category, triviaItem.Difficulty, triviaItem.Type, HttpUtility.HtmlDecode(triviaItem.Question), index++, triviaItem.CorrectAnswer, triviaItem.IncorrectAnswers));
+                var quizItem = new QuizItem(
+                    triviaItem.Category, 
+                    triviaItem.Difficulty, 
+                    triviaItem.Type, 
+                    StringDecoder.DecodeHTMLString(triviaItem.Question), 
+                    index++, 
+                    StringDecoder.DecodeHTMLString(triviaItem.CorrectAnswer),
+                    StringDecoder.DecodeHTMLString(triviaItem.IncorrectAnswers));
+
+                quizItems.Add(quizItem);
             }
 
             return quizItems;
