@@ -6,8 +6,7 @@ import Step3 from './Step3';
 import { 
     Stepper,
     Step,
-    StepLabel,
-    Button
+    StepLabel
 } from '@material-ui/core';
 
 const steps = [
