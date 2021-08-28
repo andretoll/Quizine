@@ -15,6 +15,7 @@ namespace Quizine.Api.Models
         public bool IsLastQuestion => NextQuestion == QuizResults.Last().Question;
         public bool HasCompleted => NextQuestion == null;
         public int? Score { get; private set; }
+        public DateTime? FinishedTime { get; private set; }
 
         #endregion
 
@@ -40,6 +41,7 @@ namespace Quizine.Api.Models
 
             if (nextQuestionIndex >= QuizResults.Count)
             {
+                FinishedTime = DateTime.Now;
                 NextQuestion = null;
                 return;
             }

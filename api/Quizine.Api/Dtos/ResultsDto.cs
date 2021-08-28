@@ -21,6 +21,8 @@ namespace Quizine.Api.Dtos
 
             Scores = new List<ScoreDto>();
 
+            results = results.OrderBy(x => x.FinishedTime);
+
             foreach (var result in results)
             {
                 var score = new ScoreDto(result.User.Username, result.Score.GetValueOrDefault());
