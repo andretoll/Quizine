@@ -38,20 +38,35 @@ function Step2(props) {
 
     const categories = props.categories;
     const difficulties = props.difficulties;
-
-    const { setValues } = useData();
-    const { register, handleSubmit, setValue, control, formState: { isValid } } = useForm({ mode: 'onChange' });
-
-    const [questionCount, setQuestionCount] = useState(10);
-    const [questionTimeout, setQuestionTimeout] = useState(30);
-
     const previousStep = props.onPreviousStep;
-    
+
+    const { setValues, data } = useData();
+    const { register, handleSubmit, setValue, control, formState: { isValid } } = useForm({
+        mode: 'onChange',
+        defaultValues: {
+            "questionCount": data.questionCount ? data.questionCount : '',
+            "questionTimeout": data.questionTimeout ? data.questionTimeout : '',
+        }
+    });
+
+    const [questionCount, setQuestionCount] = useState(data.questionCount ? data.questionCount : 10);
+    const [questionTimeout, setQuestionTimeout] = useState(data.questionTimeout ? data.questionTimeout : 30);
+
     // Register custom fields
     useEffect(() => {
         register("questionCount", { required: true, value: 10 });
         register("questionTimeout", { required: true, value: 30 });
     }, [register])
+
+    useEffect(() => {
+        if (questionCount)
+            setValue("questionCount", questionCount);
+    }, [questionCount, setValue]);
+
+    useEffect(() => {
+        if (questionTimeout)
+            setValue("questionTimeout", questionTimeout);
+    }, [questionTimeout, setValue]);
 
     function onSubmit(data) {
         setValues(data);
@@ -69,7 +84,6 @@ function Step2(props) {
                         <Slider
                             onChange={(_, value) => {
                                 setQuestionCount(value);
-                                setValue("questionCount", value);
                             }}
                             defaultValue={10}
                             min={1}
@@ -84,7 +98,6 @@ function Step2(props) {
                         <Slider
                             onChange={(_, value) => {
                                 setQuestionTimeout(value);
-                                setValue("questionTimeout", value);
                             }}
                             defaultValue={30}
                             min={0}
@@ -97,7 +110,7 @@ function Step2(props) {
                             Categories
                         </FormLabel>
                         <Controller
-                            defaultValue={categories[0]?.id}
+                            defaultValue={data.category ? data.category : categories[0]?.id}
                             render={({ field }) => (
                                 <Select {...field}>
                                     {categories.map((category) => {
@@ -116,7 +129,7 @@ function Step2(props) {
                             Difficulty
                         </FormLabel>
                         <Controller
-                            defaultValue={difficulties[0]}
+                            defaultValue={data.difficulty ? data.difficulty : difficulties[0]}
                             render={({ field }) => (
                                 <Select {...field}>
                                     {difficulties.map((difficulty) => {
