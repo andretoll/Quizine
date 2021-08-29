@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useData } from '../services/CreateFormDataContext';
-import { 
+import StepperNavigationActions from './StepperNavigationActions';
+import {
     makeStyles,
     FormControl,
-    Button,
     Select,
     MenuItem,
     FormLabel,
@@ -42,6 +42,8 @@ function Step3(props) {
     const { register, handleSubmit, setValue, control, formState: { isValid } } = useForm({ mode: 'onChange' });
 
     const [description, setDescription] = useState(rules[0].description);
+
+    const previousStep = props.onPreviousStep;
 
     // Register custom fields
     useEffect(() => {
@@ -86,11 +88,7 @@ function Step3(props) {
                     </div>
                 </div>
             </Fade>
-            <div>
-                <Button variant="contained" color="primary" type="submit" size="large" disabled={!isValid}>
-                    Finish
-                </Button>
-            </div>
+            <StepperNavigationActions onPreviousStep={previousStep} nextActionDisabled={!isValid} nextActionText="Finish" />
         </form>
     )
 }

@@ -26,6 +26,10 @@ function CreateForm(props) {
 
     const [activeStep, setActiveStep] = useState(0);
 
+    function handlePreviousStep() {
+        setActiveStep(prevStep => prevStep - 1);
+    }
+
     function handleNextStep() {
         setActiveStep(prevStep => prevStep + 1);
     }
@@ -40,9 +44,9 @@ function CreateForm(props) {
             case 0:
                 return <Step1 onNextStep={handleNextStep} />
             case 1:
-                return <Step2 onNextStep={handleNextStep} categories={categories} difficulties={difficulties} />
+                return <Step2 onNextStep={handleNextStep} onPreviousStep={handlePreviousStep} categories={categories} difficulties={difficulties} />
             case 2:
-                return <Step3 onNextStep={handleSubmit} rules={rules} />
+                return <Step3 onNextStep={handleSubmit} onPreviousStep={handlePreviousStep} rules={rules} />
             default:
                 break;
         }

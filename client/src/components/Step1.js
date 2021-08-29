@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useData } from '../services/CreateFormDataContext';
 import { useForm } from 'react-hook-form';
-import { 
+import StepperNavigationActions from './StepperNavigationActions';
+import {
     makeStyles,
     FormControl,
-    Button,
     TextField,
     Slider,
     FormLabel,
@@ -57,7 +57,7 @@ function Step1(props) {
     return (
         <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
             <Fade in>
-                <div style={{width: '100%'}}>
+                <div style={{ width: '100%' }}>
                     <FormControl fullWidth className={classes.formControl}>
                         <TextField autoComplete="off" size="small" color="primary" label="Username" {...register("hostname", { required: true, maxLength: 15, validate: isOnlyWhitespace })} />
                         {errors.hostname && errors.hostname.type === "required" && <p>Username is required.</p>}
@@ -87,11 +87,7 @@ function Step1(props) {
                     </FormControl>
                 </div>
             </Fade>
-            <div>
-                <Button variant="contained" color="primary" type="submit" size="large" disabled={!isValid}>
-                    Next
-                </Button>
-            </div>
+            <StepperNavigationActions nextActionDisabled={!isValid} nextActionText="Next" />
         </form>
     )
 }

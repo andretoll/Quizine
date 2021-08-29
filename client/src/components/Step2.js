@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useData } from '../services/CreateFormDataContext';
-import { 
+import StepperNavigationActions from './StepperNavigationActions';
+import {
     makeStyles,
     FormControl,
-    Button,
     Select,
     MenuItem,
     Slider,
@@ -45,6 +45,8 @@ function Step2(props) {
     const [questionCount, setQuestionCount] = useState(10);
     const [questionTimeout, setQuestionTimeout] = useState(30);
 
+    const previousStep = props.onPreviousStep;
+    
     // Register custom fields
     useEffect(() => {
         register("questionCount", { required: true, value: 10 });
@@ -59,7 +61,7 @@ function Step2(props) {
     return (
         <form onSubmit={handleSubmit(onSubmit)} className={classes.form}>
             <Fade in>
-                <div style={{width: '100%'}}>
+                <div style={{ width: '100%' }}>
                     <FormControl fullWidth className={classes.formControl}>
                         <FormLabel>
                             Questions: {questionCount}
@@ -130,11 +132,7 @@ function Step2(props) {
                     </FormControl>
                 </div>
             </Fade>
-            <div>
-                <Button variant="contained" color="primary" type="submit" size="large" disabled={!isValid}>
-                    Next
-                </Button>
-            </div>
+            <StepperNavigationActions onPreviousStep={previousStep} nextActionDisabled={!isValid} nextActionText="Next" />
         </form>
     )
 }
