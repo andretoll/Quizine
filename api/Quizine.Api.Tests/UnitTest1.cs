@@ -8,7 +8,8 @@ namespace Quizine.Api.Tests
         [Test]
         public void Test()
         {
-            Assert.That(true);
+            string s = "test";
+            Assert.IsTrue(string.IsNullOrEmpty(s));
         }
     }
 }
