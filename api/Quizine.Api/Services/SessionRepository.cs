@@ -12,7 +12,6 @@ namespace Quizine.Api.Services
 
         private readonly List<QuizSession> _quizSessions;
 
-
         #endregion
 
         #region Constructor

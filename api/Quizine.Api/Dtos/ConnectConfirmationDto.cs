@@ -22,7 +22,7 @@ namespace Quizine.Api.Dtos
         #region Public Static Methods
 
         /// <summary>
-        /// Create empty instance with only an error message.
+        /// Creates empty instance with only an error message.
         /// </summary>
         /// <param name="errorMessage"></param>
         /// <returns></returns>
@@ -32,7 +32,7 @@ namespace Quizine.Api.Dtos
         }
 
         /// <summary>
-        /// Create instance based on <see cref="IQuizSession"/> object.
+        /// Creates instance based on an <see cref="IQuizSession"/> object.
         /// </summary>
         /// <param name="session"></param>
         /// <returns></returns>

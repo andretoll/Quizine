@@ -18,8 +18,14 @@ namespace Quizine.Api.Controllers
     [ApiKey]
     public class QuizController : ControllerBase
     {
+        #region Private Members
+
         private readonly ISessionRepository _sessionRepository;
         private readonly ITriviaRespository _triviaRepository;
+
+        #endregion
+
+        #region Constructor
 
         public QuizController(ISessionRepository sessionRepository, ITriviaRespository triviaRespository)
         {
@@ -27,8 +33,12 @@ namespace Quizine.Api.Controllers
             _triviaRepository = triviaRespository;
         }
 
+        #endregion
+
+        #region Endpoints
+
         [HttpPost("create")]
-        public async Task<ActionResult> Post([FromBody]SessionParameters parameters)
+        public async Task<ActionResult> Post([FromBody] SessionParameters parameters)
         {
             string sessionId = UIDGenerator.Generate();
             parameters.SessionID = sessionId;
@@ -54,18 +64,16 @@ namespace Quizine.Api.Controllers
         [HttpGet("rules")]
         public ActionResult GetRules()
         {
-            List<RulesetDto> rulesets = new List<RulesetDto>();
+            List<RulesetDto> rulesets = new();
 
             foreach (var rule in Enum.GetValues<Rule>())
             {
-                rulesets.Add(new RulesetDto()
-                {
-                    Rule = rule,
-                    Description = Ruleset.Parse(rule).Description
-                });
+                rulesets.Add(new RulesetDto(rule, Ruleset.Parse(rule).Description));
             }
 
             return Ok(rulesets);
-        }
+        } 
+
+        #endregion
     }
 }

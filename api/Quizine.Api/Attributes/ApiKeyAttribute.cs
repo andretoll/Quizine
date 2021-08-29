@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Quizine.Api.Attributes
 {
+    /// <summary>
+    /// Classes with this attribute require an API key for authentication.
+    /// </summary>
     [AttributeUsage(validOn: AttributeTargets.Class)]
     public class ApiKeyAttribute : Attribute, IAsyncActionFilter
     {

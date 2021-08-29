@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 using Quizine.Api.Hubs;
 using Quizine.Api.Interfaces;
 using Quizine.Api.Services;
@@ -28,10 +27,6 @@ namespace Quizine.Api
             {
                 opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
-            //services.AddSwaggerGen(c =>
-            //{
-            //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Quizine.Api", Version = "v1" });
-            //});
             services.AddCors();
             services.AddSignalR();
             services.AddSingleton<ISessionRepository, SessionRepository>();
@@ -45,8 +40,6 @@ namespace Quizine.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseSwagger();
-                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quizine.Api v1"));
             }
             app.UseRouting();
 

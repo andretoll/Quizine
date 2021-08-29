@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace Quizine.Api.Interfaces
 {
     /// <summary>
-    /// Contains functions to return to clients.
+    /// Contains functions to return events and data to clients.
     /// </summary>
     public interface IQuizHub
     {

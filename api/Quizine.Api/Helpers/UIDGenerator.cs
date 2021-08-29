@@ -4,7 +4,7 @@ using shortid.Configuration;
 namespace Quizine.Api.Helpers
 {
     /// <summary>
-    /// Static helper class for generating UIDs.
+    /// A static helper class for generating UIDs.
     /// </summary>
     public static class UIDGenerator
     {

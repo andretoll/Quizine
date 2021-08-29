@@ -1,7 +1,6 @@
 ﻿using Quizine.Api.Models;
 using Quizine.Api.Models.Base;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Quizine.Api.Interfaces
 {

@@ -1,5 +1,4 @@
 ﻿using Quizine.Api.Enums;
-using System.Text.Json.Serialization;
 
 namespace Quizine.Api.Models
 {

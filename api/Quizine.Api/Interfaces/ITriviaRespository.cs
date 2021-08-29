@@ -6,7 +6,11 @@ namespace Quizine.Api.Interfaces
 {
     public interface ITriviaRespository
     {
+        #region Methods
+
         Task<string> GetCategoriesJsonString();
-        Task<IEnumerable<QuizItem>> GetTrivia(int questionCount, int category, string difficulty);
+        Task<IEnumerable<QuizItem>> GetTrivia(int questionCount, int category, string difficulty); 
+
+        #endregion
     }
 }

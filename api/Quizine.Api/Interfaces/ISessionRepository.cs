@@ -1,14 +1,13 @@
 ﻿using Quizine.Api.Enums;
 using Quizine.Api.Models;
 using Quizine.Api.Services;
-using System;
 using System.Collections.Generic;
 
 namespace Quizine.Api.Interfaces
 {
     public interface ISessionRepository
     {
-        #region Public Methods
+        #region Methods
 
         void AddUser(string sessionId, string connectionId, string username);
         bool UserExists(string sessionId, string username);

@@ -9,7 +9,7 @@ namespace Quizine.Api.Dtos
         #region Public Properties
 
         public bool SessionCompleted { get; }
-        public List<ScoreDto> Scores { get; set; }
+        public List<ScoreDto> Scores { get; }
 
         #endregion
 
