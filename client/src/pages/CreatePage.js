@@ -146,32 +146,33 @@ function CreatePage() {
     // Handle form submission
     async function handleOnSubmit(data) {
 
-        try {
-            setErrorMessage(null);
-            setContent(contentStates.IN_PROGRESS);
+        setErrorMessage(null);
+        setContent(contentStates.IN_PROGRESS);
 
-            // Create session and accept sessionID
-            await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/create`, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
-                }
-            }).then(response => {
+        // Create session and accept sessionID
+        await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/create`, {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json',
+                'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
+            }
+        }).then(response => {
+            if (response.status === 200) {
                 response.json().then(result => {
 
                     setSessionId(result);
                     setHostname(data.hostname);
                     setContent(contentStates.SUCCESS);
                 });
+            } else {
+                setErrorMessage(`Error ${response.status}: Server rejected request.`);
+                setContent(contentStates.FORM);
             }
-            )
-        }
-        catch (e) {
+        }).catch(error => {
+            setErrorMessage("Could not connect to the server. Please try again later.");
             setContent(contentStates.FORM);
-            setErrorMessage("Failed to create quiz. Could not connect to the server. Please try again later.");
-        }
+        });
     }
 
     // Controls the content to be displayed

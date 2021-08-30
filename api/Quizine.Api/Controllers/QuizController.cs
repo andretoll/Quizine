@@ -40,6 +40,9 @@ namespace Quizine.Api.Controllers
         [HttpPost("create")]
         public async Task<ActionResult> Post([FromBody] SessionParameters parameters)
         {
+            if (!ModelState.IsValid)
+                return BadRequest("Modelstate invalid.");
+
             string sessionId = UIDGenerator.Generate();
             parameters.SessionID = sessionId;
 

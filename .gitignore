@@ -2,3 +2,6 @@ api/.vs/Quizine/DesignTimeBuild/.dtbcache.v2
 api/.vs/Quizine/v16/TestStore/0/000.testlog
 api/.vs/Quizine/v16/TestStore/0/testlog.manifest
 client/.env.development
+/.vs/ProjectSettings.json
+/.vs/slnx.sqlite
+/.vs/VSWorkspaceState.json
