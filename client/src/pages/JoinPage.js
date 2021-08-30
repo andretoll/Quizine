@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useTitle } from '../hooks/useTitle';
 import GoHome from '../components/GoHome';
 import {
@@ -51,31 +51,28 @@ function JoinPage() {
 
     const classes = useStyles();
     const history = useHistory();
-
-    const [sessionId, setSessionId] = useState("");
-
-    const { register, handleSubmit, setValue, formState: { errors } } = useForm({ mode: 'onChange' });
-
     const hash = history.location.hash.replace('#', '');
+
+    const { register, handleSubmit, control, formState: { errors, isValid } } = useForm({ mode: 'onChange', defaultValues: {
+        "sessionId": hash,
+        "username": '',
+    } });
+
 
     useTitle("Join quiz");
     useEffect(() => {
+        register("sessionId", { required: true });
+        register("username", { required: true, maxLength: 15, validate: isOnlyWhitespace });
+    }, [register])
 
-        // If user was directed with a link, store sessionID
-        if (hash) {
-            setSessionId(hash);
-            setValue("sessionId", hash);
-        }
-
-    }, [hash, setValue]);
+    function isOnlyWhitespace(value) {
+        return !!value.trim();
+    }
 
     // Handle form submission
     function onHandleSubmit(data) {
 
-        // Get sessionID from URL or form
-        const validSessionId = sessionId ? sessionId : data.sessionId;
-
-        history.push(`/quiz/${validSessionId}`, { sessionId: validSessionId, username: data.username });
+        history.push(`/quiz/${data.sessionId}`, { sessionId: data.sessionId, username: data.username });
     }
 
     return (
@@ -88,17 +85,29 @@ function JoinPage() {
                         <form onSubmit={handleSubmit(onHandleSubmit)} className={classes.form}>
 
                             <FormControl margin="dense" fullWidth>
-                                <TextField label="Session ID" value={sessionId} autoFocus disabled={sessionId?.length > 0} {...register("sessionId", { required: true })} />
-                                {errors.sessionId && <p>Session ID is required.</p>}
+                                <Controller
+                                    control={control}
+                                    name="sessionId"
+                                    render={({ field: { onChange, value } }) => (
+                                        <TextField autoComplete="off" label="Session ID" autoFocus disabled={hash?.length > 0} onChange={onChange} value={value} />
+                                    )} />
+                                {errors.sessionId && errors.sessionId.type === "required" && <p>Session ID is required.</p>}
                             </FormControl>
 
                             <FormControl margin="dense" fullWidth>
-                                <TextField label="Username" autoFocus={hash.length > 0} {...register("username", { required: true })} />
-                                {errors.username && <p>Username is required.</p>}
+                                <Controller
+                                    control={control}
+                                    name="username"
+                                    render={({ field: { onChange, value } }) => (
+                                        <TextField autoComplete="off" label="Username" autoFocus={hash.length > 0} onChange={onChange} value={value} />
+                                    )} />
+                                {errors.username && errors.username.type === "required" && <p>Session ID is required.</p>}
+                                {errors.username && errors.username.type === "maxLength" && <p>Username must consist of less than 15 characters.</p>}
+                                {errors.username && errors.username.type === "validate" && <p>Invalid username.</p>}
                             </FormControl>
 
                             <div style={{ textAlign: 'center', marginTop: '30px ' }}>
-                                <Button variant="contained" color="primary" type="submit" size="large">
+                                <Button variant="contained" color="primary" type="submit" size="large" disabled={!isValid}>
                                     Join
                                 </Button>
                             </div>
