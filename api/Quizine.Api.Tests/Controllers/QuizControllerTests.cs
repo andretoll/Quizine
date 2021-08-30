@@ -72,7 +72,7 @@ namespace Quizine.Api.Tests.Controllers
             // Assert
             Assert.That(result, Is.TypeOf<OkObjectResult>());
             Assert.That((result as OkObjectResult).Value, Is.TypeOf<string>());
-            Assert.That((result as OkObjectResult).Value as string, Is.Not.Empty);
+            Assert.That((result as OkObjectResult).Value as string, Is.Empty);
             Assert.That(_sessionRepository.SessionExists(((result as OkObjectResult).Value as string).Trim('"')));
         }
 
