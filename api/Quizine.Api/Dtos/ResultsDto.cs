@@ -8,17 +8,14 @@ namespace Quizine.Api.Dtos
     {
         #region Public Properties
 
-        public bool SessionCompleted { get; }
         public List<ScoreDto> Scores { get; }
 
         #endregion
 
         #region Constructor
 
-        public ResultsDto(IEnumerable<QuizProgress> results, bool sessionCompleted)
+        public ResultsDto(IEnumerable<QuizProgress> results)
         {
-            SessionCompleted = sessionCompleted;
-
             Scores = new List<ScoreDto>();
 
             results = results.OrderBy(x => x.FinishedTime);

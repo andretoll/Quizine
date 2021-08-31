@@ -3,6 +3,7 @@ import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
 import { MuiThemeProvider, createTheme, withStyles, responsiveFontSizes, CssBaseline } from '@material-ui/core';
 import { ConfirmProvider } from 'material-ui-confirm';
 import { ConnectionProvider } from './contexts/HubConnectionContext';
+import { SnackbarProvider } from './contexts/SnackbarContext';
 import NotFoundPage from './pages/error/NotFoundPage';
 import HomePage from './pages/HomePage';
 import CreatePage from './pages/CreatePage';
@@ -117,25 +118,27 @@ function App() {
       <GlobalCss />
       <CssBaseline />
       <ConfirmProvider>
-        <Router>
-          <Switch>
-            <Route exact path="/">
-              <HomePage />
-            </Route>
-            <Route exact path="/create">
-              <CreatePage />
-            </Route>
-            <Route path="/join">
-              <JoinPage />
-            </Route>
-            <Route path="/quiz">
-              <ConnectionProvider>
-                <QuizPage />
-              </ConnectionProvider>
-            </Route>
-            <Route path="*" component={NotFoundPage} />
-          </Switch>
-        </Router>
+        <SnackbarProvider>
+          <Router>
+            <Switch>
+              <Route exact path="/">
+                <HomePage />
+              </Route>
+              <Route exact path="/create">
+                <CreatePage />
+              </Route>
+              <Route path="/join">
+                <JoinPage />
+              </Route>
+              <Route path="/quiz">
+                <ConnectionProvider>
+                  <QuizPage />
+                </ConnectionProvider>
+              </Route>
+              <Route path="*" component={NotFoundPage} />
+            </Switch>
+          </Router>
+        </SnackbarProvider>
       </ConfirmProvider>
     </MuiThemeProvider>
   );

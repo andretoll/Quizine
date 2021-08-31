@@ -17,13 +17,14 @@ namespace Quizine.Api.Interfaces
         bool SessionExists(string sessionId);
         bool SessionFull(string sessionId);
         bool SessionStarted(string sessionId);
+        bool SessionCompleted(string sessionId);
         QuizSession GetSessionBySessionId(string sessionId);
         QuizSession GetSessionByConnectionId(string connectionId);
         Rule GetSessionRule(string sessionId);
 
         QuizItem GetNextQuestion(string sessionId, string connectionId, out bool lastQuestion);
         string SubmitAnswer(string sessionId, string connectionId, string questionId, string answerId);
-        IEnumerable<QuizProgress> GetResults(string sessionId, out bool sessionCompleted);
+        IEnumerable<QuizProgress> GetResults(string sessionId);
 
         #endregion
     }

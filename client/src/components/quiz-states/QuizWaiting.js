@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useConfirm } from 'material-ui-confirm';
 import { Start } from '../../services/QuizService';
 import { sendNotification } from '../../services/NotificationService';
-import { HubConnectionContext } from '../../contexts/HubConnectionContext';
+import { useConnection } from '../../contexts/HubConnectionContext';
 import ShareQuiz from '../ShareQuiz';
 import PlayerList from '../PlayerList';
 import ShareIcon from '@material-ui/icons/Share';
@@ -26,7 +26,7 @@ function QuizWaiting(props) {
     const expectedPlayers = props.expectedPlayers;
     const players = props.players;
 
-    const { connection } = useContext(HubConnectionContext);
+    const { connection } = useConnection();
     const confirm = useConfirm();
 
     const [shareDialogOpen, setShareDialogOpen] = useState(false);

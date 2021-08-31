@@ -57,6 +57,12 @@ namespace Quizine.Api.Services
             return quizSession.IsStarted;
         }
 
+        public bool SessionCompleted(string sessionId)
+        {
+            var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
+            return quizSession.IsCompleted;
+        }
+
         public void AddUser(string sessionId, string connectionId, string username)
         {
             var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
@@ -89,11 +95,11 @@ namespace Quizine.Api.Services
             return quizSession.SubmitAnswer(connectionId, questionId, answerId);
         }
 
-        public IEnumerable<QuizProgress> GetResults(string sessionId, out bool sessionCompleted)
+        public IEnumerable<QuizProgress> GetResults(string sessionId)
         {
             var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
             var rule = quizSession.SessionParameters.Rule;
-            var results = quizSession.GetResults(out sessionCompleted);
+            var results = quizSession.GetResults();
             return results;
         }
 

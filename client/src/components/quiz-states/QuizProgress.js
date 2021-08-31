@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState, Fragment } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
-import { HubConnectionContext } from '../../contexts/HubConnectionContext';
+import { useConnection } from '../../contexts/HubConnectionContext';
 import { NextQuestion, SubmitAnswer } from '../../services/QuizService';
 import QuizForm from '../QuizForm';
 import StarIcon from '@material-ui/icons/Star';
@@ -89,7 +89,7 @@ function QuizProgress(props) {
 
     const classes = useStyles();
 
-    const { connection } = useContext(HubConnectionContext);
+    const { connection } = useConnection();
 
     const [correctAnswer, setCorrectAnswer] = useState(null);
     const [quizContent, setQuizContent] = useState(null);

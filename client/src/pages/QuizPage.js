@@ -1,8 +1,9 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useLocation } from "react-router-dom";
-import { NextQuestion, GetResults } from '../services/QuizService';
-import { HubConnectionContext } from '../contexts/HubConnectionContext';
+import { NextQuestion, GetResults, Disconnect } from '../services/QuizService';
+import { useConnection } from '../contexts/HubConnectionContext';
+import { useSnackbar } from '../contexts/SnackbarContext';
 import useTitle from '../hooks/useTitle';
 import QuizConnecting from '../components/quiz-states/QuizConnecting';
 import QuizWaiting from '../components/quiz-states/QuizWaiting';
@@ -39,7 +40,8 @@ function QuizPage() {
 
     const classes = useStyles();
 
-    const { connection } = useContext(HubConnectionContext);
+    const { connection } = useConnection();
+    const { notifySuccess, notifyError } = useSnackbar();
 
     // Quiz state
     const [sessionId, setSessionId] = useState();
@@ -87,6 +89,29 @@ function QuizPage() {
 
     useEffect(() => {
 
+        if (connection) {
+            window.addEventListener("beforeunload", handleBeforeUnload);
+        }
+
+        function handleBeforeUnload(e) {
+
+            var confirmationMessage = 'Leaving this page will remove you from the ongoing quiz session.';
+
+            (e || window.event).returnValue = confirmationMessage;
+            return confirmationMessage;
+        }
+
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+            if (connection && connection.connectionState === "Connected") {
+                Disconnect(connection);
+            }
+        }
+
+    }, [connection]);
+
+    useEffect(() => {
+
         // Redirect to /join if state is undefined
         if (!location.state) {
             history.push("/join");
@@ -115,16 +140,16 @@ function QuizPage() {
 
                     setMaxScore(response.maxScore);
                     setPlayers(response.users);
-
-                    //TODO: Display message in snackbar
                 } else {
                     reportError(response.errorMessage);
                 }
             });
+            connection.on('UserConnected', (response) => {
+                notifySuccess(`${response.username} joined!`);
+            });
             connection.on('ConfirmDisconnect', (response) => {
                 setPlayers(response.users);
-
-                //TODO: Display message in snackbar
+                notifyError(`${response.username} disconnected.`);
             });
             connection.on('ConfirmStart', (_) => {
                 setContent(contentStates.IN_PROGRESS);
@@ -132,7 +157,7 @@ function QuizPage() {
             });
         }
 
-    }, [connection, sessionId]);
+    }, [connection, sessionId, notifyError, notifySuccess]);
 
     // Report error
     function reportError(message) {
@@ -195,7 +220,7 @@ function QuizPage() {
                     <QuizResults
                         maxScore={maxScore}
                         username={username}
-                        expectedPlayers={expectedPlayers}
+                        expectedPlayers={players.length}
                     />
                 )
             default:

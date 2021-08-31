@@ -25,6 +25,7 @@ namespace Quizine.Api.Services
         public SessionParameters SessionParameters { get; }
         public Ruleset Ruleset => _ruleset;
         public bool IsStarted => _isStarted;
+        public bool IsCompleted => _progressList.All(x => x.HasCompleted);
         public int QuestionCount => _questions.Count;
         public int MaxScore => _maxScore;
 
@@ -55,6 +56,11 @@ namespace Quizine.Api.Services
         public IEnumerable<User> GetUsers()
         {
             return _members;
+        }
+
+        public User GetUser(string connectionId)
+        {
+            return _members.FirstOrDefault(x => x.ConnectionID == connectionId);
         }
 
         public void RemoveUser(string connectionId)
@@ -90,9 +96,8 @@ namespace Quizine.Api.Services
             return _questions.First(x => x.ID == questionId).CorrectAnswer.ID;
         }
 
-        public IEnumerable<QuizProgress> GetResults(out bool sessionCompleted)
+        public IEnumerable<QuizProgress> GetResults()
         {
-            sessionCompleted = _progressList.All(x => x.HasCompleted);
             var progressList = _progressList.Where(x => x.HasCompleted);
 
             foreach (var progress in progressList)

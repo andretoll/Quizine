@@ -31,9 +31,16 @@ namespace Quizine.Api.Hubs
 
             if (session != null)
             {
+                string username = session.GetUser(Context.ConnectionId).Username;
                 session.RemoveUser(Context.ConnectionId);
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, session.SessionParameters.SessionID);
-                await Clients.Group(session.SessionParameters.SessionID).ConfirmDisconnect(new DisconnectConfirmationDto(session.GetUsers()));
+                await Clients.Group(session.SessionParameters.SessionID).ConfirmDisconnect(new DisconnectConfirmationDto(session.GetUsers(), username));
+
+                // Notify users if quiz is completed after disconnect
+                if (session.IsCompleted)
+                {
+                    await Clients.Group(session.SessionParameters.SessionID).QuizCompleted();
+                }
             }
 
             await base.OnDisconnectedAsync(exception);
@@ -45,8 +52,6 @@ namespace Quizine.Api.Hubs
 
         private async Task AddConnection(string sessionId, string connectionId, string username)
         {
-            
-
             _sessionRepository.AddUser(sessionId, connectionId, username);
             await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
         }
@@ -80,6 +85,7 @@ namespace Quizine.Api.Hubs
 
             await AddConnection(sessionId, Context.ConnectionId, username);
             await Clients.Group(sessionId).ConfirmConnect(ConnectConfirmationDto.CreateSuccessResponse(_sessionRepository.GetSessionBySessionId(sessionId)));
+            await Clients.OthersInGroup(sessionId).UserConnected(new UserConnectedDto(username));
         }
 
         public async Task Disconnect()
@@ -90,7 +96,7 @@ namespace Quizine.Api.Hubs
         public async Task Start(string sessionId)
         {
             _sessionRepository.StartSession(sessionId);
-            await Clients.Group(sessionId).ConfirmStart(true);
+            await Clients.Group(sessionId).ConfirmStart();
         }
 
         public async Task SubmitAnswer(string sessionId, string questionId, string answerId)
@@ -107,8 +113,15 @@ namespace Quizine.Api.Hubs
 
         public async Task GetResults(string sessionId)
         {
-            var results = _sessionRepository.GetResults(sessionId, out bool sessionCompleted);
-            await Clients.Group(sessionId).Results(new ResultsDto(results, sessionCompleted));
+            var results = _sessionRepository.GetResults(sessionId);
+            
+            await Clients.Group(sessionId).Results(new ResultsDto(results));
+
+            // Notify users if quiz is completed
+            if (_sessionRepository.SessionCompleted(sessionId))
+            {
+                await Clients.Group(sessionId).QuizCompleted();
+            }
         }
 
         #endregion

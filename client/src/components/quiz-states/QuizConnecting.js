@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HubConnectionBuilder, LogLevel, HttpTransportType } from '@microsoft/signalr';
-import { HubConnectionContext } from '../../contexts/HubConnectionContext';
+import { useConnection } from '../../contexts/HubConnectionContext';
 import { Connect } from '../../services/QuizService';
 import {
     Container,
@@ -16,7 +16,7 @@ function QuizConnecting(props) {
 
     const [errorMessage, setErrorMessage] = useState();
 
-    const { connection, setConnection } = useContext(HubConnectionContext);
+    const { connection, setConnection } = useConnection();
 
     useEffect(() => {
 
@@ -26,7 +26,7 @@ function QuizConnecting(props) {
                 transport: HttpTransportType.WebSockets
             })
             .withAutomaticReconnect()
-            .configureLogging(LogLevel.Information)
+            .configureLogging(LogLevel.Critical)
             .build();
 
         setConnection(newConnection);

@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { HubConnectionContext } from '../../contexts/HubConnectionContext';
+import { useConnection } from '../../contexts/HubConnectionContext';
 import { sendNotification } from '../../services/NotificationService';
 import TrophyIcon from '@material-ui/icons/EmojiEvents';
 import { 
@@ -135,7 +135,7 @@ function QuizResults(props) {
 
     const classes = useStyles();
 
-    const { connection } = useContext(HubConnectionContext);
+    const { connection } = useConnection();
 
     const [quizCompleted, setQuizCompleted] = useState(false);
     const [finalScore, setFinalScore] = useState([]);
@@ -148,6 +148,9 @@ function QuizResults(props) {
             connection.on('Results', (response) => {
                 setQuizCompleted(response.sessionCompleted);
                 setFinalScore(response.scores);
+            });
+            connection.on('QuizCompleted', () => {
+                setQuizCompleted(true);
             });
         }
     }, [connection]);
