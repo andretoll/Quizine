@@ -5,3 +5,4 @@ client/.env.development
 /.vs/ProjectSettings.json
 /.vs/slnx.sqlite
 /.vs/VSWorkspaceState.json
+*.testlog

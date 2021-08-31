@@ -52,7 +52,9 @@ namespace Quizine.Api.Hubs
 
         private async Task AddConnection(string sessionId, string connectionId, string username)
         {
-            _sessionRepository.AddUser(sessionId, connectionId, username);
+            var session = _sessionRepository.GetSessionBySessionId(sessionId);
+
+            session.AddUser(connectionId, username);
             await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
         }
 
@@ -77,11 +79,6 @@ namespace Quizine.Api.Hubs
                 await Clients.Caller.ConfirmConnect(ConnectConfirmationDto.CreateErrorResponse("Session already started."));
                 return;
             }
-            else if (_sessionRepository.UserExists(sessionId, username))
-            {
-                await Clients.Caller.ConfirmConnect(ConnectConfirmationDto.CreateErrorResponse("A player with this username already joined."));
-                return;
-            }
 
             await AddConnection(sessionId, Context.ConnectionId, username);
             await Clients.Group(sessionId).ConfirmConnect(ConnectConfirmationDto.CreateSuccessResponse(_sessionRepository.GetSessionBySessionId(sessionId)));
@@ -101,19 +98,25 @@ namespace Quizine.Api.Hubs
 
         public async Task SubmitAnswer(string sessionId, string questionId, string answerId)
         {
-            string correctAnswerId = _sessionRepository.SubmitAnswer(sessionId, Context.ConnectionId, questionId, answerId);
+            var session = _sessionRepository.GetSessionBySessionId(sessionId);
+            
+            string correctAnswerId = session.SubmitAnswer(Context.ConnectionId, questionId, answerId);
             await Clients.Caller.ValidateAnswer(correctAnswerId);
         }
 
         public async Task NextQuestion(string sessionId)
         {
-            var nextQuestion = _sessionRepository.GetNextQuestion(sessionId, Context.ConnectionId, out bool lastQuestion);
+            var session = _sessionRepository.GetSessionBySessionId(sessionId);
+
+            var nextQuestion = session.GetNextQuestion(Context.ConnectionId, out bool lastQuestion);
             await Clients.Caller.NextQuestion(new NextQuestionDto(nextQuestion, lastQuestion));
         }
 
         public async Task GetResults(string sessionId)
         {
-            var results = _sessionRepository.GetResults(sessionId);
+            var session = _sessionRepository.GetSessionBySessionId(sessionId);
+
+            var results = session.GetResults();
             
             await Clients.Group(sessionId).Results(new ResultsDto(results));
 
