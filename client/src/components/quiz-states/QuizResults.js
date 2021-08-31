@@ -1,21 +1,25 @@
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import { HubConnectionContext } from '../../contexts/HubConnectionContext';
+import { sendNotification } from '../../services/NotificationService';
 import TrophyIcon from '@material-ui/icons/EmojiEvents';
-import Container from '@material-ui/core/Container';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { 
+    makeStyles,
+    Grid,
+    Paper,
+    Tabs,
+    Tab,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography,
+    Button,
+    Container,
+    CircularProgress
+} from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
 
@@ -123,17 +127,44 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-function Results(props) {
+function QuizResults(props) {
 
-    const quizCompleted = props.quizCompleted;
-    const finalScore = props.finalScore;
     const username = props.username;
     const maxScore = props.maxScore;
     const expectedPlayers = props.expectedPlayers;
 
     const classes = useStyles();
 
+    const { connection } = useContext(HubConnectionContext);
+
+    const [quizCompleted, setQuizCompleted] = useState(false);
+    const [finalScore, setFinalScore] = useState([]);
+    
     const [tabValue, setTabValue] = useState(0);
+
+    useEffect(() => {
+
+        if (connection) {
+            connection.on('Results', (response) => {
+                setQuizCompleted(response.sessionCompleted);
+                setFinalScore(response.scores);
+            });
+        }
+    }, [connection]);
+
+    // When quiz has completed
+    useEffect(() => {
+
+        if (quizCompleted) {
+            sendNotification("Quizine", "All players have submitted their results!", () => {
+                window.focus();
+            });
+        }
+    }, [quizCompleted])
+
+    function handleTabChange(_, newValue) {
+        setTabValue(newValue);
+    }
 
     function getTrophyStyle(score) {
 
@@ -148,10 +179,6 @@ function Results(props) {
             default:
                 break;
         }
-    }
-
-    function handleTabChange(_, newValue) {
-        setTabValue(newValue);
     }
 
     return (
@@ -235,4 +262,4 @@ function Results(props) {
     )
 }
 
-export default Results;
+export default QuizResults;

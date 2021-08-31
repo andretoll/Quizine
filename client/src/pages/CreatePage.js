@@ -1,6 +1,6 @@
 import { useState, useEffect, Fragment } from 'react';
 import { Link } from 'react-router-dom';
-import { DataProvider } from '../services/CreateFormDataContext';
+import { DataProvider } from '../contexts/CreateFormDataContext';
 import useTitle from '../hooks/useTitle';
 import ShareQuiz from '../components/ShareQuiz';
 import CreateForm from '../components/CreateForm';
@@ -94,53 +94,42 @@ function CreatePage() {
     // Gets the available categories from the server
     async function fetchCategories() {
 
-        try {
-            await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/categories`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
-                }
-            }).then(response => {
-                response.json().then(result => {
+        await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/categories`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
+            }
+        }).then(response => {
+            response.json().then(result => {
 
-                    // Add 'any' category
-                    result.trivia_categories.unshift({ id: 0, name: 'Any' });
-                    setCategories(result.trivia_categories);
-                })
-            }).catch(error => {
-                console.log(error);
-                setErrorMessage("Failed to fetch categories. Refresh to try again.");
+                // Add 'any' category
+                result.trivia_categories.unshift({ id: 0, name: 'Any' });
+                setCategories(result.trivia_categories);
             })
-        } catch (error) {
-            console.log(error);
-            setErrorMessage("Failed to fetch categories. Refresh to try again.");
-        }
+        }).catch(error => {
+            console.error(error);
+            setErrorMessage("Failed to connect to the server. Refresh to try again.");
+        })
     }
 
     // Gets the available rules from the server
     async function fetchRules() {
 
-        try {
-
-            await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/rules`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
-                }
-            }).then(response => {
-                response.json().then(result => {
-                    setRules(result);
-                })
-            }).catch(error => {
-                console.log(error);
-                setErrorMessage("Failed to fetch rules. Refresh to try again.");
+        await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/rules`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
+            }
+        }).then(response => {
+            response.json().then(result => {
+                setRules(result);
             })
-        } catch (error) {
-            console.log(error);
-            setErrorMessage("Failed to fetch rules. Refresh to try again.");
-        }
+        }).catch(error => {
+            console.error(error);
+            setErrorMessage("Failed to connect to the server. Refresh to try again");
+        })
     }
 
     // Handle form submission
