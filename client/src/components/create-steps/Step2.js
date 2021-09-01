@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { useData } from '../services/CreateFormDataContext';
-import StepperNavigationActions from './StepperNavigationActions';
+import { useData } from '../../contexts/CreateFormDataContext';
+import StepperNavigationActions from '../StepperNavigationActions';
 import {
     makeStyles,
     FormControl,
@@ -41,31 +41,17 @@ function Step2(props) {
     const previousStep = props.onPreviousStep;
 
     const { setValues, data } = useData();
-    const { register, handleSubmit, setValue, control, formState: { isValid } } = useForm({
-        mode: 'onChange',
-        defaultValues: {
-            "questionCount": data.questionCount ? data.questionCount : '',
-            "questionTimeout": data.questionTimeout ? data.questionTimeout : '',
-        }
-    });
+    const { handleSubmit, setValue, control, formState: { isValid } } = useForm({mode: 'onChange'});
 
     const [questionCount, setQuestionCount] = useState(data.questionCount ? data.questionCount : 10);
     const [questionTimeout, setQuestionTimeout] = useState(data.questionTimeout ? data.questionTimeout : 30);
 
-    // Register custom fields
     useEffect(() => {
-        register("questionCount", { required: true, value: 10 });
-        register("questionTimeout", { required: true, value: 30 });
-    }, [register])
-
-    useEffect(() => {
-        if (questionCount)
-            setValue("questionCount", questionCount);
+        setValue("questionCount", questionCount);
     }, [questionCount, setValue]);
 
     useEffect(() => {
-        if (questionTimeout)
-            setValue("questionTimeout", questionTimeout);
+        setValue("questionTimeout", questionTimeout);
     }, [questionTimeout, setValue]);
 
     function onSubmit(data) {
@@ -81,29 +67,42 @@ function Step2(props) {
                         <FormLabel>
                             Questions: {questionCount}
                         </FormLabel>
-                        <Slider
-                            onChange={(_, value) => {
-                                setQuestionCount(value);
-                            }}
-                            defaultValue={10}
-                            min={1}
-                            max={50}
-                            step={1}
-                        />
+                        <Controller
+                            control={control}
+                            name="questionCount"
+                            render={() => (
+                                <Slider
+                                    value={questionCount}
+                                    onChange={(_, value) => {
+                                        setQuestionCount(value);
+                                    }}
+                                    min={1}
+                                    max={50}
+                                    step={1}
+                                />
+                            )} />
+
                     </FormControl>
                     <FormControl fullWidth className={classes.formControl}>
                         <FormLabel>
                             Timeout: {questionTimeout > 0 ? `${questionTimeout} seconds` : `Disabled`}
                         </FormLabel>
-                        <Slider
-                            onChange={(_, value) => {
-                                setQuestionTimeout(value);
-                            }}
-                            defaultValue={30}
-                            min={0}
-                            max={120}
-                            step={5}
-                        />
+                        <Controller
+                            control={control}
+                            name="questionTimeout"
+                            render={() => (
+                                <Slider
+
+                                    onChange={(_, value) => {
+                                        setQuestionTimeout(value);
+                                    }}
+                                    value={questionTimeout}
+                                    min={0}
+                                    max={120}
+                                    step={5}
+                                />
+                            )} />
+
                     </FormControl>
                     <FormControl fullWidth className={classes.formControl}>
                         <FormLabel>

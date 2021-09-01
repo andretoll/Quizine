@@ -9,8 +9,10 @@ namespace Quizine.Api.Interfaces
         #region Properties
 
         SessionParameters SessionParameters { get; }
+        IEnumerable<QuizProgress> MemberProgressList { get; }
         Ruleset Ruleset { get; }
         bool IsStarted { get; }
+        bool IsCompleted { get; }
         int QuestionCount { get;  }
         int MaxScore { get; }
 
@@ -18,13 +20,15 @@ namespace Quizine.Api.Interfaces
 
         #region Methods
 
-        void AddUser(User name);
+        void AddUser(string connectionId, string username);
         void RemoveUser(string connectionId);
         IEnumerable<User> GetUsers();
+        User GetUser(string connectionId);
+        bool UserExists(string connectionId);
 
         QuizItem GetNextQuestion(string connectionId, out bool lastQuestion);
         string SubmitAnswer(string connectionId, string questionId, string answerId);
-        IEnumerable<QuizProgress> GetResults(out bool sessionCompleted);
+        IEnumerable<QuizProgress> GetResults();
 
         void Start();
 

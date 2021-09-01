@@ -1,26 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useLocation } from "react-router-dom";
-import { HubConnectionBuilder, LogLevel, HttpTransportType } from '@microsoft/signalr';
-import { makeStyles } from '@material-ui/core';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import ShareIcon from '@material-ui/icons/Share';
-import ShareQuiz from '../components/ShareQuiz';
-import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
-import { useConfirm } from 'material-ui-confirm';
+import { NextQuestion, GetResults, Disconnect } from '../services/QuizService';
+import { useConnection } from '../contexts/HubConnectionContext';
+import { useSnackbar } from '../contexts/SnackbarContext';
 import useTitle from '../hooks/useTitle';
-import { Connect, Disconnect, Start, SubmitAnswer, NextQuestion, GetResults } from '../services/QuizService';
-import PlayerList from '../components/PlayerList';
-import Quiz from '../components/Quiz';
-import Results from '../components/Results';
-import Icon from '../assets/logo/logo.png';
+import QuizConnecting from '../components/quiz-states/QuizConnecting';
+import QuizWaiting from '../components/quiz-states/QuizWaiting';
+import QuizProgress from '../components/quiz-states/QuizProgress';
+import QuizResults from '../components/quiz-states/QuizResults';
+import {
+    makeStyles,
+    Typography,
+} from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
 
@@ -34,75 +26,89 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
         minHeight: '100vh',
     },
-
-    loadingAnimation: {
-
-        '&:after': {
-            overflow: 'hidden',
-            display: 'inline-block',
-            verticalAlign: 'bottom',
-            '-webkit-animation': '$ellipsis steps(14, end) 900ms infinite',
-            '-moz-animation': '$ellipsis steps(14, end) 900ms infinite',
-            '-o-animation': '$ellipsis steps(14, end) 900ms infinite',
-            animation: '$ellipsis steps(14, end) 900ms infinite',
-            content: '"\\2026"',
-            width: '0px'
-        }
-    },
-
-    "@keyframes ellipsis": {
-        "to": {
-            width: '1.25em',
-        }
-    },
-    "@-webkit-keyframes ellipsis": {
-        "to": {
-            width: '1.25e',
-        }
-    }
-}))
+}));
 
 const contentStates = Object.freeze({
+    ERROR: 0,
     CONNECTING: 1,
-    ERROR: 2,
-    WAITING: 3,
-    IN_PROGRESS: 4,
-    RESULTS: 5
+    WAITING: 2,
+    IN_PROGRESS: 3,
+    RESULTS: 4
 })
 
 function QuizPage() {
 
     const classes = useStyles();
 
-    // SignalR connection state
-    const [connection, setConnection] = useState(null);
+    const { connection } = useConnection();
+    const { notifySuccess, notifyError } = useSnackbar();
 
     // Quiz state
     const [sessionId, setSessionId] = useState();
-    const [quizTitle, setQuizTitle] = useState();
     const [username, setUsername] = useState();
+    const [quizTitle, setQuizTitle] = useState();
     const [expectedPlayers, setExpectedPlayers] = useState();
     const [players, setPlayers] = useState([]);
     const [questionTimeout, setQuestionTimeout] = useState();
     const [questionCount, setQuestionCount] = useState();
     const [maxScore, setMaxScore] = useState();
     const [enableSkip, setEnableSkip] = useState();
-    const [quizCompleted, setQuizCompleted] = useState(false);
-    const [finalScore, setFinalScore] = useState([]);
-
-    // Quiz current state
-    const [correctAnswer, setCorrectAnswer] = useState(null);
-    const [quizContent, setQuizContent] = useState(null);
 
     // UI state
     const [content, setContent] = useState(contentStates.CONNECTING);
-    const [shareDialogOpen, setShareDialogOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
 
-    useTitle(quizTitle);
     const history = useHistory();
     const location = useLocation();
-    const confirm = useConfirm();
+
+    useTitle(quizTitle);
+
+    useEffect(() => {
+
+        // Request permission to send notifications
+        Notification.requestPermission();
+
+        // Prevent browser sleeping
+        var lockResolver;
+        if (navigator && navigator.locks && navigator.locks.request) {
+            const promise = new Promise((res) => {
+                lockResolver = res;
+            });
+
+            navigator.locks.request('unique_lock_name', { mode: "shared" }, () => {
+                return promise;
+            });
+        }
+
+        // Allow browser sleeping on unmount
+        return () => {
+            lockResolver();
+        }
+
+    }, []);
+
+    useEffect(() => {
+
+        if (connection) {
+            window.addEventListener("beforeunload", handleBeforeUnload);
+        }
+
+        function handleBeforeUnload(e) {
+
+            var confirmationMessage = 'Leaving this page will remove you from the ongoing quiz session.';
+
+            (e || window.event).returnValue = confirmationMessage;
+            return confirmationMessage;
+        }
+
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+            if (connection && connection.connectionState === "Connected") {
+                Disconnect(connection);
+            }
+        }
+
+    }, [connection]);
 
     useEffect(() => {
 
@@ -121,124 +127,36 @@ function QuizPage() {
 
     useEffect(() => {
 
-        // Request permission to send notifications
-        Notification.requestPermission();
-
-        // Create new connection
-        const newConnection = new HubConnectionBuilder()
-            .withUrl(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}hubs/quiz`, {
-                skipNegotiation: true,
-                transport: HttpTransportType.WebSockets
-            })
-            .withAutomaticReconnect()
-            .configureLogging(LogLevel.Error)
-            .build();
-
-        setConnection(newConnection);
-    }, []);
-
-    useEffect(() => {
-
         if (connection) {
-            connection.start()
-                .then(_ => {
+            connection.on('ConfirmConnect', (response) => {
 
-                    // Connect to quiz
-                    Connect(connection, sessionId, username);
-
-                    // Subscribe to all events
-                    connection.on('ConfirmConnect', (response) => {
-
-                        if (response.connected) {
-                            setQuizTitle(response.quizTitle);
-                            setExpectedPlayers(response.expectedUsers);
-                            setPlayers(response.users);
-                            setQuestionTimeout(response.questionTimeout);
-                            setQuestionCount(response.questionCount);
-                            setMaxScore(response.maxScore);
-                            setEnableSkip(response.enableSkip);
-                            setContent(contentStates.WAITING);
-                        } else {
-                            reportError(response.errorMessage);
-                        }
-                    });
-                    connection.on('ConfirmDisconnect', (response) => {
-                        setPlayers(response.users);
-                    });
-                    connection.on('ConfirmStart', (_) => {
-                        NextQuestion(connection, sessionId);
-                        setContent(contentStates.IN_PROGRESS);
-                    });
-                    connection.on('NextQuestion', (response) => {
-                        setCorrectAnswer(null);
-                        setQuizContent(response);
-                    })
-                    connection.on('ValidateAnswer', (response) => {
-                        setCorrectAnswer(response);
-                    })
-                    connection.on('Results', (response) => {
-                        setQuizCompleted(response.sessionCompleted);
-                        setFinalScore(response.scores);
-                    })
-                    connection.onclose(function () {
-                        reportError("Lost server connection.");
-                    })
-                })
-                .catch(e => {
-                    console.log(e);
-                    reportError("Failed to connect to server.");
-                });
-
-            window.addEventListener("beforeunload", handleBeforeUnload);
-
-            function handleBeforeUnload(e) {
-
-                var confirmationMessage = 'Leaving this page will remove you from the ongoing quiz session.';
-
-                (e || window.event).returnValue = confirmationMessage;
-                return confirmationMessage;
-            }
-
-            return () => {
-                window.removeEventListener("beforeunload", handleBeforeUnload);
-                if (connection && connection.connectionState === "Connected") {
-                    Disconnect(connection);
+                if (response.connected) {
+                    setContent(contentStates.WAITING);
+                    setQuizTitle(response.quizTitle);
+                    setExpectedPlayers(response.expectedUsers);
+                    setQuestionTimeout(response.questionTimeout);
+                    setQuestionCount(response.questionCount);
+                    setEnableSkip(response.enableSkip);
+                    setMaxScore(response.maxScore);
+                    setPlayers(response.users);
+                } else {
+                    reportError(response.errorMessage);
                 }
-            }
-        }
-
-    }, [connection, sessionId, username]);
-
-    // When any new player joins
-    useEffect(() => {
-
-        if (expectedPlayers > 1 && players.length === expectedPlayers) {
-            sendNotification("All players are ready to go!", () => {
-                window.focus();
+            });
+            connection.on('UserConnected', (response) => {
+                notifySuccess(`${response.username} joined!`);
+            });
+            connection.on('ConfirmDisconnect', (response) => {
+                setPlayers(response.users);
+                notifyError(`${response.username} disconnected.`);
+            });
+            connection.on('ConfirmStart', (_) => {
+                setContent(contentStates.IN_PROGRESS);
+                NextQuestion(connection, sessionId);
             });
         }
-    }, [players, expectedPlayers])
 
-    // When quiz has completed
-    useEffect(() => {
-
-        if (quizCompleted) {
-            sendNotification("All players have submitted their results!", () => {
-                window.focus();
-            });
-        }
-    }, [quizCompleted])
-
-    // Send notifications
-    function sendNotification(message, onClick) {
-
-        // If document is not hidden (active), return without sending notification
-        if (!document.hidden)
-            return;
-
-        var notification = new Notification("Quizine", { body: message, image: Icon });
-        notification.onclick = onClick;
-    }
+    }, [connection, sessionId, notifyError, notifySuccess]);
 
     // Report error
     function reportError(message) {
@@ -247,87 +165,10 @@ function QuizPage() {
         setErrorMessage(message);
     }
 
-    // Open share dialog
-    function handleOnOpenShareDialog() {
-        setShareDialogOpen(true);
-    }
-
-    // Close share dialog
-    function handleOnCloseShareDialog() {
-        setShareDialogOpen(false);
-    }
-
-    // Start quiz
-    function handleOnStart() {
-
-        const allReady = expectedPlayers === players.length;
-
-        try {
-            if (!allReady) {
-                confirm({
-                    title: 'Confirm?',
-                    description: 'Not all players are ready. Start quiz anyway?',
-                    confirmationText: 'Yes',
-                    cancellationText: 'No',
-                    dialogProps: { PaperProps: { className: "secondary-background" } }
-                }).then(() => {
-                    Start(connection, sessionId);
-                }).catch(() => { });
-            } else {
-                Start(connection, sessionId);
-            }
-        } catch (error) {
-            reportError(error);
-        }
-    }
-
-    // Submit answer
-    function handleOnSubmitAnswer(answer) {
-
-        try {
-            SubmitAnswer(connection, sessionId, quizContent.id, answer?.id);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    // Next question
-    function handleNextQuestion() {
-
-        try {
-            NextQuestion(connection, sessionId);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
     // See results
     function handleOnFinal() {
-
-        try {
-            GetResults(connection, sessionId);
-            setContent(contentStates.RESULTS);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    // Get message during waiting state
-    function getWaitingMessage() {
-
-        if (expectedPlayers !== players.length) {
-            return (
-                <Typography variant="h6" className={classes.loadingAnimation}>
-                    Waiting for other players
-                </Typography>
-            );
-        } else if (players[0] !== username) {
-            return (
-                <Typography variant="h6" className={classes.loadingAnimation}>
-                    Waiting for host to start
-                </Typography>
-            )
-        }
+        setContent(contentStates.RESULTS);
+        GetResults(connection, sessionId);
     }
 
     // Controls the content to be displayed
@@ -345,72 +186,41 @@ function QuizPage() {
             case contentStates.CONNECTING:
                 return (
                     <div className={classes.centeredContent}>
-                        <Container maxWidth="sm">
-                            <Paper elevation={10} className="secondary-background">
-                                <div style={{ padding: '20px' }}>
-                                    <Typography variant="h6" className={classes.loadingAnimation}>Connecting</Typography>
-                                </div>
-                            </Paper>
-                        </Container>
+                        <QuizConnecting
+                            sessionId={sessionId}
+                            username={username}
+                        />
                     </div>
                 )
             case contentStates.WAITING:
                 return (
                     <div className={classes.centeredContent}>
-                        <Container maxWidth="sm">
-                            <Paper elevation={10} className="secondary-background">
-                                <div style={{ padding: '20px' }}>
-                                    <div className="primary-color" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <Typography variant="h3" style={{ textAlign: 'center' }} gutterBottom>{quizTitle}</Typography>
-                                        <IconButton onClick={handleOnOpenShareDialog} style={{ height: 'fit-content' }}>
-                                            <ShareIcon />
-                                        </IconButton>
-                                        <Dialog open={shareDialogOpen} onClose={handleOnCloseShareDialog}>
-                                            <DialogTitle>Share Quiz</DialogTitle>
-                                            <DialogContent dividers>
-                                                <DialogContentText>
-                                                    Share the quiz to your friends (or rivals) so that they may join this EPIC battle!
-                                                </DialogContentText>
-                                                <ShareQuiz sessionId={sessionId} />
-                                            </DialogContent>
-                                        </Dialog>
-                                    </div>
-                                    {getWaitingMessage()}
-                                    <hr />
-                                    <PlayerList expectedPlayers={expectedPlayers} players={players} username={username} />
-                                    <hr />
-                                    <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                                        {players[0] === username &&
-                                            <Button onClick={handleOnStart} variant={(expectedPlayers === players.length) ? 'contained' : 'outlined'} color="primary">
-                                                Start
-                                            </Button>
-                                        }
-                                    </div>
-                                </div>
-                            </Paper>
-                        </Container>
+                        <QuizWaiting
+                            sessionId={sessionId}
+                            username={username}
+                            quizTitle={quizTitle}
+                            expectedPlayers={expectedPlayers}
+                            players={players}
+                        />
                     </div>
                 )
             case contentStates.IN_PROGRESS:
                 return (
-                    <div>
-                        {quizContent &&
-                            <Quiz
-                                questionTimeout={questionTimeout}
-                                questionCount={questionCount}
-                                content={quizContent}
-                                correctAnswer={correctAnswer}
-                                enableSkip={enableSkip}
-                                onSubmit={handleOnSubmitAnswer}
-                                onNext={handleNextQuestion}
-                                onFinal={handleOnFinal}
-                            />
-                        }
-                    </div>
+                    <QuizProgress
+                        sessionId={sessionId}
+                        questionCount={questionCount}
+                        questionTimeout={questionTimeout}
+                        enableSkip={enableSkip}
+                        onFinal={handleOnFinal}
+                    />
                 )
             case contentStates.RESULTS:
                 return (
-                    <Results quizCompleted={quizCompleted} finalScore={finalScore} maxScore={maxScore} username={username} expectedPlayers={expectedPlayers} />
+                    <QuizResults
+                        maxScore={maxScore}
+                        username={username}
+                        expectedPlayers={players.length}
+                    />
                 )
             default:
                 return null;

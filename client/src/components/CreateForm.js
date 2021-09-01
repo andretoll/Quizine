@@ -1,13 +1,14 @@
 import { useState, Fragment } from 'react';
-import { useData } from '../services/CreateFormDataContext';
-import Step1 from './Step1';
-import Step2 from './Step2';
-import Step3 from './Step3';
-import { 
+import { useData } from '../contexts/CreateFormDataContext';
+import Step1 from './create-steps/Step1';
+import Step2 from './create-steps/Step2';
+import Step3 from './create-steps/Step3';
+import {
     Stepper,
     Step,
     StepLabel
 } from '@material-ui/core';
+import ConfirmStep from './create-steps/ConfirmStep';
 
 const steps = [
     "General",
@@ -46,7 +47,9 @@ function CreateForm(props) {
             case 1:
                 return <Step2 onNextStep={handleNextStep} onPreviousStep={handlePreviousStep} categories={categories} difficulties={difficulties} />
             case 2:
-                return <Step3 onNextStep={handleSubmit} onPreviousStep={handlePreviousStep} rules={rules} />
+                return <Step3 onNextStep={handleNextStep} onPreviousStep={handlePreviousStep} rules={rules} />
+            case 3:
+                return <ConfirmStep onNextStep={handleSubmit} onPreviousStep={handlePreviousStep} rules={rules} categories={categories} />
             default:
                 break;
         }
@@ -64,7 +67,7 @@ function CreateForm(props) {
                 })}
 
             </Stepper>
-            <div style={{margin: '0 20px', display: 'flex', flex: '1'}}>
+            <div style={{ margin: '0 20px', display: 'flex', flex: '1' }}>
                 {getStepContent(activeStep)}
             </div>
         </Fragment>

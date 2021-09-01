@@ -8,14 +8,16 @@ namespace Quizine.Api.Dtos
     {
         #region Public Properties
 
+        public string Username { get; set; }
         public string[] Users { get; }
 
         #endregion
 
         #region Constructor
 
-        public DisconnectConfirmationDto(IEnumerable<User> users)
+        public DisconnectConfirmationDto(IEnumerable<User> users, string username)
         {
+            Username = username;
             Users = users.Select(x => x.Username).ToArray();
         } 
 

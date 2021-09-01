@@ -31,9 +31,16 @@ namespace Quizine.Api.Hubs
 
             if (session != null)
             {
+                string username = session.GetUser(Context.ConnectionId).Username;
                 session.RemoveUser(Context.ConnectionId);
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, session.SessionParameters.SessionID);
-                await Clients.Group(session.SessionParameters.SessionID).ConfirmDisconnect(new DisconnectConfirmationDto(session.GetUsers()));
+                await Clients.Group(session.SessionParameters.SessionID).ConfirmDisconnect(new DisconnectConfirmationDto(session.GetUsers(), username));
+
+                // Notify users if quiz is completed after disconnect
+                if (session.IsCompleted)
+                {
+                    await Clients.Group(session.SessionParameters.SessionID).QuizCompleted();
+                }
             }
 
             await base.OnDisconnectedAsync(exception);
@@ -45,9 +52,9 @@ namespace Quizine.Api.Hubs
 
         private async Task AddConnection(string sessionId, string connectionId, string username)
         {
-            
+            var session = _sessionRepository.GetSessionBySessionId(sessionId);
 
-            _sessionRepository.AddUser(sessionId, connectionId, username);
+            session.AddUser(connectionId, username);
             await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
         }
 
@@ -72,14 +79,10 @@ namespace Quizine.Api.Hubs
                 await Clients.Caller.ConfirmConnect(ConnectConfirmationDto.CreateErrorResponse("Session already started."));
                 return;
             }
-            else if (_sessionRepository.UserExists(sessionId, username))
-            {
-                await Clients.Caller.ConfirmConnect(ConnectConfirmationDto.CreateErrorResponse("A player with this username already joined."));
-                return;
-            }
 
             await AddConnection(sessionId, Context.ConnectionId, username);
             await Clients.Group(sessionId).ConfirmConnect(ConnectConfirmationDto.CreateSuccessResponse(_sessionRepository.GetSessionBySessionId(sessionId)));
+            await Clients.OthersInGroup(sessionId).UserConnected(new UserConnectedDto(username));
         }
 
         public async Task Disconnect()
@@ -90,25 +93,38 @@ namespace Quizine.Api.Hubs
         public async Task Start(string sessionId)
         {
             _sessionRepository.StartSession(sessionId);
-            await Clients.Group(sessionId).ConfirmStart(true);
+            await Clients.Group(sessionId).ConfirmStart();
         }
 
         public async Task SubmitAnswer(string sessionId, string questionId, string answerId)
         {
-            string correctAnswerId = _sessionRepository.SubmitAnswer(sessionId, Context.ConnectionId, questionId, answerId);
+            var session = _sessionRepository.GetSessionBySessionId(sessionId);
+            
+            string correctAnswerId = session.SubmitAnswer(Context.ConnectionId, questionId, answerId);
             await Clients.Caller.ValidateAnswer(correctAnswerId);
         }
 
         public async Task NextQuestion(string sessionId)
         {
-            var nextQuestion = _sessionRepository.GetNextQuestion(sessionId, Context.ConnectionId, out bool lastQuestion);
+            var session = _sessionRepository.GetSessionBySessionId(sessionId);
+
+            var nextQuestion = session.GetNextQuestion(Context.ConnectionId, out bool lastQuestion);
             await Clients.Caller.NextQuestion(new NextQuestionDto(nextQuestion, lastQuestion));
         }
 
         public async Task GetResults(string sessionId)
         {
-            var results = _sessionRepository.GetResults(sessionId, out bool sessionCompleted);
-            await Clients.Group(sessionId).Results(new ResultsDto(results, sessionCompleted));
+            var session = _sessionRepository.GetSessionBySessionId(sessionId);
+
+            var results = session.GetResults();
+            
+            await Clients.Group(sessionId).Results(new ResultsDto(results));
+
+            // Notify users if quiz is completed
+            if (_sessionRepository.SessionCompleted(sessionId))
+            {
+                await Clients.Group(sessionId).QuizCompleted();
+            }
         }
 
         #endregion

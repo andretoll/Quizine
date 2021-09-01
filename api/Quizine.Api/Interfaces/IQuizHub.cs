@@ -10,9 +10,11 @@ namespace Quizine.Api.Interfaces
     {
         Task ConfirmConnect(ConnectConfirmationDto dto);
         Task ConfirmDisconnect(DisconnectConfirmationDto dto);
-        Task ConfirmStart(bool success);
+        Task ConfirmStart();
         Task ValidateAnswer(string correctAnswerId);
         Task NextQuestion(NextQuestionDto dto);
         Task Results(ResultsDto dto);
+        Task UserConnected(UserConnectedDto dto);
+        Task QuizCompleted();
     }
 }

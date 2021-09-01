@@ -1,4 +1,6 @@
-﻿using Quizine.Api.Interfaces;
+﻿using Quizine.Api.Enums;
+using Quizine.Api.Helpers;
+using Quizine.Api.Interfaces;
 using Quizine.Api.Models;
 using Quizine.Api.Models.Base;
 using System;
@@ -13,8 +15,7 @@ namespace Quizine.Api.Services
 
         private readonly Ruleset _ruleset;
         private readonly List<QuizItem> _questions;
-        private readonly List<User> _members;
-        private readonly List<QuizProgress> _progressList;
+        private readonly List<QuizProgress> _memberProgressList;
         private bool _isStarted;
         private readonly int _maxScore;
 
@@ -23,8 +24,10 @@ namespace Quizine.Api.Services
         #region Public Properties
 
         public SessionParameters SessionParameters { get; }
+        public IEnumerable<QuizProgress> MemberProgressList => _memberProgressList;
         public Ruleset Ruleset => _ruleset;
         public bool IsStarted => _isStarted;
+        public bool IsCompleted => _memberProgressList.Any() & _memberProgressList.All(x => x.HasCompleted);
         public int QuestionCount => _questions.Count;
         public int MaxScore => _maxScore;
 
@@ -36,8 +39,7 @@ namespace Quizine.Api.Services
         {
             SessionParameters = sessionParameters;
             _ruleset = Ruleset.Parse(sessionParameters.Rule);
-            _members = new List<User>();
-            _progressList = new List<QuizProgress>();
+            _memberProgressList = new List<QuizProgress>();
             _questions = new List<QuizItem>(quizItems);
             _maxScore = _ruleset.CalculateMaxScore(quizItems);
         }
@@ -46,21 +48,30 @@ namespace Quizine.Api.Services
 
         #region IQuizSession Implementation
 
-        public void AddUser(User user)
+        public void AddUser(string connectionId, string username)
         {
-            _members.Add(user);
-            _progressList.Add(new QuizProgress(user, _questions));
+            var user = new User { ConnectionID = connectionId, Username = username };
+            _memberProgressList.Add(new QuizProgress(user, _questions));
         }
 
         public IEnumerable<User> GetUsers()
         {
-            return _members;
+            return _memberProgressList.Select(x => x.User).ToList();
+        }
+
+        public User GetUser(string connectionId)
+        {
+            return _memberProgressList.Select(x => x.User).FirstOrDefault(x => x.ConnectionID == connectionId);
         }
 
         public void RemoveUser(string connectionId)
         {
-            _members.RemoveAll(x => x.ConnectionID == connectionId);
-            _progressList.RemoveAll(x => x.User.ConnectionID == connectionId);
+            _memberProgressList.RemoveAll(x => x.User.ConnectionID == connectionId);
+        }
+
+        public bool UserExists(string connectionId)
+        {
+            return _memberProgressList.Any(x => x.User.ConnectionID == connectionId);
         }
 
         public void Start()
@@ -76,7 +87,7 @@ namespace Quizine.Api.Services
 
         public QuizItem GetNextQuestion(string connectionId, out bool lastQuestion)
         {
-            var progress = _progressList.First(x => x.User.ConnectionID == connectionId);
+            var progress = _memberProgressList.First(x => x.User.ConnectionID == connectionId);
             lastQuestion = progress.IsLastQuestion;
 
             return progress.NextQuestion;
@@ -84,16 +95,15 @@ namespace Quizine.Api.Services
 
         public string SubmitAnswer(string connectionId, string questionId, string answerId)
         {
-            var progress = _progressList.First(x => x.User.ConnectionID == connectionId);
+            var progress = _memberProgressList.First(x => x.User.ConnectionID == connectionId);
             progress.AddResult(questionId, answerId);
 
             return _questions.First(x => x.ID == questionId).CorrectAnswer.ID;
         }
 
-        public IEnumerable<QuizProgress> GetResults(out bool sessionCompleted)
+        public IEnumerable<QuizProgress> GetResults()
         {
-            sessionCompleted = _progressList.All(x => x.HasCompleted);
-            var progressList = _progressList.Where(x => x.HasCompleted);
+            var progressList = _memberProgressList.Where(x => x.HasCompleted);
 
             foreach (var progress in progressList)
             {
@@ -103,7 +113,7 @@ namespace Quizine.Api.Services
                 progress.CalculateScore(_ruleset);
             }
 
-            return progressList;
+            return ScoreSorter.Sort(progressList, ScoreSortType.ScoreDescending);
         }
 
         #endregion
