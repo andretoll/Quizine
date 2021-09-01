@@ -18,8 +18,11 @@ import {
     Typography,
     Button,
     Container,
-    CircularProgress
+    CircularProgress,
+    AppBar,
+    Toolbar
 } from '@material-ui/core';
+import ConfettiWrapper from '../ConfettiWrapper';
 
 const useStyles = makeStyles(theme => ({
 
@@ -29,19 +32,6 @@ const useStyles = makeStyles(theme => ({
         flexDirection: 'column',
         justifyContent: 'center',
         background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.5) 10%, transparent 70%)',
-    },
-
-    header: {
-        letterSpacing: '10px',
-        textTransform: 'uppercase',
-        background: theme.palette.secondary.main,
-        padding: '20px',
-
-        [theme.breakpoints.down('md')]: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-        }
     },
 
     tabs: {
@@ -139,7 +129,7 @@ function QuizResults(props) {
 
     const [quizCompleted, setQuizCompleted] = useState(false);
     const [finalScore, setFinalScore] = useState([]);
-    
+
     const [tabValue, setTabValue] = useState(0);
 
     useEffect(() => {
@@ -184,14 +174,38 @@ function QuizResults(props) {
         }
     }
 
+    function getConfettiColors() {
+
+        if (finalScore[0]?.username === username) {
+            return ["#ffd700"];
+        } else if (finalScore[1]?.username === username) {
+            return ["#c0c0c0"];
+        } else if (finalScore[2]?.username === username) {
+            return ["#cd7f32"];
+        }
+    }
+
+    function isPlayerTopThree() {
+
+        for (let index = 0; index < finalScore.slice(0, 3).length; index++) {
+
+            if (finalScore[index]?.username === username)
+                return true;
+        }
+
+        return false;
+    }
+
     return (
         <div className={classes.container}>
-            <div className={classes.header}>
-                <Typography variant="h5">{quizCompleted ? 'Final results' : `Awaiting ${expectedPlayers - finalScore.length} player(s)...`}</Typography>
-                <Link to="/">
-                    <Button variant="text" color="primary">Go Home</Button>
-                </Link>
-            </div>
+            <AppBar position="relative" color="secondary">
+                <Toolbar>
+                    <Typography style={{ flexGrow: '1' }} variant="h5">{quizCompleted ? 'Final results' : `Awaiting ${expectedPlayers - finalScore.length} player(s)...`}</Typography>
+                    <Link to="/">
+                        <Button variant="text" color="primary">Go Home</Button>
+                    </Link>
+                </Toolbar>
+            </AppBar>
             <Tabs value={tabValue} onChange={handleTabChange} indicatorColor="primary" className={classes.tabs}>
                 <Tab tabIndex={0} label="Top 3" />
                 <Tab tabIndex={1} label="Standings" />
@@ -199,6 +213,9 @@ function QuizResults(props) {
             <div className={classes.tabItemContainer}>
                 {tabValue === 0 &&
                     <Container>
+                        {quizCompleted && isPlayerTopThree() &&
+                            <ConfettiWrapper colors={getConfettiColors()} />
+                        }
                         <Grid container className={classes.cardsContainer} spacing={1}>
                             {finalScore.slice(0, 3).map((score) => {
 
