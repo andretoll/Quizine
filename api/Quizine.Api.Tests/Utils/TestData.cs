@@ -63,6 +63,28 @@ namespace Quizine.Api.Tests.Utils
             return quizItems;
         }
 
+        public static IEnumerable<QuizProgress> GetRandomQuizProgressList(User[] users, int questionCount)
+        {
+            Random r = new Random();
+
+            var quizItems = GetRandomQuizItems(questionCount);
+            List<QuizProgress> progressList = new List<QuizProgress>();
+
+            for (int i = 0; i < users.Length; i++)
+            {
+                var progress = new QuizProgress(users[i], quizItems);
+
+                foreach (var result in progress.QuizResults)
+                {
+                    progress.AddResult(result.Question.ID, r.Next(0, 2) > 0 ? result.Question.Answers.First().ID : result.Question.CorrectAnswer.ID);
+                }
+
+                progressList.Add(progress);
+            }
+
+            return progressList;
+        }
+
         public static string GetRandomString(int length)
         {
             Random r = new();

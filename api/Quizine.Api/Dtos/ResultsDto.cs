@@ -1,6 +1,5 @@
 ﻿using Quizine.Api.Models;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Quizine.Api.Dtos
 {
@@ -18,16 +17,32 @@ namespace Quizine.Api.Dtos
         {
             Scores = new List<ScoreDto>();
 
-            results = results.OrderBy(x => x.FinishedTime);
-
             foreach (var result in results)
             {
                 var score = new ScoreDto(result.User.Username, result.Score.GetValueOrDefault());
 
                 Scores.Add(score);
             }
+        }
 
-            Scores = Scores.OrderByDescending(x => x.Points).ToList();
+        #endregion
+    }
+
+    public class ScoreDto
+    {
+        #region Public Properties
+
+        public string Username { get; set; }
+        public int Points { get; set; }
+
+        #endregion
+
+        #region Constructor
+
+        public ScoreDto(string username, int points)
+        {
+            Username = username;
+            Points = points;
         }
 
         #endregion

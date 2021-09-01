@@ -1,4 +1,6 @@
-﻿using Quizine.Api.Interfaces;
+﻿using Quizine.Api.Enums;
+using Quizine.Api.Helpers;
+using Quizine.Api.Interfaces;
 using Quizine.Api.Models;
 using Quizine.Api.Models.Base;
 using System;
@@ -111,7 +113,7 @@ namespace Quizine.Api.Services
                 progress.CalculateScore(_ruleset);
             }
 
-            return progressList;
+            return ScoreSorter.Sort(progressList, ScoreSortType.ScoreDescending);
         }
 
         #endregion
