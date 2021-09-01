@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
         background: theme.palette.secondary.main,
-        padding: '20px',
+        padding: '15px',
         minHeight: '600px',
     },
 

@@ -137,7 +137,6 @@ function QuizPage() {
                     setQuestionTimeout(response.questionTimeout);
                     setQuestionCount(response.questionCount);
                     setEnableSkip(response.enableSkip);
-
                     setMaxScore(response.maxScore);
                     setPlayers(response.users);
                 } else {

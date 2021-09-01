@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { useData } from '../contexts/CreateFormDataContext';
-import StepperNavigationActions from './StepperNavigationActions';
+import { useData } from '../../contexts/CreateFormDataContext';
+import StepperNavigationActions from '../StepperNavigationActions';
 import {
     makeStyles,
     FormControl,
@@ -38,17 +37,11 @@ function Step3(props) {
 
     const rules = props.rules;
 
-    const { setValues } = useData();
-    const { register, handleSubmit, setValue, control, formState: { isValid } } = useForm({ mode: 'onChange' });
-
-    const [description, setDescription] = useState(rules[0].description);
+    const { setValues, data } = useData();
+    const { handleSubmit, watch, control, formState: { isValid } } = useForm({ mode: 'onChange' });
+    const ruleWatch = watch("rule", 0);
 
     const previousStep = props.onPreviousStep;
-
-    // Register custom fields
-    useEffect(() => {
-        register("rule", { required: true });
-    }, [register])
 
     function onSubmit(data) {
         setValues(data);
@@ -64,12 +57,9 @@ function Step3(props) {
                             Ruleset
                         </FormLabel>
                         <Controller
-                            defaultValue={0}
+                            defaultValue={data.rule ? data.rule : 0}
                             render={({ field }) => (
-                                <Select {...field} onChange={(event) => {
-                                    setDescription(rules[event.target.value].description);
-                                    setValue("rule", event.target.value);
-                                }}>
+                                <Select {...field}>
                                     {rules.map((rule, index) => {
                                         return (
                                             <MenuItem key={rule.rule} value={index}>{rule.rule}</MenuItem>
@@ -83,12 +73,12 @@ function Step3(props) {
                     </FormControl>
                     <div>
                         <Typography variant="subtitle1" color="primary">
-                            {description}
+                            {rules[ruleWatch]?.description}
                         </Typography>
                     </div>
                 </div>
             </Fade>
-            <StepperNavigationActions onPreviousStep={previousStep} nextActionDisabled={!isValid} nextActionText="Finish" />
+            <StepperNavigationActions onPreviousStep={previousStep} nextActionDisabled={!isValid} nextActionText="Next" />
         </form>
     )
 }
