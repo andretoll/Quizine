@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using NUnit.Framework;
 using Quizine.Api.Controllers;
 using Quizine.Api.Dtos;
@@ -26,6 +27,7 @@ namespace Quizine.Api.Tests.Controllers
             _sessionRepository = new SessionRepository(new ILoggerStub<SessionRepository>());
             _triviaRespository = new TriviaRepositoryStub();
             _controller = new QuizController(_sessionRepository, _triviaRespository, new ILoggerStub<QuizController>());
+            _controller.ControllerContext.ActionDescriptor = new ControllerActionDescriptor() { ActionName = "" };
         }
 
         [Test(Description = "Asserts that categories are fetched successfully.")]
@@ -74,20 +76,6 @@ namespace Quizine.Api.Tests.Controllers
             Assert.That((result as OkObjectResult).Value, Is.TypeOf<string>());
             Assert.That((result as OkObjectResult).Value as string, Is.Not.Empty);
             Assert.That(_sessionRepository.SessionExists(((result as OkObjectResult).Value as string).Trim('"')));
-        }
-
-        [Test(Description = "Asserts that a bad request response is returned when validation fails.")]
-        public async Task ShouldReturnBadRequestOnValidationError()
-        {
-            // Arrange
-            var parameters = new SessionParameters();
-
-            // Act
-            _controller.ModelState.AddModelError("", "invalid data");
-            var result = await _controller.Create(parameters);
-
-            // Assert
-            Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
         }
     }
 }
