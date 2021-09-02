@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useConnection } from '../../contexts/HubConnectionContext';
 import { sendNotification } from '../../services/NotificationService';
 import TrophyIcon from '@material-ui/icons/EmojiEvents';
-import { 
+import {
     makeStyles,
     Grid,
     Paper,
@@ -75,6 +75,17 @@ const useStyles = makeStyles(theme => ({
         [theme.breakpoints.down('sm')]: {
             padding: '15px',
         },
+
+        '&.active': {
+            transform: 'scale(1.03)',
+
+            '& svg': {
+                '-webkit-animation': '$spinning 2s infinite linear ease-in',
+                '-moz-animation': '$spinning 2s linear infinite',
+                '-o-animation': '$spinning 2s linear infinite',
+                animation: '$spinning 2s linear infinite',
+            }
+        },
     },
 
     trophyContainer: {
@@ -115,6 +126,17 @@ const useStyles = makeStyles(theme => ({
         color: '#cd7f32',
         borderColor: '#cd7f32',
     },
+
+    "@keyframes spinning": {
+        "to": {
+            transform: 'rotateY(360deg)',
+        },
+    },
+    "@-webkit-keyframes spinning": {
+        "to": {
+            transform: 'rotateY(360deg)',
+        }
+    }
 }));
 
 function QuizResults(props) {
@@ -221,7 +243,11 @@ function QuizResults(props) {
 
                                 return (
                                     <Grid key={score.username} item className={classes.scoreWrapper} xs={12} sm={12} md={4}>
-                                        <Paper className={classes.scoreContainer} variant="outlined">
+                                        <Paper
+                                            className={`${classes.scoreContainer} ${score.username === username && 'active'}`}
+                                            variant={score.username === username ? 'elevation' : 'outlined'}
+                                            elevation={6}
+                                        >
                                             <div className={`${getTrophyStyle(score)} ${classes.trophyContainer}`}>
                                                 {quizCompleted ? <TrophyIcon /> : <CircularProgress color="inherit" />}
                                             </div>
