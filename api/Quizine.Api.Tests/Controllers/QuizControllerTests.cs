@@ -23,7 +23,7 @@ namespace Quizine.Api.Tests.Controllers
         [SetUp]
         public void Setup()
         {
-            _sessionRepository = new SessionRepository();
+            _sessionRepository = new SessionRepository(new ILoggerStub<SessionRepository>());
             _triviaRespository = new TriviaRepositoryStub();
             _controller = new QuizController(_sessionRepository, _triviaRespository, new ILoggerStub<QuizController>());
         }
