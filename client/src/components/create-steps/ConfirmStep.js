@@ -1,4 +1,5 @@
 import StepperNavigationActions from '../StepperNavigationActions';
+import { useForm } from 'react-hook-form';
 import { useData } from '../../contexts/CreateFormDataContext';
 import {
     makeStyles,
@@ -54,6 +55,7 @@ function ConfirmStep(props) {
     const classes = useStyles();
 
     const { data } = useData();
+    const { handleSubmit } = useForm();
 
     function getCategoryValue() {
         return categories.find(({ id }) => id === data.category).name;
@@ -71,7 +73,7 @@ function ConfirmStep(props) {
     }
 
     return (
-        <form onSubmit={finishStep} className={classes.form}>
+        <form onSubmit={handleSubmit(finishStep)} className={classes.form}>
             <Fade in>
                 <div className={classes.summaryContainer}>
                     <Paper className={classes.summaryWrapper} variant="outlined">

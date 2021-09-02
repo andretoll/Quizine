@@ -1,4 +1,6 @@
-﻿using Quizine.Api.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using Quizine.Api.Helpers;
+using Quizine.Api.Interfaces;
 using Quizine.Api.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +11,18 @@ namespace Quizine.Api.Services
     {
         #region Private Members
 
-        private readonly List<QuizSession> _quizSessions;
+        private readonly ICollection<QuizSession> _quizSessions;
+        private readonly ILogger _logger;
 
         #endregion
 
         #region Constructor
 
-        public SessionRepository()
+        public SessionRepository(ILogger<SessionRepository> logger)
         {
+            _logger = logger;
+            _logger.LogTrace("Constructor");
+
             _quizSessions = new List<QuizSession>();
         }
 
@@ -26,44 +32,61 @@ namespace Quizine.Api.Services
 
         public void AddSession(SessionParameters sessionParameters, IEnumerable<QuizItem> quizItems)
         {
+            _logger.LogTrace($"{nameof(AddSession)}()");
+            LogHelper.LogSessionParameters(_logger, sessionParameters, LogLevel.Debug);
+
             _quizSessions.Add(new QuizSession(sessionParameters, quizItems));
         }
 
         public IQuizSession GetSessionBySessionId(string sessionId)
         {
+            _logger.LogTrace($"{nameof(GetSessionBySessionId)}()");
+
             return _quizSessions.SingleOrDefault(x => x.SessionParameters.SessionID == sessionId);
         }
 
         public IQuizSession GetSessionByConnectionId(string connectionId)
         {
+            _logger.LogTrace($"{nameof(GetSessionByConnectionId)}()");
+
             return _quizSessions.SingleOrDefault(x => x.GetUsers().Any(x => x.ConnectionID == connectionId));
         }
 
         public bool SessionExists(string sessionId)
         {
+            _logger.LogTrace($"{nameof(SessionExists)}()");
+
             return _quizSessions.Any(x => x.SessionParameters.SessionID == sessionId);
         }
 
         public bool SessionFull(string sessionId)
         {
+            _logger.LogTrace($"{nameof(SessionFull)}()");
+
             var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
             return quizSession.GetUsers().Count() >= quizSession.SessionParameters.PlayerCount;
         }
 
         public bool SessionStarted(string sessionId)
         {
+            _logger.LogTrace($"{nameof(SessionStarted)}()");
+
             var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
             return quizSession.IsStarted;
         }
 
         public bool SessionCompleted(string sessionId)
         {
+            _logger.LogTrace($"{nameof(SessionCompleted)}()");
+
             var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
             return quizSession.IsCompleted;
         }
 
         public void StartSession(string sessionId)
         {
+            _logger.LogTrace($"{nameof(StartSession)}()");
+
             var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
             quizSession.Start();
         }

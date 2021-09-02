@@ -21,7 +21,7 @@ namespace Quizine.Api.Interfaces
         #region Methods
 
         void AddUser(string connectionId, string username);
-        void RemoveUser(string connectionId);
+        string RemoveUser(string connectionId);
         IEnumerable<User> GetUsers();
         User GetUser(string connectionId);
         bool UserExists(string connectionId);

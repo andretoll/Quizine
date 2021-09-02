@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using NUnit.Framework;
 using Quizine.Api.Controllers;
 using Quizine.Api.Interfaces;
@@ -20,13 +21,14 @@ namespace Quizine.Api.Tests.Services
         [SetUp]
         public void Setup()
         {
-            _sessionRepository = new SessionRepository();
-            _quizController = new QuizController(_sessionRepository, new TriviaRepositoryStub());
+            _sessionRepository = new SessionRepository(new ILoggerStub<SessionRepository>());
+            _quizController = new QuizController(_sessionRepository, new TriviaRepositoryStub(), new ILoggerStub<QuizController>());
+            _quizController.ControllerContext.ActionDescriptor = new ControllerActionDescriptor() { ActionName = "" };
         }
 
         private async Task<string> CreateSession(SessionParameters parameters)
         {
-            var result = await _quizController.Post(parameters);
+            var result = await _quizController.Create(parameters);
             return ((result as OkObjectResult).Value as string).Trim('"');
         }
 

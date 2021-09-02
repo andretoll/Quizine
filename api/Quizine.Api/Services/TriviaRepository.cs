@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Logging;
 using Quizine.Api.Helpers;
 using Quizine.Api.Interfaces;
 using Quizine.Api.Models;
@@ -41,13 +42,17 @@ namespace Quizine.Api.Services
 
         private readonly Uri _baseAddress = new("https://opentdb.com/");
         private readonly HttpClient _httpClient;
+        private readonly ILogger _logger;
 
         #endregion
 
         #region Constructor
 
-        public TriviaRepository(HttpClient httpClient)
+        public TriviaRepository(HttpClient httpClient, ILogger<TriviaRepository> logger)
         {
+            _logger = logger;
+            _logger.LogTrace("Constructor");
+
             _httpClient = httpClient;
         }
 
@@ -55,21 +60,27 @@ namespace Quizine.Api.Services
 
         #region Private Methods
 
-        private static string ParseDifficulty(string s)
+        private string ParseDifficulty(string s)
         {
+            _logger.LogTrace("Parsing difficulty...");
+
             if (!string.IsNullOrEmpty(s) & (s.ToLower() == "easy" || s.ToLower() == "medium" || s.ToLower() == "hard"))
                 return s.ToLower();
 
             return null;
         }
 
-        private static string ParseCategory(int i)
+        private string ParseCategory(int i)
         {
+            _logger.LogTrace("Parsing category...");
+
             return i > 0 ? i.ToString() : null;
         }
 
-        private static IEnumerable<QuizItem> ParseTrivia(TriviaItemRoot root)
+        private IEnumerable<QuizItem> ParseTrivia(TriviaItemRoot root)
         {
+            _logger.LogTrace($"Parsing trivia...");
+
             List<QuizItem> quizItems = new();
             int index = 1;
 
@@ -99,6 +110,7 @@ namespace Quizine.Api.Services
             var uri = new Uri(_baseAddress, "api_category.php");
             var request = new HttpRequestMessage(HttpMethod.Get, uri);
 
+            _logger.LogDebug($"Fetching categories from '{uri.AbsoluteUri}'...");
             var response = await _httpClient.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
@@ -109,6 +121,7 @@ namespace Quizine.Api.Services
             }
             else
             {
+                _logger.LogError($"Failed to fetch categories ({response.StatusCode})");
                 return null;
             }
         }
@@ -125,6 +138,8 @@ namespace Quizine.Api.Services
             string query = QueryHelpers.AddQueryString(uri.AbsoluteUri, queryParams);
             var request = new HttpRequestMessage(HttpMethod.Get, query);
 
+            _logger.LogDebug($"Fetching trivia from '{uri.AbsoluteUri}'...");
+            _logger.LogDebug($"Parameters: count- {questionCount}, category- {category}, difficulty- {difficulty}");
             var response = await _httpClient.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
@@ -133,10 +148,13 @@ namespace Quizine.Api.Services
 
                 var root = JsonSerializer.Deserialize<TriviaItemRoot>(jsonString);
 
+                _logger.LogDebug($"Response code: {root.ResponseCode}. Retrieved {root.QuizItems.Count} items");
+
                 return ParseTrivia(root);
             }
             else
             {
+                _logger.LogError($"Failed to fetch trivia ({response.StatusCode})");
                 return null;
             }
         } 

@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Quizine.Api.Helpers;
 using Quizine.Api.Hubs;
 using Quizine.Api.Interfaces;
 using Quizine.Api.Services;
@@ -23,10 +26,20 @@ namespace Quizine.Api
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers().AddJsonOptions(opt =>
-            {
-                opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-            });
+            services.AddControllers()
+                .ConfigureApiBehaviorOptions(opt =>
+                {
+                    opt.InvalidModelStateResponseFactory = context =>
+                    {
+                        var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
+                        LogHelper.LogModelStateErrors(logger, context.ModelState, context.ActionDescriptor.DisplayName);
+                        return new BadRequestObjectResult(context.ModelState);
+                    };
+                })
+                .AddJsonOptions(opt =>
+                {
+                    opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                });
             services.AddCors();
             services.AddSignalR();
             services.AddSingleton<ISessionRepository, SessionRepository>();

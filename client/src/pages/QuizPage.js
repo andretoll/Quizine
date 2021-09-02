@@ -41,6 +41,7 @@ function QuizPage() {
     const classes = useStyles();
 
     const { connection } = useConnection();
+    const [eventsSubscribedTo, setEventsSubscribedTo] = useState(false);
     const { notifySuccess, notifyError } = useSnackbar();
 
     // Quiz state
@@ -127,7 +128,7 @@ function QuizPage() {
 
     useEffect(() => {
 
-        if (connection) {
+        if (connection && !eventsSubscribedTo) {
             connection.on('ConfirmConnect', (response) => {
 
                 if (response.connected) {
@@ -154,9 +155,11 @@ function QuizPage() {
                 setContent(contentStates.IN_PROGRESS);
                 NextQuestion(connection, sessionId);
             });
+
+            setEventsSubscribedTo(true);
         }
 
-    }, [connection, sessionId, notifyError, notifySuccess]);
+    }, [connection, sessionId, notifyError, notifySuccess, eventsSubscribedTo]);
 
     // Report error
     function reportError(message) {

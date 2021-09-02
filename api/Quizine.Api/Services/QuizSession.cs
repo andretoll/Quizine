@@ -64,9 +64,12 @@ namespace Quizine.Api.Services
             return _memberProgressList.Select(x => x.User).FirstOrDefault(x => x.ConnectionID == connectionId);
         }
 
-        public void RemoveUser(string connectionId)
+        public string RemoveUser(string connectionId)
         {
-            _memberProgressList.RemoveAll(x => x.User.ConnectionID == connectionId);
+            var progress = _memberProgressList.Single(x => x.User.ConnectionID == connectionId);
+            _memberProgressList.Remove(progress);
+
+            return progress.User.Username;
         }
 
         public bool UserExists(string connectionId)
