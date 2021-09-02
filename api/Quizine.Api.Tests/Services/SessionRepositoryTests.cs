@@ -21,12 +21,12 @@ namespace Quizine.Api.Tests.Services
         public void Setup()
         {
             _sessionRepository = new SessionRepository();
-            _quizController = new QuizController(_sessionRepository, new TriviaRepositoryStub());
+            _quizController = new QuizController(_sessionRepository, new TriviaRepositoryStub(), new ILoggerStub<QuizController>());
         }
 
         private async Task<string> CreateSession(SessionParameters parameters)
         {
-            var result = await _quizController.Post(parameters);
+            var result = await _quizController.Create(parameters);
             return ((result as OkObjectResult).Value as string).Trim('"');
         }
 

@@ -25,7 +25,7 @@ namespace Quizine.Api.Tests.Controllers
         {
             _sessionRepository = new SessionRepository();
             _triviaRespository = new TriviaRepositoryStub();
-            _controller = new QuizController(_sessionRepository, _triviaRespository);
+            _controller = new QuizController(_sessionRepository, _triviaRespository, new ILoggerStub<QuizController>());
         }
 
         [Test(Description = "Asserts that categories are fetched successfully.")]
@@ -67,7 +67,7 @@ namespace Quizine.Api.Tests.Controllers
             };
 
             // Act
-            var result = await _controller.Post(parameters);
+            var result = await _controller.Create(parameters);
 
             // Assert
             Assert.That(result, Is.TypeOf<OkObjectResult>());
@@ -84,7 +84,7 @@ namespace Quizine.Api.Tests.Controllers
 
             // Act
             _controller.ModelState.AddModelError("", "invalid data");
-            var result = await _controller.Post(parameters);
+            var result = await _controller.Create(parameters);
 
             // Assert
             Assert.That(result, Is.TypeOf<BadRequestObjectResult>());

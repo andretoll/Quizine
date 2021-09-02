@@ -79,7 +79,7 @@ const useStyles = makeStyles(theme => ({
         '&.active': {
             transform: 'scale(1.03)',
 
-            '& svg': {
+            '& .spinning': {
                 '-webkit-animation': '$spinning 2s infinite linear ease-in',
                 '-moz-animation': '$spinning 2s linear infinite',
                 '-o-animation': '$spinning 2s linear infinite',
@@ -249,7 +249,7 @@ function QuizResults(props) {
                                             elevation={6}
                                         >
                                             <div className={`${getTrophyStyle(score)} ${classes.trophyContainer}`}>
-                                                {quizCompleted ? <TrophyIcon /> : <CircularProgress color="inherit" />}
+                                                {quizCompleted ? <TrophyIcon className="spinning" /> : <CircularProgress color="inherit" />}
                                             </div>
                                             <Typography variant="h4" color={score.username === username ? 'primary' : 'inherit'} style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{score.username}</Typography>
                                             <div>
