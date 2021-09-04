@@ -6,13 +6,13 @@ namespace Quizine.Api.Models.Rulesets
 {
     public class RiskRuleset : Ruleset
     {
-        public override string Description => "High risk, high reward.";
+        public override string Description => "Just like standard rules, but answering incorrectly will reduce your points. Is it worth the risk?";
 
         public override bool EnableSkip => true;
 
         public override int CalculateMaxScore(IEnumerable<QuizItem> questions)
         {
-            return questions.Count() * 1;
+            return questions.Count() * PointsFactor;
         }
 
         /// <summary>
@@ -31,9 +31,9 @@ namespace Quizine.Api.Models.Rulesets
                 if (result.Answer.IsAnswerValid())
                 {
                     if (result.Answer.ID == result.Question.CorrectAnswer.ID)
-                        score += 1;
+                        score += PointsFactor;
                     else if (result.Answer != null)
-                        score -= 1; 
+                        score -= PointsFactor; 
                 }
             }
 

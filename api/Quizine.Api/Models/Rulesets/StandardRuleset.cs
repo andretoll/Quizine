@@ -6,13 +6,13 @@ namespace Quizine.Api.Models.Rulesets
 {
     public class StandardRuleset : Ruleset
     {
-        public override string Description => "Play a standard game of Quiz.";
+        public override string Description => "Play a standard game of Quizine.";
 
         public override bool EnableSkip => false;
 
         public override int CalculateMaxScore(IEnumerable<QuizItem> questions)
         {
-            return questions.Count() * 1;
+            return questions.Count() * PointsFactor;
         }
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace Quizine.Api.Models.Rulesets
         /// <returns></returns>
         public override int CalculateScore(IEnumerable<QuizResult> results)
         {
-            return results.Where(x => x.Question.CorrectAnswer.ID == x.Answer.ID).Count() * 1;
+            return results.Where(x => x.Question.CorrectAnswer.ID == x.Answer.ID).Count() * PointsFactor;
         }
     }
 }
