@@ -44,7 +44,7 @@ function Step2(props) {
     const { handleSubmit, setValue, control, formState: { isValid } } = useForm({mode: 'onChange'});
 
     const [questionCount, setQuestionCount] = useState(data.questionCount ? data.questionCount : 10);
-    const [questionTimeout, setQuestionTimeout] = useState(data.questionTimeout ? data.questionTimeout : 30);
+    const [questionTimeout, setQuestionTimeout] = useState(data.questionTimeout !== undefined ? data.questionTimeout : 30);
 
     useEffect(() => {
         setValue("questionCount", questionCount);
