@@ -94,6 +94,8 @@ function CreatePage() {
     // Gets the available categories from the server
     async function fetchCategories() {
 
+        console.info("Fetching categories...");
+
         await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/categories`, {
             method: 'GET',
             headers: {
@@ -102,6 +104,8 @@ function CreatePage() {
             }
         }).then(response => {
             response.json().then(result => {
+
+                console.info("Successfully fetched categories.");
 
                 // Add 'any' category
                 result.trivia_categories.unshift({ id: 0, name: 'Any' });
@@ -116,6 +120,8 @@ function CreatePage() {
     // Gets the available rules from the server
     async function fetchRules() {
 
+        console.info("Fetching rules...");
+
         await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/rules`, {
             method: 'GET',
             headers: {
@@ -124,6 +130,9 @@ function CreatePage() {
             }
         }).then(response => {
             response.json().then(result => {
+
+                console.info("Successfully fetched rules.");
+
                 setRules(result);
             })
         }).catch(error => {
@@ -134,6 +143,9 @@ function CreatePage() {
 
     // Handle form submission
     async function handleOnSubmit(data) {
+
+        console.info("Submitting quiz parameters...");
+        console.trace(data);
 
         setErrorMessage(null);
         setContent(contentStates.IN_PROGRESS);
@@ -150,6 +162,8 @@ function CreatePage() {
             if (response.status === 200) {
                 response.json().then(result => {
 
+                    console.info("Successfully submitted quiz paramters.");
+                    
                     setSessionId(result);
                     setHostname(data.hostname);
                     setContent(contentStates.SUCCESS);
@@ -158,7 +172,7 @@ function CreatePage() {
                 setErrorMessage(`Error ${response.status}: Server rejected request.`);
                 setContent(contentStates.FORM);
             }
-        }).catch(error => {
+        }).catch(_ => {
             setErrorMessage("Could not connect to the server. Please try again later.");
             setContent(contentStates.FORM);
         });
@@ -221,7 +235,7 @@ function CreatePage() {
                         <Paper elevation={10} className={classes.content}>
                             <GoHome />
                             {content !== contentStates.SUCCESS && <Typography variant="h3" style={{ textAlign: 'center' }}>Create quiz</Typography>}
-                            <Typography style={{ textAlign: 'center', marginTop: '10px' }} color="error">{errorMessage}</Typography>
+                            <Typography style={{ textAlign: 'center', marginTop: '10px' }} color="error" gutterBottom>{errorMessage}</Typography>
                             {getContent(content)}
                         </Paper>
                     </Fade>

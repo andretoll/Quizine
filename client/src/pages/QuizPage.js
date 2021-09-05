@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useLocation } from "react-router-dom";
-import { NextQuestion, GetResults, Disconnect } from '../services/QuizService';
+import { Connect, NextQuestion, GetResults } from '../services/QuizService';
 import { useConnection } from '../contexts/HubConnectionContext';
 import { useSnackbar } from '../contexts/SnackbarContext';
+import { useErrorModal } from '../contexts/ErrorModalContext';
 import useTitle from '../hooks/useTitle';
+import QuizError from '../components/quiz-states/QuizError';
 import QuizConnecting from '../components/quiz-states/QuizConnecting';
 import QuizWaiting from '../components/quiz-states/QuizWaiting';
 import QuizProgress from '../components/quiz-states/QuizProgress';
 import QuizResults from '../components/quiz-states/QuizResults';
+import PromptWrapper from '../components/PromptWrapper';
 import {
     makeStyles,
-    Typography,
 } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -43,6 +45,7 @@ function QuizPage() {
     const { connection } = useConnection();
     const [eventsSubscribedTo, setEventsSubscribedTo] = useState(false);
     const { notifySuccess, notifyError } = useSnackbar();
+    const { openModal, closeModal } = useErrorModal();
 
     // Quiz state
     const [sessionId, setSessionId] = useState();
@@ -62,54 +65,32 @@ function QuizPage() {
     const history = useHistory();
     const location = useLocation();
 
-    useTitle(quizTitle);
+    useTitle(quizTitle ? quizTitle : '');
 
     useEffect(() => {
 
-        // Request permission to send notifications
-        Notification.requestPermission();
-
-        // Prevent browser sleeping
-        var lockResolver;
-        if (navigator && navigator.locks && navigator.locks.request) {
-            const promise = new Promise((res) => {
-                lockResolver = res;
-            });
-
-            navigator.locks.request('unique_lock_name', { mode: "shared" }, () => {
-                return promise;
-            });
+        if (connection && connection.state === 'Disconnected') {
+            console.info("Starting socket connection...");
+            start();
         }
 
-        // Allow browser sleeping on unmount
-        return () => {
-            lockResolver();
-        }
+        async function start() {
 
-    }, []);
-
-    useEffect(() => {
-
-        if (connection) {
-            window.addEventListener("beforeunload", handleBeforeUnload);
-        }
-
-        function handleBeforeUnload(e) {
-
-            var confirmationMessage = 'Leaving this page will remove you from the ongoing quiz session.';
-
-            (e || window.event).returnValue = confirmationMessage;
-            return confirmationMessage;
-        }
-
-        return () => {
-            window.removeEventListener("beforeunload", handleBeforeUnload);
-            if (connection && connection.connectionState === "Connected") {
-                Disconnect(connection);
+            try {
+                await connection.start().then(_ => {
+                    console.info("Connecting to session...");
+                    Connect(connection, sessionId, username).catch((error) => {
+                        console.log(error);
+                        reportError("Failed to connect to session (Error code 2).")
+                    });
+                });
+            } catch (error) {
+                console.log(error);
+                reportError("Error connecting to server (Error code 1).");
             }
         }
 
-    }, [connection]);
+    }, [connection, sessionId, username])
 
     useEffect(() => {
 
@@ -129,9 +110,35 @@ function QuizPage() {
     useEffect(() => {
 
         if (connection && !eventsSubscribedTo) {
+            // When connection is lost
+            connection.onreconnecting(error => {
+                console.error(error);
+                openModal({
+                    title: "Lost connection",
+                    message: "Lost connection to the server. Reconnecting...",
+                    actionText: "Cancel",
+                    action: () => {
+                        history.push("/");
+                    }
+                });
+            });
+            // When connection is restored
+            connection.onreconnected(response => {
+                console.info(response);
+                closeModal();
+                notifySuccess("Reconnected to the server.");
+            });
+            // When reconnection fails
+            connection.onclose(error => {
+                console.error(error)
+                closeModal();
+                reportError("Unable to reconnect to the session. Connection permanently lost (Error code 3).")
+            });
             connection.on('ConfirmConnect', (response) => {
 
                 if (response.connected) {
+                    console.info("Connection confirmed!");
+
                     setContent(contentStates.WAITING);
                     setQuizTitle(response.quizTitle);
                     setExpectedPlayers(response.expectedUsers);
@@ -141,17 +148,27 @@ function QuizPage() {
                     setMaxScore(response.maxScore);
                     setPlayers(response.users);
                 } else {
-                    reportError(response.errorMessage);
+                    console.warn("Connection rejected: ", response.errorMessage);
+                    // If not successful, go back to join page and display error message
+                    history.replace('/join', { username: username, errorMessage: response.errorMessage });
                 }
+
+                console.trace(response);
             });
             connection.on('UserConnected', (response) => {
+                console.info("Another user connected");
+
                 notifySuccess(`${response.username} joined!`);
             });
             connection.on('ConfirmDisconnect', (response) => {
+                console.info("Another user disconnected");
+
                 setPlayers(response.users);
                 notifyError(`${response.username} disconnected.`);
             });
             connection.on('ConfirmStart', (_) => {
+                console.info("Start confirmed!");
+
                 setContent(contentStates.IN_PROGRESS);
                 NextQuestion(connection, sessionId);
             });
@@ -159,17 +176,18 @@ function QuizPage() {
             setEventsSubscribedTo(true);
         }
 
-    }, [connection, sessionId, notifyError, notifySuccess, eventsSubscribedTo]);
+    }, [connection, sessionId, notifyError, notifySuccess, eventsSubscribedTo, history, username, openModal, closeModal]);
 
     // Report error
     function reportError(message) {
-        console.log(message);
+        console.error(message);
         setContent(contentStates.ERROR);
         setErrorMessage(message);
     }
 
     // See results
     function handleOnFinal() {
+        console.info("Getting results...");
         setContent(contentStates.RESULTS);
         GetResults(connection, sessionId);
     }
@@ -181,9 +199,7 @@ function QuizPage() {
             case contentStates.ERROR:
                 return (
                     <div className={classes.centeredContent}>
-                        <Typography variant="h1" color="error">
-                            {errorMessage}
-                        </Typography>
+                        <QuizError errorMessage={errorMessage} />
                     </div>
                 )
             case contentStates.CONNECTING:
@@ -192,6 +208,7 @@ function QuizPage() {
                         <QuizConnecting
                             sessionId={sessionId}
                             username={username}
+                            reportError={reportError}
                         />
                     </div>
                 )
@@ -204,6 +221,7 @@ function QuizPage() {
                             quizTitle={quizTitle}
                             expectedPlayers={expectedPlayers}
                             players={players}
+                            reportError={reportError}
                         />
                     </div>
                 )
@@ -232,6 +250,11 @@ function QuizPage() {
 
     return (
         <div className={classes.container}>
+            <PromptWrapper
+                title="Progress will be lost."
+                message="Leaving this page will result in a disconnect and all progress will be lost. Continue?"
+                when={content !== contentStates.ERROR && content !== contentStates.CONNECTING}
+            />
             {getContent(content)}
         </div>
     )

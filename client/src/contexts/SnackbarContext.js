@@ -21,6 +21,9 @@ export const SnackbarProvider = ({ children }) => {
     const [type, setType] = useState(snackbarTypes.DEFAULT);
 
     function handleClose(_, reason) {
+
+        console.debug("Closing snackbar...");
+
         if (reason === 'clickaway') {
             return;
         }
@@ -29,12 +32,18 @@ export const SnackbarProvider = ({ children }) => {
     };
 
     function notifySuccess(message) {
+
+        console.debug("Opening success snackbar...");
+
         setMessage(message);
         setType(snackbarTypes.SUCCESS);
         setOpen(true);
     }
 
     function notifyError(message) {
+        
+        console.debug("Opening error snackbar...");
+
         setMessage(message);
         setType(snackbarTypes.ERROR);
         setOpen(true);
@@ -53,7 +62,7 @@ export const SnackbarProvider = ({ children }) => {
             <SnackbarContent
                 style={{ background: type }}
                 message={
-                    <Typography variant="overline" color="textPrimary">{message}</Typography>
+                    <Typography variant="body1" color="textPrimary">{message}</Typography>
                 }
                 action={
                     <IconButton size="small" onClick={handleClose}>

@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useHistory } from 'react-router';
+import { useEffect, useState } from 'react';
+import { useHistory, useLocation } from 'react-router';
 import { useForm, Controller } from 'react-hook-form';
 import { useTitle } from '../hooks/useTitle';
 import GoHome from '../components/GoHome';
@@ -51,19 +51,25 @@ function JoinPage() {
 
     const classes = useStyles();
     const history = useHistory();
+    const location = useLocation();
+
+    // Show error message if state contains one
+    const [errorMessage, setErrorMessage] = useState(location.state?.errorMessage);
+
     const hash = history.location.hash.replace('#', '');
 
-    const { register, handleSubmit, control, formState: { errors, isValid } } = useForm({ mode: 'onChange', defaultValues: {
-        "sessionId": hash,
-        "username": '',
-    } });
-
+    const { register, handleSubmit, control, formState: { errors, isValid } } = useForm({
+        mode: 'onChange', defaultValues: {
+            "sessionId": hash,
+            "username": location.state?.username ? location.state.username : '',
+        }
+    });
 
     useTitle("Join quiz");
     useEffect(() => {
         register("sessionId", { required: true });
         register("username", { required: true, maxLength: 15, validate: isOnlyWhitespace });
-    }, [register])
+    }, [register]);
 
     function isOnlyWhitespace(value) {
         return !!value.trim();
@@ -72,6 +78,10 @@ function JoinPage() {
     // Handle form submission
     function onHandleSubmit(data) {
 
+        console.info("Joining session...");
+        console.trace(data);
+
+        setErrorMessage(null);
         history.push(`/quiz/${data.sessionId}`, { sessionId: data.sessionId, username: data.username });
     }
 
@@ -82,6 +92,7 @@ function JoinPage() {
                     <Paper elevation={10} className={classes.content}>
                         <GoHome />
                         <Typography variant="h3" style={{ textAlign: 'center' }}>Join quiz</Typography>
+                        <Typography variant="body1" color="error" style={{ textAlign: 'center' }}>{errorMessage}</Typography>
                         <form onSubmit={handleSubmit(onHandleSubmit)} className={classes.form}>
 
                             <FormControl margin="dense" fullWidth>

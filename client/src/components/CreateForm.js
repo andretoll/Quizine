@@ -28,14 +28,23 @@ function CreateForm(props) {
     const [activeStep, setActiveStep] = useState(0);
 
     function handlePreviousStep() {
+
+        console.debug("Navigating to previous step...");
+
         setActiveStep(prevStep => prevStep - 1);
     }
 
     function handleNextStep() {
+        
+        console.debug("Navigating to next step...");
+
         setActiveStep(prevStep => prevStep + 1);
     }
 
     function handleSubmit() {
+        
+        console.debug("Sending data to parent component...");
+        
         props.onSubmit(data);
     }
 
