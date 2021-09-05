@@ -14,6 +14,12 @@ namespace Quizine.Api.Models.Base
 
         #endregion
 
+        #region Public Virtual Properties
+
+        public virtual int PointsFactor => 100;
+
+        #endregion
+
         #region Public Abstract Methods
 
         public abstract int CalculateMaxScore(IEnumerable<QuizItem> questions);

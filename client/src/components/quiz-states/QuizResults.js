@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useConnection } from '../../contexts/HubConnectionContext';
 import { sendNotification } from '../../services/NotificationService';
 import TrophyIcon from '@material-ui/icons/EmojiEvents';
+import ConfettiWrapper from '../ConfettiWrapper';
 import {
     makeStyles,
     Grid,
@@ -22,7 +23,6 @@ import {
     AppBar,
     Toolbar
 } from '@material-ui/core';
-import ConfettiWrapper from '../ConfettiWrapper';
 
 const useStyles = makeStyles(theme => ({
 
@@ -158,10 +158,12 @@ function QuizResults(props) {
 
         if (connection) {
             connection.on('Results', (response) => {
+                console.info("Received results");
                 setQuizCompleted(response.sessionCompleted);
                 setFinalScore(response.scores);
             });
             connection.on('QuizCompleted', () => {
+                console.info("Quiz completed");
                 setQuizCompleted(true);
             });
         }

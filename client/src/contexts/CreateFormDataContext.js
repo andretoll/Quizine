@@ -6,6 +6,9 @@ export const DataProvider = ({ children }) => {
     const [data, setData] = useState({});
 
     const setValues = (values) => {
+
+        console.debug("Setting form data...", values);
+
         setData(prevData => ({
             ...prevData,
             ...values

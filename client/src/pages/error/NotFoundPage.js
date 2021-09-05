@@ -10,6 +10,7 @@ const useStyles = makeStyles(theme => ({
         textAlign: 'center',
         alignItems: 'center',
         minHeight: '100vh',
+        background: theme.palette.secondary.main,
 
         "& button": {
             marginTop: '20px',

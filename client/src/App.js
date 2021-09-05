@@ -2,6 +2,7 @@ import React from 'react';
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
 import { MuiThemeProvider, createTheme, withStyles, responsiveFontSizes, CssBaseline } from '@material-ui/core';
 import { ConfirmProvider } from 'material-ui-confirm';
+import { ErrorModalProvider } from './contexts/ErrorModalContext';
 import { ConnectionProvider } from './contexts/HubConnectionContext';
 import { SnackbarProvider } from './contexts/SnackbarContext';
 import NotFoundPage from './pages/error/NotFoundPage';
@@ -110,7 +111,14 @@ function App() {
       overline: {
         fontSize: '1rem',
       },
-    }
+    },
+    overrides: {
+      MuiTooltip: {
+        tooltip: {
+          fontSize: "1em",
+        },
+      },
+    },
   }))
 
   return (
@@ -132,7 +140,9 @@ function App() {
               </Route>
               <Route path="/quiz">
                 <ConnectionProvider>
-                  <QuizPage />
+                  <ErrorModalProvider>
+                    <QuizPage />
+                  </ErrorModalProvider>
                 </ConnectionProvider>
               </Route>
               <Route path="*" component={NotFoundPage} />
