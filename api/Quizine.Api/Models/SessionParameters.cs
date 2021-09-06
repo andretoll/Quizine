@@ -26,6 +26,8 @@ namespace Quizine.Api.Models
 
         [Required]
         public int Category { get; set; }
+
+        public string CategoryName { get; set; }
         
         [Required]
         public string Difficulty { get; set; } 
