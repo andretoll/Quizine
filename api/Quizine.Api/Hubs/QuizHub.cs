@@ -111,8 +111,8 @@ namespace Quizine.Api.Hubs
             }
 
             await AddConnection(sessionId, Context.ConnectionId, username);
-            await Clients.Group(sessionId).ConfirmConnect(ConnectConfirmationDto.CreateSuccessResponse(_sessionRepository.GetSessionBySessionId(sessionId)));
-            await Clients.OthersInGroup(sessionId).UserConnected(new UserConnectedDto(username));
+            await Clients.Caller.ConfirmConnect(ConnectConfirmationDto.CreateSuccessResponse(_sessionRepository.GetSessionBySessionId(sessionId)));
+            await Clients.OthersInGroup(sessionId).UserConnected(new UserConnectedDto(username, _sessionRepository.GetSessionBySessionId(sessionId)));
         }
 
         public async Task Disconnect()

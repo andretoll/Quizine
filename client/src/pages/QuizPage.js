@@ -157,6 +157,7 @@ function QuizPage() {
             connection.on('UserConnected', (response) => {
                 console.info("Another user connected");
 
+                setPlayers(response.users);
                 notifySuccess(`${response.username} joined!`);
             });
             connection.on('ConfirmDisconnect', (response) => {
