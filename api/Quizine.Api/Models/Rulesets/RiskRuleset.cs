@@ -10,6 +10,8 @@ namespace Quizine.Api.Models.Rulesets
 
         public override bool EnableSkip => true;
 
+        public override string Title => "Risk";
+
         public override int CalculateMaxScore(IEnumerable<QuizItem> questions)
         {
             return questions.Count() * PointsFactor;

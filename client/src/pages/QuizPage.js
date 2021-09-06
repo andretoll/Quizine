@@ -57,6 +57,7 @@ function QuizPage() {
     const [questionCount, setQuestionCount] = useState();
     const [maxScore, setMaxScore] = useState();
     const [enableSkip, setEnableSkip] = useState();
+    const [ruleset, setRuleset] = useState();
 
     // UI state
     const [content, setContent] = useState(contentStates.CONNECTING);
@@ -139,7 +140,6 @@ function QuizPage() {
                 if (response.connected) {
                     console.info("Connection confirmed!");
 
-                    setContent(contentStates.WAITING);
                     setQuizTitle(response.quizTitle);
                     setExpectedPlayers(response.expectedUsers);
                     setQuestionTimeout(response.questionTimeout);
@@ -147,6 +147,8 @@ function QuizPage() {
                     setEnableSkip(response.enableSkip);
                     setMaxScore(response.maxScore);
                     setPlayers(response.users);
+                    setRuleset(response.rule);
+                    setContent(contentStates.WAITING);
                 } else {
                     console.warn("Connection rejected: ", response.errorMessage);
                     history.replace(`${location.state.url}`, { errorMessage: response.errorMessage });
@@ -221,6 +223,9 @@ function QuizPage() {
                             quizTitle={quizTitle}
                             expectedPlayers={expectedPlayers}
                             players={players}
+                            questionCount={questionCount}
+                            questionTimeout={questionTimeout}
+                            ruleset={ruleset}
                             reportError={reportError}
                         />
                     </div>
