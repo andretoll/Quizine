@@ -41,6 +41,11 @@ const GlobalCss = withStyles(theme => ({
       borderRadius: '1em',
     },
 
+    '.MuiSlider-thumb': {
+      transform: 'scale(1.7)',
+      borderRadius: '20%',
+    },
+
     'ul, ol': {
       margin: '0',
       padding: '0',
