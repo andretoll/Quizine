@@ -67,7 +67,7 @@ function ConfirmStep(props) {
 
     function getQuestionTimeoutValue() {
         return data.questionTimeout === 0 ?
-            'Disabled'
+            'Unlimited'
             :
             `${data.questionTimeout}s`;
     }
@@ -100,7 +100,7 @@ function ConfirmStep(props) {
                             <Typography className={classes.summaryItemValue}>{data.difficulty}</Typography>
                         </div>
                         <div className={classes.summaryItemContainer}>
-                            <Typography className={classes.summaryItemTitle}>Timeout</Typography>
+                            <Typography className={classes.summaryItemTitle}>Time</Typography>
                             <Typography className={classes.summaryItemValue}>{getQuestionTimeoutValue()}</Typography>
                         </div>
                         <div className={classes.summaryItemContainer}>

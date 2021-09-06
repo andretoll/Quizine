@@ -37,7 +37,11 @@ function QuizParametersList(props) {
                 <ListItemIcon>
                     <TimeoutIcon />
                 </ListItemIcon>
-                <ListItemText primary={`${questionTimeout} seconds`} />
+                {questionTimeout > 0 ?
+                    < ListItemText primary={`${questionTimeout} seconds`} />
+                    :
+                    <ListItemText primary="Unlimited" />
+                }
             </ListItem>
         </ImageList>
     )
