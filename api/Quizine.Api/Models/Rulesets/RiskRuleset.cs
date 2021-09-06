@@ -33,7 +33,11 @@ namespace Quizine.Api.Models.Rulesets
                     if (result.Answer.ID == result.Question.CorrectAnswer.ID)
                         score += PointsFactor;
                     else if (result.Answer != null)
-                        score -= PointsFactor; 
+                        score -= PointsFactor;
+
+                    // Prevent negative score
+                    if (score < 0)
+                        score = 0;
                 }
             }
 
