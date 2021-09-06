@@ -103,6 +103,12 @@ namespace Quizine.Api.Hubs
                 await Clients.Caller.ConfirmConnect(ConnectConfirmationDto.CreateErrorResponse("Session already started."));
                 return;
             }
+            else if (_sessionRepository.GetSessionBySessionId(sessionId).UsernameTaken(username))
+            {
+                _logger.LogTrace($"Session with ID '{sessionId}' already contains user with username '{username}'");
+                await Clients.Caller.ConfirmConnect(ConnectConfirmationDto.CreateErrorResponse($"Username '{username}' taken."));
+                return;
+            }
 
             await AddConnection(sessionId, Context.ConnectionId, username);
             await Clients.Group(sessionId).ConfirmConnect(ConnectConfirmationDto.CreateSuccessResponse(_sessionRepository.GetSessionBySessionId(sessionId)));

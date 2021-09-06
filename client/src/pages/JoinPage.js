@@ -61,7 +61,7 @@ function JoinPage() {
     const { register, handleSubmit, control, formState: { errors, isValid } } = useForm({
         mode: 'onChange', defaultValues: {
             "sessionId": hash,
-            "username": location.state?.username ? location.state.username : '',
+            "username": '',
         }
     });
 
@@ -82,7 +82,7 @@ function JoinPage() {
         console.trace(data);
 
         setErrorMessage(null);
-        history.push(`/quiz/${data.sessionId}`, { sessionId: data.sessionId, username: data.username });
+        history.push(`/quiz/${data.sessionId}`, { sessionId: data.sessionId, username: data.username, url: location.pathname + location.hash });
     }
 
     return (

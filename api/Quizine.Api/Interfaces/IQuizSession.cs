@@ -25,6 +25,7 @@ namespace Quizine.Api.Interfaces
         IEnumerable<User> GetUsers();
         User GetUser(string connectionId);
         bool UserExists(string connectionId);
+        bool UsernameTaken(string username);
 
         QuizItem GetNextQuestion(string connectionId, out bool lastQuestion);
         string SubmitAnswer(string connectionId, string questionId, string answerId);

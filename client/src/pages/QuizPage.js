@@ -149,8 +149,7 @@ function QuizPage() {
                     setPlayers(response.users);
                 } else {
                     console.warn("Connection rejected: ", response.errorMessage);
-                    // If not successful, go back to join page and display error message
-                    history.replace('/join', { username: username, errorMessage: response.errorMessage });
+                    history.replace(`${location.state.url}`, { errorMessage: response.errorMessage });
                 }
 
                 console.trace(response);
@@ -176,7 +175,7 @@ function QuizPage() {
             setEventsSubscribedTo(true);
         }
 
-    }, [connection, sessionId, notifyError, notifySuccess, eventsSubscribedTo, history, username, openModal, closeModal]);
+    }, [connection, sessionId, notifyError, notifySuccess, eventsSubscribedTo, history, location, username, openModal, closeModal]);
 
     // Report error
     function reportError(message) {

@@ -77,6 +77,11 @@ namespace Quizine.Api.Services
             return _memberProgressList.Any(x => x.User.ConnectionID == connectionId);
         }
 
+        public bool UsernameTaken(string username)
+        {
+            return _memberProgressList.Any(x => x.User.Username.ToLower() == username.ToLower());
+        }
+
         public void Start()
         {
             if (_isStarted)
