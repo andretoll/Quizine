@@ -99,14 +99,16 @@ function QuizProgress(props) {
 
     // Timer
     const [timerPlaying, setTimerPlaying] = useState(true);
+    const [timerVisible, setTimerVisible] = useState(true);
 
     useEffect(() => {
         if (connection) {
             connection.on('NextQuestion', (response) => {
                 console.info("Received next question");
                 setCorrectAnswer(null);
-                setSlide(true); // Trigger slide animation (in)
-                setTimerPlaying(true); // Set timer status
+                setSlide(true);         // Trigger slide animation (in)
+                setTimerPlaying(true);  // Enable timer
+                setTimerVisible(true);  // Show timer
                 setQuizContent(response);
             });
             connection.on('ValidateAnswer', (response) => {
@@ -125,6 +127,7 @@ function QuizProgress(props) {
     function handleOnSubmitAnswer(answer) {
         console.info("Submitting answer...");
         setTimerPlaying(false);
+        setTimerVisible(false);
         SubmitAnswer(connection, sessionId, quizContent.id, answer?.id);
     }
 
@@ -192,7 +195,7 @@ function QuizProgress(props) {
                                 <hr />
                                 {questionTimeout > 0 &&
                                     <div className={classes.timerContainer}>
-                                        <Fade in={timerPlaying} timeout={500}>
+                                        <Fade in={timerVisible} timeout={500}>
                                             <div>
                                                 <CountdownTimerWrapper questionTimeout={questionTimeout} on={timerPlaying} onTimeout={handleOnTimeout} />
                                             </div>
