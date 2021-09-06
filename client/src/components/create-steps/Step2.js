@@ -85,7 +85,7 @@ function Step2(props) {
                     </FormControl>
                     <FormControl fullWidth className={classes.formControl}>
                         <FormLabel>
-                            Timeout: {questionTimeout > 0 ? `${questionTimeout} seconds` : `Disabled`}
+                            Time per question: {questionTimeout > 0 ? `${questionTimeout} seconds` : `Unlimited`}
                         </FormLabel>
                         <Controller
                             control={control}

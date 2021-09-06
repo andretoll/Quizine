@@ -5,6 +5,7 @@ import { sendNotification } from '../../services/NotificationService';
 import { useConnection } from '../../contexts/HubConnectionContext';
 import ShareQuiz from '../ShareQuiz';
 import PlayerList from '../PlayerList';
+import QuizParametersList from '../QuizParametersList';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import NotificationsOffIcon from '@material-ui/icons/NotificationsOff';
 import ShareIcon from '@material-ui/icons/Share';
@@ -39,6 +40,9 @@ function QuizWaiting(props) {
     const quizTitle = props.quizTitle;
     const expectedPlayers = props.expectedPlayers;
     const players = props.players;
+    const questionCount = props.questionCount;
+    const questionTimeout = props.questionTimeout;
+    const ruleset = props.ruleset;
     const reportError = props.reportError;
 
     const { connection } = useConnection();
@@ -111,13 +115,7 @@ function QuizWaiting(props) {
     // Get message during waiting state
     function getWaitingMessage() {
 
-        if (expectedPlayers !== players.length) {
-            return (
-                <Typography variant="h6" className="loadingAnimation">
-                    Waiting for other players
-                </Typography>
-            );
-        } else if (players[0] !== username) {
+        if (players[0] !== username && expectedPlayers === players.length) {
             return (
                 <Typography variant="h6" className="loadingAnimation">
                     Waiting for Player 1 to start
@@ -172,10 +170,11 @@ function QuizWaiting(props) {
                             </DialogContent>
                         </Dialog>
                     </div>
-                    {getWaitingMessage()}
+                    <QuizParametersList questionCount={questionCount} questionTimeout={questionTimeout} ruleset={ruleset} />
                     <hr />
                     <PlayerList expectedPlayers={expectedPlayers} players={players} username={username} />
                     <hr />
+                    {getWaitingMessage()}
                     <div style={{ textAlign: 'center', marginTop: '20px' }}>
                         {players[0] === username &&
                             <Button onClick={handleOnStart} variant={(expectedPlayers === players.length) ? 'contained' : 'outlined'} color="primary">

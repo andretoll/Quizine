@@ -263,5 +263,25 @@ namespace Quizine.Api.Tests.Services
             Assert.That(expectingFalse, Is.False);
             Assert.That(expectingTrue, Is.True);
         }
+
+        [TestCase("James Bond", "James Bond")]
+        [TestCase("James bond", "james Bond")]
+        [TestCase("james bond", "JAMES BOND")]
+        public void ShouldCheckIdenticalUsername(string username1, string username2)
+        {
+            // Arrange
+            var sessionParameters = TestData.GetRandomSessionParameters();
+            var quizItems = TestData.GetRandomQuizItems(4);
+            string connectionId1 = TestData.GetRandomString(8);
+            string connectionId2 = TestData.GetRandomString(8);
+            var session = CreateSession(sessionParameters, quizItems);
+            AddUser(session, connectionId1, username1);
+
+            // Act
+            bool expectingTrue = session.UsernameTaken(username2);
+
+            // Assert
+            Assert.That(expectingTrue, Is.True);
+        }
     }
 }

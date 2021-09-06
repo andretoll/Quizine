@@ -10,6 +10,8 @@ namespace Quizine.Api.Models.Rulesets
 
         public override bool EnableSkip => true;
 
+        public override string Title => "Risk";
+
         public override int CalculateMaxScore(IEnumerable<QuizItem> questions)
         {
             return questions.Count() * PointsFactor;
@@ -33,7 +35,11 @@ namespace Quizine.Api.Models.Rulesets
                     if (result.Answer.ID == result.Question.CorrectAnswer.ID)
                         score += PointsFactor;
                     else if (result.Answer != null)
-                        score -= PointsFactor; 
+                        score -= PointsFactor;
+
+                    // Prevent negative score
+                    if (score < 0)
+                        score = 0;
                 }
             }
 

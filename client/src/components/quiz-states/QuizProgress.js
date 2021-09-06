@@ -1,10 +1,10 @@
 import { useEffect, useState, Fragment } from 'react';
-import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import { useConnection } from '../../contexts/HubConnectionContext';
 import { NextQuestion, SubmitAnswer } from '../../services/QuizService';
 import QuizForm from '../QuizForm';
 import StarIcon from '@material-ui/icons/Star';
 import StarEmptyIcon from '@material-ui/icons/StarBorder';
+import CountdownTimerWrapper from '../CountdownTimerWrapper';
 import {
     makeStyles,
     Typography,
@@ -98,18 +98,17 @@ function QuizProgress(props) {
     const [slide, setSlide] = useState(true);
 
     // Timer
-    const [timer, setTimer] = useState(0);
     const [timerPlaying, setTimerPlaying] = useState(true);
-    const [remainingTime, setRemainingTime] = useState();
+    const [timerVisible, setTimerVisible] = useState(true);
 
     useEffect(() => {
         if (connection) {
             connection.on('NextQuestion', (response) => {
                 console.info("Received next question");
                 setCorrectAnswer(null);
-                setSlide(true); // Trigger slide animation (in)
-                setTimer(prevState => prevState + 1); // Activate new timer
-                setTimerPlaying(true); // Set timer status
+                setSlide(true);         // Trigger slide animation (in)
+                setTimerPlaying(true);  // Enable timer
+                setTimerVisible(true);  // Show timer
                 setQuizContent(response);
             });
             connection.on('ValidateAnswer', (response) => {
@@ -119,20 +118,16 @@ function QuizProgress(props) {
         }
     }, [connection]);
 
-    // Send incorrect answer on timeout
-    useEffect(() => {
-
-        if (remainingTime === 0) {
-            console.info("Question timed out. Submitting answer...");
-            setTimerPlaying(false);
-            SubmitAnswer(connection, sessionId, quizContent.id, null);
-        }
-
-    }, [remainingTime, connection, quizContent, sessionId]);
+    function handleOnTimeout() {
+        console.info("Question timed out. Submitting answer...");
+        setTimerPlaying(false);
+        SubmitAnswer(connection, sessionId, quizContent.id, null);
+    }
 
     function handleOnSubmitAnswer(answer) {
         console.info("Submitting answer...");
         setTimerPlaying(false);
+        setTimerVisible(false);
         SubmitAnswer(connection, sessionId, quizContent.id, answer?.id);
     }
 
@@ -145,16 +140,6 @@ function QuizProgress(props) {
             console.info("Requesting next question...");
             NextQuestion(connection, sessionId); // Request next question
         }, 1000);
-    }
-
-    function renderTime({ remainingTime }) {
-        setRemainingTime(remainingTime);
-
-        return (
-            <div>
-                <Typography variant="h5">{remainingTime}</Typography>
-            </div>
-        );
     }
 
     function renderDifficulty() {
@@ -210,19 +195,9 @@ function QuizProgress(props) {
                                 <hr />
                                 {questionTimeout > 0 &&
                                     <div className={classes.timerContainer}>
-                                        <Fade in={timerPlaying} timeout={500}>
+                                        <Fade in={timerVisible} timeout={500}>
                                             <div>
-                                                <CountdownCircleTimer
-                                                    key={timer}
-                                                    size={60}
-                                                    isPlaying={timerPlaying}
-                                                    duration={questionTimeout}
-                                                    strokeWidth={3}
-                                                    trailColor={remainingTime === 0 ? '#A30000' : '#d9d9d9'}
-                                                    strokeLinecap="square"
-                                                    colors={[["#26a300", 0.33], ["#F7B801", 0.33], ["#A30000"]]}>
-                                                    {renderTime}
-                                                </CountdownCircleTimer>
+                                                <CountdownTimerWrapper questionTimeout={questionTimeout} on={timerPlaying} onTimeout={handleOnTimeout} />
                                             </div>
                                         </Fade>
                                     </div>

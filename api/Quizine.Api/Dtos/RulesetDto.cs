@@ -6,14 +6,14 @@ namespace Quizine.Api.Dtos
     {
         #region Public Properties
 
-        public Rule Rule { get; set; }
+        public string Rule { get; set; }
         public string Description { get; set; }
 
         #endregion
 
         #region Constructor
 
-        public RulesetDto(Rule rule, string description)
+        public RulesetDto(string rule, string description)
         {
             Rule = rule;
             Description = description;

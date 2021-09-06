@@ -22,8 +22,8 @@ function PlayerList(props) {
             <ul>
                 {[...Array(expectedPlayers)].map((_, i) => {
                     return (
-                        <li key={i} style={{margin: '10px 0'}}>
-                            <Typography style={{ textTransform: 'uppercase', letterSpacing: '0.2em'}}>
+                        <li key={i} style={{ margin: '10px 0' }}>
+                            <Typography style={{ textTransform: 'uppercase', letterSpacing: '0.2em' }}>
                                 Player {i + 1}:
                             </Typography>
                         </li>
@@ -38,6 +38,13 @@ function PlayerList(props) {
                             <Typography className={username === player ? 'primary-color' : ''}>
                                 {player}
                             </Typography>
+                        </li>
+                    )
+                })}
+                {[...Array(expectedPlayers - players.length)].map((_, i) => {
+                    return (
+                        <li key={i} style={{ margin: '10px 0' }}>
+                            <Typography className="loadingAnimation">Waiting for player</Typography>
                         </li>
                     )
                 })}

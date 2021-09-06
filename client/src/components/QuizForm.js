@@ -19,11 +19,12 @@ const useStyles = makeStyles(theme => ({
         fontSize: '1.3em',
         letterSpacing: '1px',
         lineHeight: 'normal',
-        height: '80px',
+        height: '60px',
         textTransform: 'none',
 
         [theme.breakpoints.up('sm')]: {
             fontSize: '1.5em',
+            height: '80px',
         },
     },
 

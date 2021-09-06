@@ -10,6 +10,8 @@ namespace Quizine.Api.Models.Rulesets
 
         public override bool EnableSkip => false;
 
+        public override string Title => "Standard";
+
         public override int CalculateMaxScore(IEnumerable<QuizItem> questions)
         {
             return questions.Count() * PointsFactor;

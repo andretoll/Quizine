@@ -11,6 +11,7 @@ namespace Quizine.Api.Models.Base
 
         public abstract bool EnableSkip { get; }
         public abstract string Description { get; }
+        public abstract string Title { get; }
 
         #endregion
 

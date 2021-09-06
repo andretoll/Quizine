@@ -57,6 +57,7 @@ function QuizPage() {
     const [questionCount, setQuestionCount] = useState();
     const [maxScore, setMaxScore] = useState();
     const [enableSkip, setEnableSkip] = useState();
+    const [ruleset, setRuleset] = useState();
 
     // UI state
     const [content, setContent] = useState(contentStates.CONNECTING);
@@ -139,7 +140,6 @@ function QuizPage() {
                 if (response.connected) {
                     console.info("Connection confirmed!");
 
-                    setContent(contentStates.WAITING);
                     setQuizTitle(response.quizTitle);
                     setExpectedPlayers(response.expectedUsers);
                     setQuestionTimeout(response.questionTimeout);
@@ -147,10 +147,11 @@ function QuizPage() {
                     setEnableSkip(response.enableSkip);
                     setMaxScore(response.maxScore);
                     setPlayers(response.users);
+                    setRuleset(response.rule);
+                    setContent(contentStates.WAITING);
                 } else {
                     console.warn("Connection rejected: ", response.errorMessage);
-                    // If not successful, go back to join page and display error message
-                    history.replace('/join', { username: username, errorMessage: response.errorMessage });
+                    history.replace(`${location.state.url}`, { errorMessage: response.errorMessage });
                 }
 
                 console.trace(response);
@@ -158,6 +159,7 @@ function QuizPage() {
             connection.on('UserConnected', (response) => {
                 console.info("Another user connected");
 
+                setPlayers(response.users);
                 notifySuccess(`${response.username} joined!`);
             });
             connection.on('ConfirmDisconnect', (response) => {
@@ -176,7 +178,7 @@ function QuizPage() {
             setEventsSubscribedTo(true);
         }
 
-    }, [connection, sessionId, notifyError, notifySuccess, eventsSubscribedTo, history, username, openModal, closeModal]);
+    }, [connection, sessionId, notifyError, notifySuccess, eventsSubscribedTo, history, location, username, openModal, closeModal]);
 
     // Report error
     function reportError(message) {
@@ -221,6 +223,9 @@ function QuizPage() {
                             quizTitle={quizTitle}
                             expectedPlayers={expectedPlayers}
                             players={players}
+                            questionCount={questionCount}
+                            questionTimeout={questionTimeout}
+                            ruleset={ruleset}
                             reportError={reportError}
                         />
                     </div>
