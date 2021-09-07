@@ -8,7 +8,7 @@ namespace Quizine.Api.Interfaces
         #region Methods
 
         void AddSession(SessionParameters sessionParameters, IEnumerable<QuizItem> quizItems);
-        void StartSession(string sessionId);
+        bool StartSession(string sessionId);
         bool SessionExists(string sessionId);
         bool SessionFull(string sessionId);
         bool SessionStarted(string sessionId);

@@ -13,7 +13,6 @@ export const ConnectionProvider = ({ children }) => {
 
         const newConnection = new HubConnectionBuilder()
             .withUrl(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}hubs/quiz`, {
-                skipNegotiation: true,
                 transport: HttpTransportType.WebSockets
             })
             .withAutomaticReconnect([0, 3000, 6000, 9000])
@@ -22,6 +21,26 @@ export const ConnectionProvider = ({ children }) => {
 
         console.debug("Storing new connection...");
         setConnection(newConnection);
+
+        let wakeLock;
+
+        const requestWakeLock = async () => {
+            try {
+                console.info("Requesting wakelock...");
+                wakeLock = await navigator.wakeLock.request();
+            } catch (error) {
+                console.error(`Error while requesting wake lock: ${error.message}`);
+            }
+        };
+
+        requestWakeLock();
+
+        return function cleanup() {
+            console.info("Releasing wakelock...");
+            wakeLock.release();
+            wakeLock = null;
+        }
+
     }, []);
 
     useEffect(() => {
