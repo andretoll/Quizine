@@ -138,6 +138,11 @@ function App() {
           },
         },
       },
+      MuiPopover: {
+        paper: {
+          background: 'linear-gradient(45deg, #6f5656 30%, #1F2833 90%)',
+        }
+      }
     },
   }))
 
