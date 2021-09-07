@@ -4,7 +4,7 @@ import RuleIcon from '@material-ui/icons/Casino';
 import CategoryIcon from '@material-ui/icons/Category';
 import PlayerCountIcon from '@material-ui/icons/Group';
 import TitleIcon from '@material-ui/icons/Create';
-import DifficultyIcon from '@material-ui/icons/Speed';
+import DifficultyIcon from '@material-ui/icons/Stars';
 import {
     makeStyles,
     useMediaQuery,
@@ -13,6 +13,7 @@ import {
     ListItem,
     ListItemIcon,
     ListItemText,
+    Tooltip,
 } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
@@ -21,9 +22,26 @@ const useStyles = makeStyles((theme) => ({
         
         '& svg': {
             color: theme.palette.primary.light,
+
+            '&:hover': {
+                color: theme.palette.primary.main,
+            },
         },
     },
 }));
+
+function TooltipWrapper(props) {
+    return (
+        <Tooltip
+            title={props.title}
+            arrow
+            enterDelay={0}
+            placement="top"
+        >
+            {props.children}
+        </Tooltip>
+    )
+}
 
 function QuizParametersList(props) {
 
@@ -46,7 +64,9 @@ function QuizParametersList(props) {
                 {ruleset &&
                     <ListItem disableGutters style={{ width: '100%' }}>
                         <ListItemIcon>
-                            <RuleIcon />
+                            <TooltipWrapper title="Ruleset">
+                                <RuleIcon />
+                            </TooltipWrapper>
                         </ListItemIcon>
                         <ListItemText primary={ruleset.rule} secondary={ruleset.description} />
                     </ListItem>
@@ -54,7 +74,9 @@ function QuizParametersList(props) {
                 {category &&
                     <ListItem disableGutters style={{ width: '100%' }}>
                         <ListItemIcon>
-                            <CategoryIcon />
+                            <TooltipWrapper title="Category">
+                                <CategoryIcon />
+                            </TooltipWrapper>
                         </ListItemIcon>
                         <ListItemText primary={category} />
                     </ListItem>
@@ -62,7 +84,9 @@ function QuizParametersList(props) {
                 {title &&
                     <ListItem disableGutters>
                         <ListItemIcon>
-                            <TitleIcon />
+                            <TooltipWrapper title="Quiz title">
+                                <TitleIcon />
+                            </TooltipWrapper>
                         </ListItemIcon>
                         <ListItemText primary={title} />
                     </ListItem>
@@ -70,7 +94,9 @@ function QuizParametersList(props) {
                 {playerCount &&
                     <ListItem disableGutters>
                         <ListItemIcon>
-                            <PlayerCountIcon />
+                            <TooltipWrapper title="Number of players">
+                                <PlayerCountIcon />
+                            </TooltipWrapper>
                         </ListItemIcon>
                         <ListItemText primary={`${playerCount} players`} />
                     </ListItem>
@@ -78,7 +104,9 @@ function QuizParametersList(props) {
                 {questionCount &&
                     <ListItem disableGutters>
                         <ListItemIcon>
-                            <QuestionsIcon />
+                            <TooltipWrapper title="Number of questions">
+                                <QuestionsIcon />
+                            </TooltipWrapper>
                         </ListItemIcon>
                         <ListItemText primary={`${questionCount} questions`} />
                     </ListItem>
@@ -86,7 +114,9 @@ function QuizParametersList(props) {
                 {difficulty &&
                     <ListItem disableGutters>
                         <ListItemIcon>
-                            <DifficultyIcon />
+                            <TooltipWrapper title="Difficulty">
+                                <DifficultyIcon />
+                            </TooltipWrapper>
                         </ListItemIcon>
                         <ListItemText primary={difficulty} />
                     </ListItem>
@@ -94,7 +124,9 @@ function QuizParametersList(props) {
                 {questionTimeout &&
                     <ListItem disableGutters>
                         <ListItemIcon>
-                            <TimeoutIcon />
+                            <TooltipWrapper title="Time per question">
+                                <TimeoutIcon />
+                            </TooltipWrapper>
                         </ListItemIcon>
                         {questionTimeout > 0 ?
                             < ListItemText primary={`${questionTimeout} seconds`} />

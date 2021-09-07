@@ -146,7 +146,7 @@ function QuizWaiting(props) {
                     <div className="primary-color" style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <Typography variant="h3" style={{ textAlign: 'center' }} gutterBottom>{quizTitle}</Typography>
                         <div>
-                            <Tooltip title={getNotificationsTooltipText()}>
+                            <Tooltip title={getNotificationsTooltipText()} arrow>
                                 <span>
                                     <IconButton onClick={requestNotificationsPermission} className={notificationsPermission === 'granted' && classes.notificationsActive} disabled={notificationsPermission === 'denied'}>
                                         {notificationsPermission === 'granted' ?
@@ -157,15 +157,17 @@ function QuizWaiting(props) {
                                     </IconButton>
                                 </span>
                             </Tooltip>
-                            <IconButton onClick={(handleOnOpenShareDialog)} style={{ height: 'fit-content' }}>
-                                <ShareIcon />
-                            </IconButton>
+                            <Tooltip title="Share quiz" arrow>
+                                <IconButton onClick={(handleOnOpenShareDialog)} style={{ height: 'fit-content' }}>
+                                    <ShareIcon />
+                                </IconButton>
+                            </Tooltip>
                         </div>
                         <Dialog open={shareDialogOpen} onClose={handleOnCloseShareDialog} PaperProps={{ className: 'secondary-background' }}>
                             <DialogTitle>Share Quiz</DialogTitle>
                             <DialogContent dividers>
                                 <DialogContentText>
-                                    Share the quiz to your friends (or rivals)!
+                                    Share the quiz with your friends (or rivals).
                                 </DialogContentText>
                                 <ShareQuiz sessionId={sessionId} />
                             </DialogContent>

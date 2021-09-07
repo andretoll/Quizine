@@ -72,7 +72,7 @@ function Step3(props) {
                         />
                     </FormControl>
                     <div>
-                        <Typography variant="subtitle1" color="primary">
+                        <Typography variant="subtitle2" color="textSecondary">
                             {rules[ruleWatch]?.description}
                         </Typography>
                     </div>
