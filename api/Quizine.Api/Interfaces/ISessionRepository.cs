@@ -1,6 +1,4 @@
-﻿using Quizine.Api.Enums;
-using Quizine.Api.Models;
-using Quizine.Api.Services;
+﻿using Quizine.Api.Models;
 using System.Collections.Generic;
 
 namespace Quizine.Api.Interfaces

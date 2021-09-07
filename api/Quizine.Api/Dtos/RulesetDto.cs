@@ -1,6 +1,4 @@
-﻿using Quizine.Api.Enums;
-
-namespace Quizine.Api.Dtos
+﻿namespace Quizine.Api.Dtos
 {
     public class RulesetDto
     {

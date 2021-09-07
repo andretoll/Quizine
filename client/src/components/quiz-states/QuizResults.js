@@ -253,7 +253,7 @@ function QuizResults(props) {
                                             <div className={`${getTrophyStyle(score)} ${classes.trophyContainer}`}>
                                                 {quizCompleted ? <TrophyIcon className="spinning" /> : <CircularProgress color="inherit" />}
                                             </div>
-                                            <Typography variant="h4" color={score.username === username ? 'primary' : 'inherit'} style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{score.username}</Typography>
+                                            <Typography variant="h4" color={score.username === username ? 'primary' : 'inherit'} noWrap>{score.username}</Typography>
                                             <div>
                                                 <Typography variant="h4">{score.points} pts</Typography>
                                             </div>

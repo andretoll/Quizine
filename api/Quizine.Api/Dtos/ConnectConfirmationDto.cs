@@ -17,6 +17,7 @@ namespace Quizine.Api.Dtos
         public int MaxScore { get; private set; }
         public bool EnableSkip { get; private set; }
         public RulesetDto Rule { get; private set; }
+        public string Category { get; private set; }
 
         #endregion
 
@@ -50,6 +51,7 @@ namespace Quizine.Api.Dtos
                 MaxScore = session.MaxScore,
                 EnableSkip = session.Ruleset.EnableSkip,
                 Rule = new RulesetDto(session.Ruleset.Title, session.Ruleset.Description),
+                Category = session.SessionParameters.CategoryName,
             };
         } 
 

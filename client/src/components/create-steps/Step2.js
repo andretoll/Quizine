@@ -41,7 +41,7 @@ function Step2(props) {
     const previousStep = props.onPreviousStep;
 
     const { setValues, data } = useData();
-    const { handleSubmit, setValue, control, formState: { isValid } } = useForm({mode: 'onChange'});
+    const { handleSubmit, setValue, control, formState: { isValid } } = useForm({ mode: 'onChange' });
 
     const [questionCount, setQuestionCount] = useState(data.questionCount ? data.questionCount : 10);
     const [questionTimeout, setQuestionTimeout] = useState(data.questionTimeout !== undefined ? data.questionTimeout : 30);
@@ -54,8 +54,13 @@ function Step2(props) {
         setValue("questionTimeout", questionTimeout);
     }, [questionTimeout, setValue]);
 
-    function onSubmit(data) {
-        setValues(data);
+    function onSubmit(formData) {
+
+        // Append category name
+        const categoryName = categories.find(x => x.id === formData.category).name;
+        formData = { ...formData, categoryName };
+        
+        setValues(formData);
         props.onNextStep();
     }
 
@@ -64,7 +69,7 @@ function Step2(props) {
             <Fade in>
                 <div style={{ width: '100%' }}>
                     <FormControl fullWidth className={classes.formControl}>
-                        <FormLabel>
+                        <FormLabel style={{marginBottom: '5px'}}>
                             Questions: {questionCount}
                         </FormLabel>
                         <Controller
@@ -84,7 +89,7 @@ function Step2(props) {
 
                     </FormControl>
                     <FormControl fullWidth className={classes.formControl}>
-                        <FormLabel>
+                        <FormLabel style={{marginBottom: '5px'}}>
                             Time per question: {questionTimeout > 0 ? `${questionTimeout} seconds` : `Unlimited`}
                         </FormLabel>
                         <Controller

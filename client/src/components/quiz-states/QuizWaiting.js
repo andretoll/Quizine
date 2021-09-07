@@ -43,6 +43,7 @@ function QuizWaiting(props) {
     const questionCount = props.questionCount;
     const questionTimeout = props.questionTimeout;
     const ruleset = props.ruleset;
+    const category = props.category;
     const reportError = props.reportError;
 
     const { connection } = useConnection();
@@ -164,20 +165,27 @@ function QuizWaiting(props) {
                             <DialogTitle>Share Quiz</DialogTitle>
                             <DialogContent dividers>
                                 <DialogContentText>
-                                    Share the quiz to your friends (or rivals) so that they may join this EPIC battle!
+                                    Share the quiz to your friends (or rivals)!
                                 </DialogContentText>
                                 <ShareQuiz sessionId={sessionId} />
                             </DialogContent>
                         </Dialog>
                     </div>
-                    <QuizParametersList questionCount={questionCount} questionTimeout={questionTimeout} ruleset={ruleset} />
+                    <div style={{ margin: '10px 0 20px 0' }}>
+                        <QuizParametersList
+                            questionCount={questionCount}
+                            questionTimeout={questionTimeout}
+                            ruleset={ruleset}
+                            category={category}
+                        />
+                    </div>
                     <hr />
                     <PlayerList expectedPlayers={expectedPlayers} players={players} username={username} />
                     <hr />
                     {getWaitingMessage()}
                     <div style={{ textAlign: 'center', marginTop: '20px' }}>
                         {players[0] === username &&
-                            <Button onClick={handleOnStart} variant={(expectedPlayers === players.length) ? 'contained' : 'outlined'} color="primary">
+                            <Button onClick={handleOnStart} variant={(expectedPlayers === players.length) ? 'contained' : 'outlined'} color="primary" size="large">
                                 Start
                             </Button>
                         }

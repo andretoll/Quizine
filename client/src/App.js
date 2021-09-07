@@ -41,10 +41,23 @@ const GlobalCss = withStyles(theme => ({
       borderRadius: '1em',
     },
 
+    '.MuiSlider-thumb': {
+      transform: 'scale(1.7)',
+      borderRadius: '20%',
+    },
+
+    '.MuiSelect-select': {
+      whiteSpace: 'normal',
+    },
+
     'ul, ol': {
       margin: '0',
       padding: '0',
       listStyle: 'none',
+    },
+
+    'hr': {
+      opacity: '0.5',
     },
 
     '.primary-color': {

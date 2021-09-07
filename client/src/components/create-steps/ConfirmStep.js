@@ -1,9 +1,9 @@
 import StepperNavigationActions from '../StepperNavigationActions';
 import { useForm } from 'react-hook-form';
 import { useData } from '../../contexts/CreateFormDataContext';
+import QuizParameterList from '../QuizParametersList';
 import {
     makeStyles,
-    Paper,
     Typography,
     Fade,
 } from '@material-ui/core';
@@ -62,7 +62,7 @@ function ConfirmStep(props) {
     }
 
     function getRuleValue() {
-        return rules[data.rule].rule;
+        return rules[data.rule];
     }
 
     function getQuestionTimeoutValue() {
@@ -74,42 +74,23 @@ function ConfirmStep(props) {
 
     return (
         <form onSubmit={handleSubmit(finishStep)} className={classes.form}>
-            <Fade in>
-                <div className={classes.summaryContainer}>
-                    <Paper className={classes.summaryWrapper} variant="outlined">
+            <div style={{ marginBottom: '15px' }}>
+                <Fade in>
+                    <div className={classes.summaryContainer}>
                         <Typography variant="h5" style={{ textAlign: 'center' }}>Summary</Typography>
                         <hr />
-                        <div className={classes.summaryItemContainer}>
-                            <Typography className={classes.summaryItemTitle}>Title</Typography>
-                            <Typography className={classes.summaryItemValue}>{data.title}</Typography>
-                        </div>
-                        <div className={classes.summaryItemContainer}>
-                            <Typography className={classes.summaryItemTitle}>Players</Typography>
-                            <Typography className={classes.summaryItemValue}>{data.playerCount}</Typography>
-                        </div>
-                        <div className={classes.summaryItemContainer}>
-                            <Typography className={classes.summaryItemTitle}>Questions</Typography>
-                            <Typography className={classes.summaryItemValue}>{data.questionCount}</Typography>
-                        </div>
-                        <div className={classes.summaryItemContainer}>
-                            <Typography className={classes.summaryItemTitle}>Category</Typography>
-                            <Typography className={classes.summaryItemValue}>{getCategoryValue()}</Typography>
-                        </div>
-                        <div className={classes.summaryItemContainer}>
-                            <Typography className={classes.summaryItemTitle}>Difficulty</Typography>
-                            <Typography className={classes.summaryItemValue}>{data.difficulty}</Typography>
-                        </div>
-                        <div className={classes.summaryItemContainer}>
-                            <Typography className={classes.summaryItemTitle}>Time</Typography>
-                            <Typography className={classes.summaryItemValue}>{getQuestionTimeoutValue()}</Typography>
-                        </div>
-                        <div className={classes.summaryItemContainer}>
-                            <Typography className={classes.summaryItemTitle}>Ruleset</Typography>
-                            <Typography className={classes.summaryItemValue}>{getRuleValue()}</Typography>
-                        </div>
-                    </Paper>
-                </div>
-            </Fade>
+                        <QuizParameterList
+                            title={data.title}
+                            playerCount={data.playerCount}
+                            questionCount={data.questionCount}
+                            category={getCategoryValue()}
+                            difficulty={data.difficulty}
+                            questionTimeout={getQuestionTimeoutValue()}
+                            ruleset={getRuleValue()}
+                        />
+                    </div>
+                </Fade>
+            </div>
             <StepperNavigationActions onPreviousStep={previousStep} nextActionText="Finish" />
         </form>
     )
