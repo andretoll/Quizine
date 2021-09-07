@@ -131,6 +131,13 @@ function App() {
           fontSize: "1em",
         },
       },
+      MuiTableRow: {
+        root: {
+          '&:last-child td': {
+            borderBottom: 0,
+          },
+        },
+      },
     },
   }))
 
