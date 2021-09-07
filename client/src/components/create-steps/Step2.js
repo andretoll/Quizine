@@ -69,7 +69,7 @@ function Step2(props) {
             <Fade in>
                 <div style={{ width: '100%' }}>
                     <FormControl fullWidth className={classes.formControl}>
-                        <FormLabel>
+                        <FormLabel style={{marginBottom: '5px'}}>
                             Questions: {questionCount}
                         </FormLabel>
                         <Controller
@@ -89,7 +89,7 @@ function Step2(props) {
 
                     </FormControl>
                     <FormControl fullWidth className={classes.formControl}>
-                        <FormLabel>
+                        <FormLabel style={{marginBottom: '5px'}}>
                             Time per question: {questionTimeout > 0 ? `${questionTimeout} seconds` : `Unlimited`}
                         </FormLabel>
                         <Controller

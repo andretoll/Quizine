@@ -52,6 +52,10 @@ const GlobalCss = withStyles(theme => ({
       listStyle: 'none',
     },
 
+    'hr': {
+      opacity: '0.5',
+    },
+
     '.primary-color': {
       color: theme.palette.primary.main
     },

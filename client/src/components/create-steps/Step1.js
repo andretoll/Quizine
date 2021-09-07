@@ -92,7 +92,7 @@ function Step1(props) {
                         {errors.title && errors.title.type === "validate" && <p>Invalid title.</p>}
                     </FormControl>
                     <FormControl fullWidth className={classes.formControl}>
-                        <FormLabel>
+                        <FormLabel style={{marginBottom: '5px'}}>
                             Players: {playerCount}
                         </FormLabel>
                         <Controller
