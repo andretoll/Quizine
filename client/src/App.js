@@ -46,6 +46,10 @@ const GlobalCss = withStyles(theme => ({
       borderRadius: '20%',
     },
 
+    '.MuiSelect-select': {
+      whiteSpace: 'normal',
+    },
+
     'ul, ol': {
       margin: '0',
       padding: '0',
