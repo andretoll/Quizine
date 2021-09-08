@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core';
 import CheckIcon from '@material-ui/icons/CheckCircle';
 import Typography from '@material-ui/core/Typography';
+import { v4 as uuid } from 'uuid';
 
 const useStyles = makeStyles(_ => ({
 
@@ -22,7 +23,7 @@ function PlayerList(props) {
             <ul>
                 {[...Array(expectedPlayers)].map((_, i) => {
                     return (
-                        <li key={i} style={{ margin: '10px 0' }}>
+                        <li key={uuid()} style={{ margin: '10px 0' }}>
                             <Typography style={{ textTransform: 'uppercase', letterSpacing: '0.2em' }}>
                                 Player {i + 1}:
                             </Typography>
@@ -33,7 +34,7 @@ function PlayerList(props) {
             <ul style={{ flex: '1', marginLeft: '10px' }}>
                 {players.map((player) => {
                     return (
-                        <li key={player} style={{ display: 'flex', alignItems: 'center', margin: '10px 0' }}>
+                        <li key={uuid()} style={{ display: 'flex', alignItems: 'center', margin: '10px 0' }}>
                             <CheckIcon className={username === player ? 'primary-color' : ''} style={{ marginRight: '5px' }} />
                             <Typography className={username === player ? 'primary-color' : ''}>
                                 {player}
@@ -41,9 +42,9 @@ function PlayerList(props) {
                         </li>
                     )
                 })}
-                {[...Array(expectedPlayers - players.length)].map((_, i) => {
+                {[...Array(expectedPlayers - players.length)].map(() => {
                     return (
-                        <li key={i} style={{ margin: '10px 0' }}>
+                        <li key={uuid()} style={{ margin: '10px 0' }}>
                             <Typography className="loadingAnimation">Waiting for player</Typography>
                         </li>
                     )

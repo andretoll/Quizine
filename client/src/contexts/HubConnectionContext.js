@@ -27,7 +27,7 @@ export const ConnectionProvider = ({ children }) => {
         const requestWakeLock = async () => {
             try {
                 console.info("Requesting wakelock...");
-                wakeLock = await navigator.wakeLock.request();
+                wakeLock = await navigator.wakeLock?.request();
             } catch (error) {
                 console.error(`Error while requesting wake lock: ${error.message}`);
             }
@@ -37,7 +37,7 @@ export const ConnectionProvider = ({ children }) => {
 
         return function cleanup() {
             console.info("Releasing wakelock...");
-            wakeLock.release();
+            wakeLock?.release();
             wakeLock = null;
         }
 

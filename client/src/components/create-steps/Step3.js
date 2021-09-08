@@ -1,5 +1,6 @@
 import { useForm, Controller } from 'react-hook-form';
 import { useData } from '../../contexts/CreateFormDataContext';
+import { v4 as uuid } from 'uuid';
 import StepperNavigationActions from '../StepperNavigationActions';
 import {
     makeStyles,
@@ -62,7 +63,7 @@ function Step3(props) {
                                 <Select {...field}>
                                     {rules.map((rule, index) => {
                                         return (
-                                            <MenuItem key={rule.rule} value={index}>{rule.rule}</MenuItem>
+                                            <MenuItem key={uuid()} value={index}>{rule.rule}</MenuItem>
                                         )
                                     })}
                                 </Select>
