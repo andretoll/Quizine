@@ -10,7 +10,11 @@ import HomePage from './pages/HomePage';
 import CreatePage from './pages/CreatePage';
 import JoinPage from './pages/JoinPage';
 import QuizPage from './pages/QuizPage';
-import "@fontsource/roboto";
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import "@fontsource/oleo-script";
 
 // Global styles
 const GlobalCss = withStyles(theme => ({
@@ -60,7 +64,7 @@ const GlobalCss = withStyles(theme => ({
     },
 
     '.MuiPopover-paper': {
-      background: theme.palette.secondary.light,
+      background: theme.palette.secondary.dark,
     },
 
     'ul, ol': {
@@ -118,7 +122,7 @@ function App() {
         main: '#daa520',
       },
       secondary: {
-        main: '#1F2833',
+        main: '#081229',
       },
       background: {
         main: 'linear-gradient(115deg, #000 -15%, #fe6b6b 50%, #2196F3 50%, #000 115%)'
@@ -134,6 +138,16 @@ function App() {
       },
     },
     typography: {
+      h1: {
+        fontWeight: 700,
+      },
+      h2: {
+        fontWeight: 700,
+      },
+      h3: {
+        fontFamily: 'Oleo Script, Roboto',
+        fontWeight: 100,
+      },
       overline: {
         fontSize: '1rem',
       },

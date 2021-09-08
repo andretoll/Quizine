@@ -11,9 +11,6 @@ const useStyles = makeStyles(_ => ({
 
     linksContainer: {
         textAlign: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
         marginBottom: '30px',
 
         '& button': {

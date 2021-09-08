@@ -1,26 +1,38 @@
-import { makeStyles } from '@material-ui/core';
-import { Typography} from '@material-ui/core';
-import Logo from '../assets/logo/logo_white.png';
+import { ReactComponent as Logo } from '../assets/logo/logo.svg';
+import {
+    makeStyles,
+    Paper,
+    Typography
+} from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
-
-    outerContainer: {
-        border: `5px solid ${theme.palette.secondary.main}`,
-        borderRadius: '7%',
-        padding: '5px'
-    },
 
     innerContainer: {
         background: theme.palette.secondary.main,
         borderRadius: '5%',
-        padding: '15px'
+        padding: '30px'
+    },
+
+    icon: {
+        position: 'relative',
+        borderBottom: '4px solid',
+        padding: '10px',
+
+        '& h2': {
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+        },
+
+        '& svg': {
+        },
     },
 
     text: {
-        fontWeight: 'bold', 
-        letterSpacing: '2px', 
+        letterSpacing: '2px',
         textTransform: 'uppercase',
-        color: theme.palette.primary.main,
+        marginTop: '10px',
     }
 }))
 
@@ -29,14 +41,15 @@ function Brand(props) {
     const classes = useStyles();
 
     return (
-        <div className={classes.outerContainer}>
-            <div className={classes.innerContainer}>
-                <img height={props.size} src={Logo} alt="quizine logo" />
-                <Typography className={classes.text} variant="h3">
-                    Quizine
-                </Typography>
+        <Paper className={classes.innerContainer} variant="elevation" elevation={12}>
+            <div className={classes.icon}>
+                <Logo fill="#fff" height={props.size} />
+                <Typography variant="h2">?</Typography>
             </div>
-        </div>
+            <Typography className={classes.text} variant="h4">
+                Quizine
+            </Typography>
+        </Paper>
     )
 }
 

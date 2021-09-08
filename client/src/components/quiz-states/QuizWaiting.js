@@ -143,7 +143,7 @@ function QuizWaiting(props) {
         <Container maxWidth="sm">
             <Paper elevation={10} className="secondary-background">
                 <div style={{ padding: '20px' }}>
-                    <div className="primary-color" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <Typography variant="h3" style={{ textAlign: 'center' }} gutterBottom>{quizTitle}</Typography>
                         <div>
                             <Tooltip title={getNotificationsTooltipText()} arrow>
@@ -165,7 +165,7 @@ function QuizWaiting(props) {
                         </div>
                         <Dialog open={shareDialogOpen} onClose={handleOnCloseShareDialog} PaperProps={{ className: 'secondary-background' }}>
                             <DialogTitle>Share Quiz</DialogTitle>
-                            <DialogContent dividers>
+                            <DialogContent dividers style={{padding: '50px'}}>
                                 <DialogContentText>
                                     Share the quiz with your friends (or rivals).
                                 </DialogContentText>
