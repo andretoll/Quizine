@@ -83,12 +83,20 @@ namespace Quizine.Api.Services
             return quizSession.IsCompleted;
         }
 
-        public void StartSession(string sessionId)
+        public bool StartSession(string sessionId)
         {
             _logger.LogTrace($"{nameof(StartSession)}()");
 
-            var quizSession = _quizSessions.Single(x => x.SessionParameters.SessionID == sessionId);
+            var quizSession = _quizSessions.SingleOrDefault(x => x.SessionParameters.SessionID == sessionId);
+
+            if (quizSession == null)
+            {
+                _logger.LogWarning($"Failed to start session: Session with id '{sessionId}' does not exist.");
+                return false;
+            }
+
             quizSession.Start();
+            return true;
         }
 
         #endregion

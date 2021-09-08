@@ -1,5 +1,6 @@
 import { useState, Fragment } from 'react';
 import { useData } from '../contexts/CreateFormDataContext';
+import { v4 as uuid } from 'uuid';
 import Step1 from './create-steps/Step1';
 import Step2 from './create-steps/Step2';
 import Step3 from './create-steps/Step3';
@@ -69,7 +70,7 @@ function CreateForm(props) {
             <Stepper alternativeLabel activeStep={activeStep} style={{ background: 'transparent', padding: '0', margin: '20px 0' }}>
                 {steps.map((label) => {
                     return (
-                        <Step key={label}>
+                        <Step key={uuid()}>
                             <StepLabel>{label}</StepLabel>
                         </Step>
                     )

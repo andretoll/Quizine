@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { v4 as uuid } from 'uuid';
 import { useConnection } from '../../contexts/HubConnectionContext';
 import { sendNotification } from '../../services/NotificationService';
 import TrophyIcon from '@material-ui/icons/EmojiEvents';
@@ -244,7 +245,7 @@ function QuizResults(props) {
                             {finalScore.slice(0, 3).map((score) => {
 
                                 return (
-                                    <Grid key={score.username} item className={classes.scoreWrapper} xs={12} sm={12} md={4}>
+                                    <Grid key={uuid()} item className={classes.scoreWrapper} xs={12} sm={12} md={4}>
                                         <Paper
                                             className={`${classes.scoreContainer} ${score.username === username && 'active'}`}
                                             variant={score.username === username ? 'elevation' : 'outlined'}
@@ -282,7 +283,7 @@ function QuizResults(props) {
                                         {finalScore.map((score) => {
 
                                             return (
-                                                <TableRow key={score.username}>
+                                                <TableRow key={uuid()}>
                                                     <TableCell className={score.username === username ? 'primary-color' : ''} align="center">
                                                         {finalScore.indexOf(score) + 1}
                                                     </TableCell>

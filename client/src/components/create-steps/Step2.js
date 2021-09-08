@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import { v4 as uuid } from 'uuid';
 import { useData } from '../../contexts/CreateFormDataContext';
 import StepperNavigationActions from '../StepperNavigationActions';
 import {
@@ -119,7 +120,7 @@ function Step2(props) {
                                 <Select {...field}>
                                     {categories.map((category) => {
                                         return (
-                                            <MenuItem key={category.id} value={category.id}>{category.name}</MenuItem>
+                                            <MenuItem key={uuid()} value={category.id}>{category.name}</MenuItem>
                                         )
                                     })}
                                 </Select>
@@ -138,7 +139,7 @@ function Step2(props) {
                                 <Select {...field}>
                                     {difficulties.map((difficulty) => {
                                         return (
-                                            <MenuItem key={difficulty} value={difficulty}>{difficulty}</MenuItem>
+                                            <MenuItem key={uuid()} value={difficulty}>{difficulty}</MenuItem>
                                         )
                                     })}
                                 </Select>

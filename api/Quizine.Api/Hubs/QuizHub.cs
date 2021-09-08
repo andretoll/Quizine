@@ -126,8 +126,14 @@ namespace Quizine.Api.Hubs
         {
             _logger.LogTrace($"({Context.ConnectionId}) Called '{nameof(Start)}' endpoint");
 
-            _sessionRepository.StartSession(sessionId);
-            await Clients.Group(sessionId).ConfirmStart();
+            bool success = _sessionRepository.StartSession(sessionId);
+
+            _logger.LogTrace($"Quiz started: {success}");
+
+            if (success)
+                await Clients.Group(sessionId).ConfirmStart(success);
+            else
+                await Clients.Caller.ConfirmStart(success);
         }
 
         public async Task SubmitAnswer(string sessionId, string questionId, string answerId)

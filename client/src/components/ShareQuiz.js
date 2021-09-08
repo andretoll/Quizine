@@ -1,30 +1,25 @@
-import CodeIcon from '@material-ui/icons/CropFreeOutlined';
-import LinkIcon from '@material-ui/icons/LinkOutlined';
+import { useState } from 'react';
 import QRCode from 'qrcode.react';
 import {
     makeStyles,
-    Typography,
-    Button
+    Button,
+    ClickAwayListener,
+    Tooltip
 } from '@material-ui/core';
 
 const useStyles = makeStyles(_ => ({
 
-    linkContainer: {
+    linksContainer: {
+        textAlign: 'center',
         display: 'flex',
-        justifyContent: 'space-between',
+        flexDirection: 'column',
         alignItems: 'center',
-        marginBottom: '20px',
-    },
+        marginBottom: '30px',
 
-    linkWrapper: {
-        display: 'flex',
-        alignItems: 'center',
-        marginRight: '10px',
-        overflowWrap: 'anywhere',
-
-        '& svg': {
-            marginRight: '10px',
-        }
+        '& button': {
+            width: '150px',
+            margin: '10px',
+        },
     },
 
     qrContainer: {
@@ -38,6 +33,39 @@ const useStyles = makeStyles(_ => ({
     },
 }))
 
+function ClickTooltipWrapper(props) {
+
+    const action = props.action;
+
+    const [open, setOpen] = useState(false);
+
+    const handleTooltipClose = () => {
+        setOpen(false);
+    };
+
+    const handleTooltipOpen = () => {
+        action();
+        setOpen(true);
+    };
+
+    return (
+        <ClickAwayListener onClickAway={handleTooltipClose}>
+            <Tooltip
+                title={props.tooltipTitle}
+                open={open}
+                onClose={handleTooltipClose}
+                placement="right"
+                arrow
+                disableFocusListener
+                disableHoverListener
+                disableTouchListener
+            >
+                <Button variant="outlined" color="primary" onClick={handleTooltipOpen}>{props.actionTitle}</Button>
+            </Tooltip>
+        </ClickAwayListener>
+    )
+}
+
 function ShareQuiz(props) {
 
     const classes = useStyles();
@@ -48,19 +76,9 @@ function ShareQuiz(props) {
 
     return (
         <div>
-            <div className={classes.linkContainer}>
-                <Typography className={classes.linkWrapper} variant="body1">
-                    <CodeIcon />
-                    <span style={{ textDecoration: 'underline' }}>{props.sessionId}</span>
-                </Typography>
-                <Button variant="outlined" color="primary" onClick={() => { navigator.clipboard.writeText(props.sessionId) }}>Copy</Button>
-            </div>
-            <div className={classes.linkContainer}>
-                <Typography className={classes.linkWrapper} variant="body1">
-                    <LinkIcon />
-                    <span style={{ textDecoration: 'underline' }}>{getLink()}</span>
-                </Typography>
-                <Button variant="outlined" color="primary" onClick={() => { navigator.clipboard.writeText(getLink()) }}>Copy</Button>
+            <div className={classes.linksContainer}>
+                <ClickTooltipWrapper tooltipTitle="Copied!" actionTitle="Copy code" action={() => navigator.clipboard.writeText(props.sessionId)} />
+                <ClickTooltipWrapper tooltipTitle="Copied!" actionTitle="Copy link" action={() => navigator.clipboard.writeText(getLink())} />
             </div>
             <div className={classes.qrContainer}>
                 <QRCode renderAs="svg" value={getLink()} size={100} />

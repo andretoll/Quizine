@@ -153,7 +153,11 @@ function QuizPage() {
                     setContent(contentStates.WAITING);
                 } else {
                     console.warn("Connection rejected: ", response.errorMessage);
-                    history.replace(`${location.state.url}`, { errorMessage: response.errorMessage });
+
+                    if (location.state.url)
+                        history.replace(`${location.state.url}`, { errorMessage: response.errorMessage });
+                    else
+                        history.push('/join', { errorMessage: response.errorMessage });
                 }
 
                 console.trace(response);
@@ -170,11 +174,15 @@ function QuizPage() {
                 setPlayers(response.users);
                 notifyError(`${response.username} disconnected.`);
             });
-            connection.on('ConfirmStart', (_) => {
-                console.info("Start confirmed!");
-
-                setContent(contentStates.IN_PROGRESS);
-                NextQuestion(connection, sessionId);
+            connection.on('ConfirmStart', (response) => {
+                console.log(response);
+                if (response) {
+                    console.info("Start confirmed!");
+                    setContent(contentStates.IN_PROGRESS);
+                    NextQuestion(connection, sessionId);
+                } else {
+                    reportError("Failed to start session (Error code 4).");
+                }
             });
 
             setEventsSubscribedTo(true);

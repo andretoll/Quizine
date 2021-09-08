@@ -1,11 +1,14 @@
 import { useState } from 'react';
-import { makeStyles } from '@material-ui/core';
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import ArrowRightIcon from "@material-ui/icons/ArrowForward";
-import CheckIcon from "@material-ui/icons/Check";
-import ClearIcon from "@material-ui/icons/Clear";
-import SkipIcon from "@material-ui/icons/SkipNext";
+import { v4 as uuid } from 'uuid';
+import ArrowRightIcon from '@material-ui/icons/ArrowForward';
+import CheckIcon from '@material-ui/icons/Check';
+import ClearIcon from '@material-ui/icons/Clear';
+import SkipIcon from '@material-ui/icons/SkipNext';
+import { 
+    makeStyles,
+    Button,
+    Grid
+} from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
 
@@ -125,7 +128,7 @@ function QuizForm(props) {
                     }
 
                     return (
-                        <Grid item xs={12} sm={6} key={answer.id}>
+                        <Grid item xs={12} sm={6} key={uuid()}>
                             <Button
                                 startIcon={icon}
                                 className={`${classes.answerButton} ${disabledClass} ${correctAnswerClass} ${incorrectAnswerClass}`}

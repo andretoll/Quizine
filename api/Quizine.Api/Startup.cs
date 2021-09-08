@@ -9,6 +9,7 @@ using Quizine.Api.Helpers;
 using Quizine.Api.Hubs;
 using Quizine.Api.Interfaces;
 using Quizine.Api.Services;
+using System;
 using System.Text.Json.Serialization;
 
 namespace Quizine.Api
@@ -41,7 +42,10 @@ namespace Quizine.Api
                     opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
             services.AddCors();
-            services.AddSignalR();
+            services.AddSignalR(opt =>
+            {
+                opt.ClientTimeoutInterval = TimeSpan.FromMinutes(3);
+            });
             services.AddSingleton<ISessionRepository, SessionRepository>();
             services.AddSingleton<ITriviaRespository, TriviaRepository>();
             services.AddHttpClient<ITriviaRespository, TriviaRepository>();
@@ -61,6 +65,7 @@ namespace Quizine.Api
                 policy
                 .WithOrigins("https://quizine-app.web.app", "http://localhost:3000")
                 .AllowAnyMethod()
+                .AllowCredentials()
                 .AllowAnyHeader();
             });
 

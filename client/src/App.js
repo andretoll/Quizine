@@ -50,6 +50,19 @@ const GlobalCss = withStyles(theme => ({
       whiteSpace: 'normal',
     },
 
+    '.MuiTooltip-tooltip': {
+      background: theme.palette.secondary.light,
+      fontSize: '1.1em'
+    },
+
+    '.MuiTooltip-arrow': {
+      color: theme.palette.secondary.light,
+    },
+
+    '.MuiPopover-paper': {
+      background: theme.palette.secondary.light,
+    },
+
     'ul, ol': {
       margin: '0',
       padding: '0',
@@ -126,9 +139,11 @@ function App() {
       },
     },
     overrides: {
-      MuiTooltip: {
-        tooltip: {
-          fontSize: "1em",
+      MuiTableRow: {
+        root: {
+          '&:last-child td': {
+            borderBottom: 0,
+          },
         },
       },
     },
