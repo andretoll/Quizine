@@ -210,7 +210,7 @@ function CreatePage() {
                         <div className={classes.successIconWrapper}>
                             <SuccessIcon />
                         </div>
-                        <Typography style={{ textAlign: 'center', margin: '20px 0' }} variant="h4">Quiz created!</Typography>
+                        <Typography style={{ textAlign: 'center', margin: '20px 0' }} variant="h3">Quiz created!</Typography>
                         <ShareQuiz sessionId={sessionId} />
                         <div style={{ textAlign: 'center', marginTop: '30px' }}>
                             <Link to={{

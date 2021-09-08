@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 import { useConnection } from '../../contexts/HubConnectionContext';
 import { sendNotification } from '../../services/NotificationService';
+import { useHistory } from 'react-router';
 import TrophyIcon from '@material-ui/icons/EmojiEvents';
+import HomeIcon from '@material-ui/icons/Home';
+import MenuIcon from '@material-ui/icons/MoreVert';
 import ConfettiWrapper from '../ConfettiWrapper';
+import Background from '../../assets/abstract_background.png';
 import {
     makeStyles,
     Grid,
@@ -18,11 +21,14 @@ import {
     TableHead,
     TableRow,
     Typography,
-    Button,
+    IconButton,
     Container,
     CircularProgress,
     AppBar,
-    Toolbar
+    Toolbar,
+    Tooltip,
+    Menu,
+    MenuItem
 } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -32,7 +38,7 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.5) 10%, transparent 70%)',
+        background: `linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5)), url(${Background})`
     },
 
     tabs: {
@@ -78,7 +84,6 @@ const useStyles = makeStyles(theme => ({
         },
 
         '&.active': {
-            transform: 'scale(1.03)',
 
             '& .spinning': {
                 '-webkit-animation': '$spinning 2s infinite linear ease-in',
@@ -154,6 +159,9 @@ function QuizResults(props) {
     const [finalScore, setFinalScore] = useState([]);
 
     const [tabValue, setTabValue] = useState(0);
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const history = useHistory();
 
     useEffect(() => {
 
@@ -221,21 +229,44 @@ function QuizResults(props) {
         return false;
     }
 
+    const handleMenuOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
     return (
         <div className={classes.container}>
             <AppBar position="relative" color="secondary">
                 <Toolbar>
-                    <Typography style={{ flexGrow: '1' }} variant="h5">{quizCompleted ? 'Final results' : `Awaiting ${expectedPlayers - finalScore.length} player(s)...`}</Typography>
-                    <Link to="/">
-                        <Button variant="text" color="primary">Go Home</Button>
-                    </Link>
+                    <Tooltip title="Go home" arrow>
+                        <IconButton onClick={() => {history.push("/")}}>
+                            <HomeIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tabs value={tabValue} onChange={handleTabChange} indicatorColor="primary" className={classes.tabs}>
+                        <Tab tabIndex={0} label="Top 3" />
+                        <Tab tabIndex={1} label="Standings" />
+                    </Tabs>
+                    <Tooltip title="Menu" arrow>
+                        <IconButton onClick={handleMenuOpen}>
+                            <MenuIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Menu
+                        anchorEl={anchorEl}
+                        keepMounted
+                        open={Boolean(anchorEl)}
+                        onClose={handleMenuClose}
+                    >
+                        <MenuItem onClick={() => history.push("/create")}>Create new quiz</MenuItem>
+                    </Menu>
                 </Toolbar>
             </AppBar>
-            <Tabs value={tabValue} onChange={handleTabChange} indicatorColor="primary" className={classes.tabs}>
-                <Tab tabIndex={0} label="Top 3" />
-                <Tab tabIndex={1} label="Standings" />
-            </Tabs>
-            <div className={classes.tabItemContainer}>
+            <Typography style={{ textAlign: 'center', margin: '20px 0' }} variant="h3">{quizCompleted ? 'Final Results' : `Awaiting ${expectedPlayers - finalScore.length} player(s)...`}</Typography>
+            <div className={classes.tabItemContainer}>3
                 {tabValue === 0 &&
                     <Container>
                         {quizCompleted && isPlayerTopThree() &&
@@ -248,8 +279,7 @@ function QuizResults(props) {
                                     <Grid key={uuid()} item className={classes.scoreWrapper} xs={12} sm={12} md={4}>
                                         <Paper
                                             className={`${classes.scoreContainer} ${score.username === username && 'active'}`}
-                                            variant={score.username === username ? 'elevation' : 'outlined'}
-                                            elevation={6}
+                                            variant="outlined"
                                         >
                                             <div className={`${getTrophyStyle(score)} ${classes.trophyContainer}`}>
                                                 {quizCompleted ? <TrophyIcon className="spinning" /> : <CircularProgress color="inherit" />}
@@ -276,7 +306,7 @@ function QuizResults(props) {
                                             <TableCell align="center" width="10%">Place</TableCell>
                                             <TableCell align="left">Player</TableCell>
                                             <TableCell align="center" width="10%">Points</TableCell>
-                                            <TableCell align="center" width="20%">Max. points</TableCell>
+                                            <TableCell align="center" width="30%">Max. points</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>

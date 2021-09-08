@@ -24,6 +24,11 @@ const useStyles = makeStyles(theme => ({
         lineHeight: 'normal',
         height: '60px',
         textTransform: 'none',
+        color: '#fff',
+
+        '&:hover': {
+            color: theme.palette.primary.main,
+        },
 
         [theme.breakpoints.up('sm')]: {
             fontSize: '1.5em',
@@ -118,7 +123,7 @@ function QuizForm(props) {
                 {answers.map((answer) => {
                     const disabledClass = props.correctAnswer ? classes.disabled : null;
                     const correctAnswerClass = props.correctAnswer === answer.id ? classes.correct : null;
-                    const incorrectAnswerClass = selectedAnswer === answer.id && selectedAnswer !== props.correctAnswer ? classes.incorrect : null;
+                    const incorrectAnswerClass = props.correctAnswer && selectedAnswer === answer.id && selectedAnswer !== props.correctAnswer ? classes.incorrect : null;
                     var icon;
 
                     if (correctAnswerClass) {

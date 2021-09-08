@@ -13,18 +13,19 @@ const useStyles = makeStyles(theme => ({
 
     root: {
         textAlign: 'center',
-        background: `linear-gradient(115deg, #000 -15%, ${theme.palette.primaryBackground.main} 50%, ${theme.palette.secondaryBackground.main} 50%, #000 115%)`,
+        background: theme.palette.background.main,
 
         '& button': {
             width: '200px',
             fontSize: '2em',
             padding: '0.5em 0.7em',
-            transition: 'transform .5s',
+            transition: 'all .5s',
             letterSpacing: '5px',
 
             '&:hover': {
                 transform: 'translateY(-5px)',
-                color: theme.palette.primary.main
+                color: theme.palette.primary.main,
+                boxShadow: theme.shadows[8]
             },
         }
     },
@@ -51,7 +52,7 @@ function HomePage() {
                         <Grid container item xs={12}>
                             <Slide in timeout={2000}>
                                 <div style={{ margin: 'auto' }}>
-                                    <Brand size={200} />
+                                    <Brand size={150} />
                                 </div>
                             </Slide>
                         </Grid>
