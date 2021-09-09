@@ -28,7 +28,11 @@ import {
     Toolbar,
     Tooltip,
     Menu,
-    MenuItem
+    MenuItem,
+    Switch,
+    FormControlLabel,
+    FormGroup,
+    Divider,
 } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -38,7 +42,7 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        background: `linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5)), url(${Background})`
+        background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)), url(${Background})`
     },
 
     tabs: {
@@ -69,21 +73,11 @@ const useStyles = makeStyles(theme => ({
         },
     },
 
-    scoreWrapper: {
+    cardWrapper: {
         flex: '0 0 auto',
-    },
-
-    scoreContainer: {
-        padding: '30px 15px',
-        textAlign: 'center',
-        width: '300px',
-        background: theme.palette.secondary.main,
-
-        [theme.breakpoints.down('sm')]: {
-            padding: '15px',
-        },
 
         '&.active': {
+            zIndex: '3',
 
             '& .spinning': {
                 '-webkit-animation': '$spinning 2s infinite linear ease-in',
@@ -94,7 +88,29 @@ const useStyles = makeStyles(theme => ({
         },
     },
 
-    trophyContainer: {
+    card: {
+        padding: '30px 15px',
+        textAlign: 'center',
+        width: '300px',
+        background: 'linear-gradient(135deg, #c10086 , #005192)',
+
+        [theme.breakpoints.down('sm')]: {
+            padding: '15px',
+        },
+
+        '&.active': {
+            boxShadow: '-5px 5px 10px 0 rgba(0 0 0 / 75%)',
+
+            [theme.breakpoints.up('xs')]: {
+                '-webkit-animation': '$float 1s ease-in-out infinite',
+                '-moz-animation': '$float 1s ease-in-out infinite',
+                '-o-animation': '$float 1s ease-in-out infinite',
+                animation: '$float 1s ease-in-out infinite',
+            }
+        },
+    },
+
+    trophyWrapper: {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -142,7 +158,31 @@ const useStyles = makeStyles(theme => ({
         "to": {
             transform: 'rotateY(360deg)',
         }
-    }
+    },
+
+    "@keyframes float": {
+        "0%": {
+            transform: "translatey(0px)",
+        },
+        "50%": {
+            transform: "translatey(-5px)",
+        },
+        "100%": {
+            transform: "translatey(0px)",
+        }
+    },
+
+    "@-webkit-keyframes float": {
+        "0%": {
+            transform: "translatey(0px)",
+        },
+        "50%": {
+            transform: "translatey(-5px)",
+        },
+        "100%": {
+            transform: "translatey(0px)",
+        }
+    },
 }));
 
 function QuizResults(props) {
@@ -160,6 +200,7 @@ function QuizResults(props) {
 
     const [tabValue, setTabValue] = useState(0);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [confetti, setConfetti] = useState(true);
 
     const history = useHistory();
 
@@ -253,31 +294,45 @@ function QuizResults(props) {
                     </Tooltip>
                     <Menu
                         anchorEl={anchorEl}
+                        getContentAnchorEl={null}
+                        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                        transformOrigin={{ vertical: "top", horizontal: "right" }}
                         keepMounted
                         open={Boolean(anchorEl)}
                         onClose={handleMenuClose}
+                        PaperProps={{ className: "secondary-background-light" }}
                     >
                         <MenuItem onClick={() => history.push("/create")}>Create new quiz</MenuItem>
+                        <Divider />
+                        <MenuItem>
+                            <FormGroup row>
+                                <FormControlLabel label="Confetti" control={
+                                    <Switch color="primary" checked={confetti} onChange={(event) => setConfetti(event.target.checked)} />
+                                }>
+                                </FormControlLabel>
+                            </FormGroup>
+                        </MenuItem>
                     </Menu>
                 </Toolbar>
             </AppBar>
             <Typography style={{ textAlign: 'center', margin: '20px 0' }} variant="h3">{quizCompleted ? 'Final Results' : `Awaiting ${expectedPlayers - finalScore.length} player(s)...`}</Typography>
             <div className={classes.tabItemContainer}>
+                {quizCompleted && isPlayerTopThree() && confetti &&
+                    <ConfettiWrapper colors={getConfettiColors()} />
+                }
                 {tabValue === 0 &&
                     <Container>
-                        {quizCompleted && isPlayerTopThree() &&
-                            <ConfettiWrapper colors={getConfettiColors()} />
-                        }
+
                         <Grid container className={classes.cardsContainer} spacing={1}>
                             {finalScore.slice(0, 3).map((score) => {
 
                                 return (
-                                    <Grid key={uuid()} item className={classes.scoreWrapper} xs={12} sm={12} md={4}>
+                                    <Grid key={uuid()} item className={`${classes.cardWrapper} ${score.username === username && 'active'}`} xs={12} sm={12} md={4}>
                                         <Paper
-                                            className={`${classes.scoreContainer} ${score.username === username && 'active'}`}
-                                            variant="outlined"
+                                            className={`${classes.card} ${score.username === username && 'active'}`}
+                                            variant="elevation"
                                         >
-                                            <div className={`${getTrophyStyle(score)} ${classes.trophyContainer}`}>
+                                            <div className={`${getTrophyStyle(score)} ${classes.trophyWrapper}`}>
                                                 {quizCompleted ? <TrophyIcon className="spinning" /> : <CircularProgress color="inherit" />}
                                             </div>
                                             <Typography variant="h4" color={score.username === username ? 'primary' : 'inherit'} noWrap>{score.username}</Typography>
@@ -294,7 +349,7 @@ function QuizResults(props) {
                 }
                 {tabValue === 1 &&
                     <Container maxWidth="sm">
-                        <Paper className="secondary-background" elevation={10}>
+                        <Paper className="secondary-background-light" elevation={10}>
                             <TableContainer>
                                 <Table>
                                     <TableHead>

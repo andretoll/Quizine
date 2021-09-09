@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router';
 import { useForm, Controller } from 'react-hook-form';
 import { useTitle } from '../hooks/useTitle';
+import { useSnackbar } from '../contexts/SnackbarContext';
 import GoHome from '../components/GoHome';
 import {
     makeStyles,
@@ -21,7 +22,6 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        background: theme.palette.background.main,
     },
 
     wrapper: {
@@ -52,6 +52,7 @@ function JoinPage() {
     const classes = useStyles();
     const history = useHistory();
     const location = useLocation();
+    const { notifyError } = useSnackbar();
 
     // Show error message if state contains one
     const [errorMessage, setErrorMessage] = useState(location.state?.errorMessage);
@@ -66,10 +67,20 @@ function JoinPage() {
     });
 
     useTitle("Join quiz");
+
     useEffect(() => {
         register("sessionId", { required: true });
         register("username", { required: true, maxLength: 15, validate: isOnlyWhitespace });
     }, [register]);
+
+    useEffect(() => {
+
+        if (errorMessage)
+            notifyError(errorMessage);
+
+        setErrorMessage(null);
+        window.history.replaceState({}, document.title)
+    }, [notifyError, errorMessage]);
 
     function isOnlyWhitespace(value) {
         return !!value.trim();
@@ -92,7 +103,6 @@ function JoinPage() {
                     <Paper elevation={10} className={classes.content}>
                         <GoHome />
                         <Typography variant="h3" style={{ textAlign: 'center' }}>Join quiz</Typography>
-                        <Typography variant="body1" color="error" style={{ textAlign: 'center' }}>{errorMessage}</Typography>
                         <form onSubmit={handleSubmit(onHandleSubmit)} className={classes.form}>
 
                             <FormControl margin="dense" fullWidth>

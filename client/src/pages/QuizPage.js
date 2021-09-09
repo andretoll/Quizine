@@ -18,10 +18,6 @@ import {
 
 const useStyles = makeStyles(theme => ({
 
-    container: {
-        background: theme.palette.background.main,
-    },
-
     centeredContent: {
         display: 'flex',
         alignItems: 'center',

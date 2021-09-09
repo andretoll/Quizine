@@ -20,7 +20,6 @@ const useStyles = makeStyles(theme => ({
 
     container: {
         minHeight: '100vh',
-        background: theme.palette.background.main,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',

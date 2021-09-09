@@ -25,7 +25,7 @@ const GlobalCss = withStyles(theme => ({
       "-webkit-font-smoothing": 'antialiased',
       "-moz-osx-font-smoothing": 'grayscale',
       margin: '0',
-      background: theme.palette.background.default,
+      background: theme.palette.background.main,
       overflow: 'hidden',
     },
 
@@ -83,6 +83,10 @@ const GlobalCss = withStyles(theme => ({
 
     '.secondary-background': {
       background: theme.palette.secondary.main
+    },
+    
+    '.secondary-background-light': {
+      background: theme.palette.secondary.light
     },
 
     '.loadingAnimation': {

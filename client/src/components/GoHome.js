@@ -1,19 +1,19 @@
-import { useHistory } from 'react-router';
-import { 
+import { Link } from 'react-router-dom';
+import HomeIcon from '@material-ui/icons/Home';
+import {
     Tooltip,
     IconButton
 } from '@material-ui/core';
-import HomeIcon from '@material-ui/icons/Home';
 
 function GoHome() {
 
-    const history = useHistory();
-
     return (
-        <Tooltip title="Go home" arrow>
-            <IconButton onClick={() => { history.push("/") }}>
-                <HomeIcon />
-            </IconButton>
+        <Tooltip title="Go home" arrow placement="right">
+            <Link to="/">
+                <IconButton>
+                    <HomeIcon />
+                </IconButton>
+            </Link>
         </Tooltip>
     )
 }

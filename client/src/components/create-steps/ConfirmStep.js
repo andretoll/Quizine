@@ -65,13 +65,6 @@ function ConfirmStep(props) {
         return rules[data.rule];
     }
 
-    function getQuestionTimeoutValue() {
-        return data.questionTimeout === 0 ?
-            'Unlimited'
-            :
-            `${data.questionTimeout}s`;
-    }
-
     return (
         <form onSubmit={handleSubmit(finishStep)} className={classes.form}>
             <div style={{ marginBottom: '15px' }}>
@@ -85,7 +78,7 @@ function ConfirmStep(props) {
                             questionCount={data.questionCount}
                             category={getCategoryValue()}
                             difficulty={data.difficulty}
-                            questionTimeout={getQuestionTimeoutValue()}
+                            questionTimeout={data.questionTimeout}
                             ruleset={getRuleValue()}
                         />
                     </div>

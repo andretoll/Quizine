@@ -13,7 +13,6 @@ const useStyles = makeStyles(theme => ({
 
     root: {
         textAlign: 'center',
-        background: theme.palette.background.main,
 
         '& button': {
             width: '200px',
