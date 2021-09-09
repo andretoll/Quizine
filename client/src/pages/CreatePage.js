@@ -163,7 +163,7 @@ function CreatePage() {
                 response.json().then(result => {
 
                     console.info("Successfully submitted quiz paramters.");
-                    
+
                     setSessionId(result);
                     setHostname(data.hostname);
                     setContent(contentStates.SUCCESS);
@@ -233,7 +233,9 @@ function CreatePage() {
                 <Container maxWidth="sm">
                     <Fade in timeout={1500}>
                         <Paper elevation={10} className={classes.content}>
-                            <GoHome />
+                            <div>
+                                <GoHome />
+                            </div>
                             {content !== contentStates.SUCCESS && <Typography variant="h3" style={{ textAlign: 'center' }}>Create quiz</Typography>}
                             <Typography style={{ textAlign: 'center', marginTop: '10px' }} color="error" gutterBottom>{errorMessage}</Typography>
                             {getContent(content)}

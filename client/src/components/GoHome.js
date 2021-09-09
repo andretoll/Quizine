@@ -1,14 +1,20 @@
-import { Link } from 'react-router-dom';
-import { Typography} from '@material-ui/core';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { useHistory } from 'react-router';
+import { 
+    Tooltip,
+    IconButton
+} from '@material-ui/core';
+import HomeIcon from '@material-ui/icons/Home';
 
 function GoHome() {
 
+    const history = useHistory();
+
     return (
-        <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', margin: '10px 0' }}>
-            <ArrowBackIcon style={{ marginRight: '10px' }} />
-            <Typography>Home</Typography>
-        </Link>
+        <Tooltip title="Go home" arrow>
+            <IconButton onClick={() => { history.push("/") }}>
+                <HomeIcon />
+            </IconButton>
+        </Tooltip>
     )
 }
 

@@ -4,9 +4,9 @@ import { useConnection } from '../../contexts/HubConnectionContext';
 import { sendNotification } from '../../services/NotificationService';
 import { useHistory } from 'react-router';
 import TrophyIcon from '@material-ui/icons/EmojiEvents';
-import HomeIcon from '@material-ui/icons/Home';
 import MenuIcon from '@material-ui/icons/MoreVert';
 import ConfettiWrapper from '../ConfettiWrapper';
+import GoHome from '../GoHome';
 import Background from '../../assets/abstract_background.png';
 import {
     makeStyles,
@@ -241,11 +241,7 @@ function QuizResults(props) {
         <div className={classes.container}>
             <AppBar position="relative" color="secondary">
                 <Toolbar>
-                    <Tooltip title="Go home" arrow>
-                        <IconButton onClick={() => {history.push("/")}}>
-                            <HomeIcon />
-                        </IconButton>
-                    </Tooltip>
+                    <GoHome />
                     <Tabs value={tabValue} onChange={handleTabChange} indicatorColor="primary" className={classes.tabs}>
                         <Tab tabIndex={0} label="Top 3" />
                         <Tab tabIndex={1} label="Standings" />
@@ -266,7 +262,7 @@ function QuizResults(props) {
                 </Toolbar>
             </AppBar>
             <Typography style={{ textAlign: 'center', margin: '20px 0' }} variant="h3">{quizCompleted ? 'Final Results' : `Awaiting ${expectedPlayers - finalScore.length} player(s)...`}</Typography>
-            <div className={classes.tabItemContainer}>3
+            <div className={classes.tabItemContainer}>
                 {tabValue === 0 &&
                     <Container>
                         {quizCompleted && isPlayerTopThree() &&
