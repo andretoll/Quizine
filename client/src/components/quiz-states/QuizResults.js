@@ -7,7 +7,6 @@ import TrophyIcon from '@material-ui/icons/EmojiEvents';
 import MenuIcon from '@material-ui/icons/MoreVert';
 import ConfettiWrapper from '../ConfettiWrapper';
 import GoHome from '../GoHome';
-import Background from '../../assets/abstract_background.png';
 import {
     makeStyles,
     Grid,
@@ -42,7 +41,6 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)), url(${Background})`
     },
 
     tabs: {
@@ -304,7 +302,7 @@ function QuizResults(props) {
                     >
                         <MenuItem onClick={() => history.push("/create")}>Create new quiz</MenuItem>
                         <Divider />
-                        <MenuItem>
+                        <MenuItem disabled={!quizCompleted}>
                             <FormGroup row>
                                 <FormControlLabel label="Confetti" control={
                                     <Switch color="primary" checked={confetti} onChange={(event) => setConfetti(event.target.checked)} />

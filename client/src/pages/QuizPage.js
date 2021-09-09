@@ -12,11 +12,17 @@ import QuizWaiting from '../components/quiz-states/QuizWaiting';
 import QuizProgress from '../components/quiz-states/QuizProgress';
 import QuizResults from '../components/quiz-states/QuizResults';
 import PromptWrapper from '../components/PromptWrapper';
+import Background from '../assets/abstract_background.png';
 import {
     makeStyles,
 } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
+
+    container: {
+        background: theme.palette.background.main,
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${Background})`,
+    },
 
     centeredContent: {
         display: 'flex',
