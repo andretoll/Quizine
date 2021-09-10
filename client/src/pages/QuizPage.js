@@ -61,6 +61,7 @@ function QuizPage() {
     const [enableSkip, setEnableSkip] = useState();
     const [ruleset, setRuleset] = useState();
     const [category, setCategory] = useState();
+    const [difficulty, setDifficulty] = useState();
 
     // UI state
     const [content, setContent] = useState(contentStates.CONNECTING);
@@ -152,6 +153,7 @@ function QuizPage() {
                     setPlayers(response.users);
                     setRuleset(response.rule);
                     setCategory(response.category);
+                    setDifficulty(response.difficulty);
                     setContent(contentStates.WAITING);
                 } else {
                     console.warn("Connection rejected: ", response.errorMessage);
@@ -239,6 +241,7 @@ function QuizPage() {
                             questionTimeout={questionTimeout}
                             ruleset={ruleset}
                             category={category}
+                            difficulty={difficulty}
                             reportError={reportError}
                         />
                     </div>

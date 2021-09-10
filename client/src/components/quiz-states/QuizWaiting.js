@@ -44,6 +44,7 @@ function QuizWaiting(props) {
     const questionTimeout = props.questionTimeout;
     const ruleset = props.ruleset;
     const category = props.category;
+    const difficulty = props.difficulty;
     const reportError = props.reportError;
 
     const { connection } = useConnection();
@@ -179,6 +180,7 @@ function QuizWaiting(props) {
                             questionTimeout={questionTimeout}
                             ruleset={ruleset}
                             category={category}
+                            difficulty={difficulty}
                         />
                     </div>
                     <hr />

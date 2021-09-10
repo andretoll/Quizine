@@ -18,6 +18,7 @@ namespace Quizine.Api.Dtos
         public bool EnableSkip { get; private set; }
         public RulesetDto Rule { get; private set; }
         public string Category { get; private set; }
+        public string Difficulty { get; private set; }
 
         #endregion
 
@@ -52,6 +53,7 @@ namespace Quizine.Api.Dtos
                 EnableSkip = session.Ruleset.EnableSkip,
                 Rule = new RulesetDto(session.Ruleset.Title, session.Ruleset.Description),
                 Category = session.SessionParameters.CategoryName,
+                Difficulty = session.SessionParameters.Difficulty,
             };
         } 
 
