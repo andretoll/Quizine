@@ -138,7 +138,7 @@ function App() {
         main: '#2196F3',
       },
       gradient: {
-        main: 'linear-gradient(45deg, #6f5656 30%, #1F2833 90%)',
+        main: 'linear-gradient(135deg, #750051 , #005192)',
       },
     },
     typography: {
@@ -146,7 +146,8 @@ function App() {
         fontWeight: 700,
       },
       h2: {
-        fontWeight: 700,
+        fontFamily: 'Oleo Script, Roboto',
+        fontWeight: 400,
       },
       h3: {
         fontFamily: 'Oleo Script, Roboto',

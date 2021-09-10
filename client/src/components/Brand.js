@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
         borderBottom: '4px solid',
         padding: '10px',
 
-        '& h2': {
+        '& h1': {
             position: 'absolute',
             top: '50%',
             left: '50%',
@@ -42,7 +42,7 @@ function Brand(props) {
         <Paper className={classes.innerContainer} variant="elevation" elevation={12}>
             <div className={classes.icon}>
                 <Logo fill="#fff" height={props.size} />
-                <Typography variant="h2">?</Typography>
+                <Typography variant="h1">?</Typography>
             </div>
             <Typography className={classes.text} variant="h4">
                 Quizine
