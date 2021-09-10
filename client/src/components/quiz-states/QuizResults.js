@@ -7,7 +7,6 @@ import TrophyIcon from '@material-ui/icons/EmojiEvents';
 import MenuIcon from '@material-ui/icons/MoreVert';
 import ConfettiWrapper from '../ConfettiWrapper';
 import GoHome from '../GoHome';
-import Background from '../../assets/abstract_background.png';
 import {
     makeStyles,
     Grid,
@@ -42,7 +41,6 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)), url(${Background})`
     },
 
     tabs: {
@@ -92,7 +90,7 @@ const useStyles = makeStyles(theme => ({
         padding: '30px 15px',
         textAlign: 'center',
         width: '300px',
-        background: 'linear-gradient(135deg, #c10086 , #005192)',
+        background: theme.palette.gradient.main,
 
         [theme.breakpoints.down('sm')]: {
             padding: '15px',
@@ -304,7 +302,7 @@ function QuizResults(props) {
                     >
                         <MenuItem onClick={() => history.push("/create")}>Create new quiz</MenuItem>
                         <Divider />
-                        <MenuItem>
+                        <MenuItem disabled={!quizCompleted}>
                             <FormGroup row>
                                 <FormControlLabel label="Confetti" control={
                                     <Switch color="primary" checked={confetti} onChange={(event) => setConfetti(event.target.checked)} />
@@ -315,7 +313,7 @@ function QuizResults(props) {
                     </Menu>
                 </Toolbar>
             </AppBar>
-            <Typography style={{ textAlign: 'center', margin: '20px 0' }} variant="h3">{quizCompleted ? 'Final Results' : `Awaiting ${expectedPlayers - finalScore.length} player(s)...`}</Typography>
+            <Typography style={{ textAlign: 'center', margin: '20px 0' }} variant="h2">{quizCompleted ? 'Final Results' : `Awaiting ${expectedPlayers - finalScore.length} player(s)...`}</Typography>
             <div className={classes.tabItemContainer}>
                 {quizCompleted && isPlayerTopThree() && confetti &&
                     <ConfettiWrapper colors={getConfettiColors()} />

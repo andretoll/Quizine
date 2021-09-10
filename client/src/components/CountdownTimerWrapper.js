@@ -11,7 +11,6 @@ function CountdownTimerWrapper(props) {
     const onTimeout = props.onTimeout;
 
     const [timer, setTimer] = useState(0);
-    const [remainingTime, setRemainingTime] = useState();
     const [completed, setCompleted] = useState(false);
 
     useEffect(() => {
@@ -31,7 +30,6 @@ function CountdownTimerWrapper(props) {
     }, [completed, onTimeout])
 
     function renderTime({ remainingTime }) {
-        setRemainingTime(remainingTime);
 
         return (
             <div>
@@ -48,7 +46,6 @@ function CountdownTimerWrapper(props) {
             duration={questionTimeout}
             strokeWidth={3}
             onComplete={() => setCompleted(true)}
-            trailColor={remainingTime === 0 ? '#A30000' : '#d9d9d9'}
             strokeLinecap="square"
             colors={[["#26a300", 0.33], ["#F7B801", 0.33], ["#A30000"]]}>
             {renderTime}

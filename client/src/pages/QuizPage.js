@@ -12,11 +12,17 @@ import QuizWaiting from '../components/quiz-states/QuizWaiting';
 import QuizProgress from '../components/quiz-states/QuizProgress';
 import QuizResults from '../components/quiz-states/QuizResults';
 import PromptWrapper from '../components/PromptWrapper';
+import Background from '../assets/abstract_background.png';
 import {
     makeStyles,
 } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
+
+    container: {
+        background: theme.palette.background.main,
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${Background})`,
+    },
 
     centeredContent: {
         display: 'flex',
@@ -55,6 +61,7 @@ function QuizPage() {
     const [enableSkip, setEnableSkip] = useState();
     const [ruleset, setRuleset] = useState();
     const [category, setCategory] = useState();
+    const [difficulty, setDifficulty] = useState();
 
     // UI state
     const [content, setContent] = useState(contentStates.CONNECTING);
@@ -146,6 +153,7 @@ function QuizPage() {
                     setPlayers(response.users);
                     setRuleset(response.rule);
                     setCategory(response.category);
+                    setDifficulty(response.difficulty);
                     setContent(contentStates.WAITING);
                 } else {
                     console.warn("Connection rejected: ", response.errorMessage);
@@ -233,6 +241,7 @@ function QuizPage() {
                             questionTimeout={questionTimeout}
                             ruleset={ruleset}
                             category={category}
+                            difficulty={difficulty}
                             reportError={reportError}
                         />
                     </div>
