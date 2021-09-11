@@ -26,10 +26,6 @@ const useStyles = makeStyles(theme => ({
         textTransform: 'none',
         color: '#fff',
 
-        '&:hover': {
-            color: theme.palette.primary.main,
-        },
-
         [theme.breakpoints.up('sm')]: {
             fontSize: '1.5em',
             height: '80px',

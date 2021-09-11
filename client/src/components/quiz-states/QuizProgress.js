@@ -77,6 +77,39 @@ const useStyles = makeStyles(theme => ({
             textAlign: 'right',
         },
     },
+
+    pointsPopup: {
+        position: 'absolute',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        '-webkit-animation': '$points 3s ease-out',
+        '-moz-animation': '$points 3s ease-out',
+        '-o-animation': '$points 3s ease-out',
+        animation: '$points 3s ease-out',
+        opacity: '0',
+    },
+
+    "@keyframes points": {
+        "from": {
+            opacity: '1',
+            transform: 'translate(-50%, 0px)',
+        },
+        "to": {
+            opacity: '0',
+            transform: 'translate(-50%, -100px)',
+        }
+    },
+
+    "@-webkit-keyframes points": {
+        "from": {
+            opacity: '1',
+            transform: 'translate(-50%, 0px)',
+        },
+        "to": {
+            opacity: '0',
+            transform: 'translate(-50%, -100px)',
+        }
+    },
 }));
 
 function QuizProgress(props) {
@@ -92,6 +125,7 @@ function QuizProgress(props) {
 
     const [correctAnswer, setCorrectAnswer] = useState(null);
     const [quizContent, setQuizContent] = useState(null);
+    const [pointsGained, setPointsGained] = useState(null);
 
     // Quiz slider
     const [slide, setSlide] = useState(true);
@@ -105,6 +139,7 @@ function QuizProgress(props) {
             connection.on('NextQuestion', (response) => {
                 console.info("Received next question");
                 setCorrectAnswer(null);
+                setPointsGained(null);
                 setSlide(true);         // Trigger slide animation (in)
                 setTimerPlaying(true);  // Enable timer
                 setTimerVisible(true);  // Show timer
@@ -112,7 +147,8 @@ function QuizProgress(props) {
             });
             connection.on('ValidateAnswer', (response) => {
                 console.info("Received correct answer");
-                setCorrectAnswer(response);
+                setCorrectAnswer(response.answerId);
+                setPointsGained(response.points);
             });
         }
     }, [connection]);
@@ -173,10 +209,33 @@ function QuizProgress(props) {
         }
     }
 
+    function getPointsGained() {
+
+        if (pointsGained < 0) {
+            return (
+                <Typography variant="h4" color="error">
+                    {pointsGained}
+                </Typography>
+            )
+        } else if (pointsGained > 0) {
+            return (
+                <Typography variant="h4" color="primary">
+                    +{pointsGained}
+                </Typography>
+            )
+        }
+    }
+
     return (
         <div className={classes.container}>
             {quizContent &&
                 <Container className={classes.quizContentWrapper} disableGutters maxWidth="md">
+                    {pointsGained ?
+                        <div className={classes.pointsPopup}>
+                            {getPointsGained()}
+                        </div>
+                        : null
+                    }
                     <Slide in={slide} timeout={500} direction={slide ? 'left' : 'right'}>
                         <Paper className={classes.quizContent} elevation={10}>
                             <div style={{ padding: '10px' }}>

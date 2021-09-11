@@ -10,6 +10,8 @@ namespace Quizine.Api.Models
         public QuizItem Question { get; }
         public QuizAnswer Answer { get; private set; }
 
+        public bool IsAnswerCorrect => Answer.IsAnswerValid() && Answer.ID == Question.CorrectAnswer.ID;
+
         #endregion
 
         #region Constructor

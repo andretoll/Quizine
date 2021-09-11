@@ -25,6 +25,7 @@ namespace Quizine.Api.Models.Base
 
         public abstract int CalculateMaxScore(IEnumerable<QuizItem> questions);
         public abstract int CalculateScore(IEnumerable<QuizResult> results);
+        public abstract int GetQuestionPoints(QuizResult result);
 
         #endregion
 
@@ -41,6 +42,7 @@ namespace Quizine.Api.Models.Base
             {
                 Rule.Standard => new StandardRuleset(),
                 Rule.Risk => new RiskRuleset(),
+                Rule.Balanced => new BalancedRuleset(),
                 _ => throw new InvalidOperationException("Error while parsing ruleset: Ruleset not supported."),
             };
         } 

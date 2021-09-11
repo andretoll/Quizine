@@ -28,7 +28,7 @@ namespace Quizine.Api.Interfaces
         bool UsernameTaken(string username);
 
         QuizItem GetNextQuestion(string connectionId, out bool lastQuestion);
-        string SubmitAnswer(string connectionId, string questionId, string answerId);
+        string SubmitAnswer(string connectionId, string questionId, string answerId, out int points);
         IEnumerable<QuizProgress> GetResults();
 
         void Start();

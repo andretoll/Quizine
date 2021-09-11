@@ -32,7 +32,7 @@ namespace Quizine.Api.Models.Rulesets
             {
                 if (result.Answer.IsAnswerValid())
                 {
-                    if (result.Answer.ID == result.Question.CorrectAnswer.ID)
+                    if (result.IsAnswerCorrect)
                         score += PointsFactor;
                     else if (result.Answer != null)
                         score -= PointsFactor;
@@ -44,6 +44,21 @@ namespace Quizine.Api.Models.Rulesets
             }
 
             return score;
+        }
+
+        public override int GetQuestionPoints(QuizResult result)
+        {
+            int points = PointsFactor;
+
+            if (result != null)
+            {
+                if (result != null && result.Answer.IsAnswerValid() && result.IsAnswerCorrect)
+                    return points;
+                else if (result.Answer.IsAnswerValid())
+                    return points * -1;
+            }
+
+            return 0;
         }
     }
 }

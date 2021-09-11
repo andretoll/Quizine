@@ -101,11 +101,12 @@ namespace Quizine.Api.Services
             return progress.NextQuestion;
         }
 
-        public string SubmitAnswer(string connectionId, string questionId, string answerId)
+        public string SubmitAnswer(string connectionId, string questionId, string answerId, out int points)
         {
             var progress = _memberProgressList.First(x => x.User.ConnectionID == connectionId);
             progress.AddResult(questionId, answerId);
 
+            points = Ruleset.GetQuestionPoints(progress.QuizResults.Single(x => x.Question.ID == questionId));
             return _questions.First(x => x.ID == questionId).CorrectAnswer.ID;
         }
 

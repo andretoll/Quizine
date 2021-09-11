@@ -25,7 +25,12 @@ namespace Quizine.Api.Models.Rulesets
         /// <returns></returns>
         public override int CalculateScore(IEnumerable<QuizResult> results)
         {
-            return results.Where(x => x.Question.CorrectAnswer.ID == x.Answer.ID).Count() * PointsFactor;
+            return results.Where(x => x.IsAnswerCorrect).Count() * PointsFactor;
+        }
+
+        public override int GetQuestionPoints(QuizResult result)
+        {
+            return result != null && result.IsAnswerCorrect ? PointsFactor : 0;
         }
     }
 }
