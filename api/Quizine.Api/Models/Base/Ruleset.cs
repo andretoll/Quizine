@@ -41,6 +41,7 @@ namespace Quizine.Api.Models.Base
             {
                 Rule.Standard => new StandardRuleset(),
                 Rule.Risk => new RiskRuleset(),
+                Rule.Balanced => new BalancedRuleset(),
                 _ => throw new InvalidOperationException("Error while parsing ruleset: Ruleset not supported."),
             };
         } 

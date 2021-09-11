@@ -32,7 +32,7 @@ namespace Quizine.Api.Models.Rulesets
             {
                 if (result.Answer.IsAnswerValid())
                 {
-                    if (result.Answer.ID == result.Question.CorrectAnswer.ID)
+                    if (result.IsAnswerCorrect)
                         score += PointsFactor;
                     else if (result.Answer != null)
                         score -= PointsFactor;

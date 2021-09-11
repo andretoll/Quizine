@@ -3,6 +3,7 @@
     public enum Rule
     {
         Standard = 0,
-        Risk = 1
+        Balanced = 1,
+        Risk = 2,
     }
 }
