@@ -1,4 +1,3 @@
-import Icon from '../assets/logo/logo.png';
 
 export function sendNotification(title, message, onClick) {
 
@@ -6,6 +5,6 @@ export function sendNotification(title, message, onClick) {
     if (!document.hidden)
         return;
 
-    var notification = new Notification(title, { body: message, image: Icon });
+    var notification = new Notification(title, { body: message });
     notification.onclick = onClick;
 }
