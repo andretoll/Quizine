@@ -11,7 +11,7 @@ namespace Quizine.Api.Interfaces
         Task ConfirmConnect(ConnectConfirmationDto dto);
         Task ConfirmDisconnect(DisconnectConfirmationDto dto);
         Task ConfirmStart(bool success);
-        Task ValidateAnswer(string correctAnswerId);
+        Task ValidateAnswer(ValidateAnswerDto dto);
         Task NextQuestion(NextQuestionDto dto);
         Task Results(ResultsDto dto);
         Task UserConnected(UserConnectedDto dto);

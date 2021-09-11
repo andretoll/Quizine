@@ -66,10 +66,10 @@ namespace Quizine.Api.Tests.Utils
 
         public static IEnumerable<QuizProgress> GetRandomQuizProgressList(User[] users, int questionCount)
         {
-            Random r = new Random();
+            Random r = new();
 
             var quizItems = GetRandomQuizItems(questionCount);
-            List<QuizProgress> progressList = new List<QuizProgress>();
+            List<QuizProgress> progressList = new();
 
             for (int i = 0; i < users.Length; i++)
             {

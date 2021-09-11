@@ -25,6 +25,7 @@ namespace Quizine.Api.Models.Base
 
         public abstract int CalculateMaxScore(IEnumerable<QuizItem> questions);
         public abstract int CalculateScore(IEnumerable<QuizResult> results);
+        public abstract int GetQuestionPoints(QuizResult result);
 
         #endregion
 

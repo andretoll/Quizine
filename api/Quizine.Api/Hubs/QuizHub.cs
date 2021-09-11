@@ -142,8 +142,8 @@ namespace Quizine.Api.Hubs
 
             var session = _sessionRepository.GetSessionBySessionId(sessionId);
             
-            string correctAnswerId = session.SubmitAnswer(Context.ConnectionId, questionId, answerId);
-            await Clients.Caller.ValidateAnswer(correctAnswerId);
+            string correctAnswerId = session.SubmitAnswer(Context.ConnectionId, questionId, answerId, out int points);
+            await Clients.Caller.ValidateAnswer(new ValidateAnswerDto(correctAnswerId, points));
         }
 
         public async Task NextQuestion(string sessionId)

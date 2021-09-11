@@ -45,5 +45,20 @@ namespace Quizine.Api.Models.Rulesets
 
             return score;
         }
+
+        public override int GetQuestionPoints(QuizResult result)
+        {
+            int points = PointsFactor;
+
+            if (result != null)
+            {
+                if (result != null && result.Answer.IsAnswerValid() && result.IsAnswerCorrect)
+                    return points;
+                else if (result.Answer.IsAnswerValid())
+                    return points * -1;
+            }
+
+            return 0;
+        }
     }
 }

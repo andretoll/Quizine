@@ -27,5 +27,10 @@ namespace Quizine.Api.Models.Rulesets
         {
             return results.Where(x => x.IsAnswerCorrect).Count() * PointsFactor;
         }
+
+        public override int GetQuestionPoints(QuizResult result)
+        {
+            return result != null && result.IsAnswerCorrect ? PointsFactor : 0;
+        }
     }
 }

@@ -54,7 +54,7 @@ namespace Quizine.Api.Tests.Services
 
             // Act
             var firstQuestion = session.GetNextQuestion(connectionId, out bool expectingFalse);
-            session.SubmitAnswer(connectionId, firstQuestion.ID, firstQuestion.CorrectAnswer.ID);
+            session.SubmitAnswer(connectionId, firstQuestion.ID, firstQuestion.CorrectAnswer.ID, out _);
             _ = session.GetNextQuestion(connectionId, out bool expectingTrue);
 
             // Assert
@@ -75,7 +75,7 @@ namespace Quizine.Api.Tests.Services
 
             // Act
             var question = session.GetNextQuestion(connectionId, out _);
-            string correctAnswerId = session.SubmitAnswer(connectionId, question.ID, question.CorrectAnswer.ID);
+            string correctAnswerId = session.SubmitAnswer(connectionId, question.ID, question.CorrectAnswer.ID, out _);
 
             // Assert
             Assert.That(correctAnswerId, Is.EqualTo(question.CorrectAnswer.ID));
@@ -94,7 +94,7 @@ namespace Quizine.Api.Tests.Services
 
             // Act
             var question = session.GetNextQuestion(connectionId, out _);
-            string correctAnswerId = session.SubmitAnswer(connectionId, question.ID, question.Answers.First(x => x.ID != question.CorrectAnswer.ID).ID);
+            string correctAnswerId = session.SubmitAnswer(connectionId, question.ID, question.Answers.First(x => x.ID != question.CorrectAnswer.ID).ID, out _);
 
             // Assert
             Assert.That(correctAnswerId, Is.EqualTo(question.CorrectAnswer.ID));
@@ -115,7 +115,7 @@ namespace Quizine.Api.Tests.Services
             // Act
             var question = session.GetNextQuestion(connectionId, out bool expectingFalse);
             var answer = question.CorrectAnswer;
-            session.SubmitAnswer(connectionId, question.ID, answer.ID);
+            session.SubmitAnswer(connectionId, question.ID, answer.ID, out _);
             var result = progress.QuizResults.First(x => x.Question.ID == question.ID);
 
             // Assert
@@ -157,7 +157,7 @@ namespace Quizine.Api.Tests.Services
             for (int i = 0; i < quizItems.Count(); i++)
             {
                 var question = session.GetNextQuestion(connectionId, out _);
-                session.SubmitAnswer(connectionId, question.ID, question.CorrectAnswer.ID);
+                session.SubmitAnswer(connectionId, question.ID, question.CorrectAnswer.ID, out _);
             }
             var result = session.GetResults().First(x => x.User.ConnectionID == connectionId);
 
@@ -180,7 +180,7 @@ namespace Quizine.Api.Tests.Services
             for (int i = 0; i < quizItems.Count() - 1; i++)
             {
                 var question = session.GetNextQuestion(connectionId, out _);
-                session.SubmitAnswer(connectionId, question.ID, question.CorrectAnswer.ID);
+                session.SubmitAnswer(connectionId, question.ID, question.CorrectAnswer.ID, out _);
             }
             var result = session.GetResults().ToList();
 
@@ -206,17 +206,17 @@ namespace Quizine.Api.Tests.Services
             for (int i = 0; i < quizItems.Count(); i++)
             {
                 var question = session.GetNextQuestion(connectionId1, out _);
-                session.SubmitAnswer(connectionId1, question.ID, question.CorrectAnswer.ID);
+                session.SubmitAnswer(connectionId1, question.ID, question.CorrectAnswer.ID, out _);
             }
             for (int i = 0; i < quizItems.Count(); i++)
             {
                 var question = session.GetNextQuestion(connectionId2, out _);
-                session.SubmitAnswer(connectionId2, question.ID, question.CorrectAnswer.ID);
+                session.SubmitAnswer(connectionId2, question.ID, question.CorrectAnswer.ID, out _);
             }
             for (int i = 0; i < quizItems.Count() - 1; i++)
             {
                 var question = session.GetNextQuestion(connectionId3, out _);
-                session.SubmitAnswer(connectionId3, question.ID, question.CorrectAnswer.ID);
+                session.SubmitAnswer(connectionId3, question.ID, question.CorrectAnswer.ID, out _);
             }
             var result = session.GetResults().ToList();
 
@@ -242,18 +242,18 @@ namespace Quizine.Api.Tests.Services
             for (int i = 0; i < quizItems.Count(); i++)
             {
                 var question = session.GetNextQuestion(connectionId1, out _);
-                session.SubmitAnswer(connectionId1, question.ID, question.CorrectAnswer.ID);
+                session.SubmitAnswer(connectionId1, question.ID, question.CorrectAnswer.ID, out _);
             }
             for (int i = 0; i < quizItems.Count(); i++)
             {
                 var question = session.GetNextQuestion(connectionId2, out _);
-                session.SubmitAnswer(connectionId2, question.ID, question.CorrectAnswer.ID);
+                session.SubmitAnswer(connectionId2, question.ID, question.CorrectAnswer.ID, out _);
             }
             bool expectingFalse = session.IsCompleted;
             for (int i = 0; i < quizItems.Count(); i++)
             {
                 var question = session.GetNextQuestion(connectionId3, out _);
-                session.SubmitAnswer(connectionId3, question.ID, question.CorrectAnswer.ID);
+                session.SubmitAnswer(connectionId3, question.ID, question.CorrectAnswer.ID, out _);
             }
             var result = session.GetResults().ToList();
             bool expectingTrue = session.IsCompleted;
@@ -273,7 +273,6 @@ namespace Quizine.Api.Tests.Services
             var sessionParameters = TestData.GetRandomSessionParameters();
             var quizItems = TestData.GetRandomQuizItems(4);
             string connectionId1 = TestData.GetRandomString(8);
-            string connectionId2 = TestData.GetRandomString(8);
             var session = CreateSession(sessionParameters, quizItems);
             AddUser(session, connectionId1, username1);
 
