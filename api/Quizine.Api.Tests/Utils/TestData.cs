@@ -20,7 +20,7 @@ namespace Quizine.Api.Tests.Utils
                 QuestionCount = r.Next(1, 50),
                 QuestionTimeout = r.Next(0, 120),
                 Category = r.Next(0, 30),
-                Difficulty = r.Next(0, 1) > 0 ? "Easy" : "Hard",
+                Difficulty = r.Next(0, 2) > 0 ? "Easy" : "Hard",
                 SessionID = GetRandomString(7)
             };
         }
@@ -37,13 +37,14 @@ namespace Quizine.Api.Tests.Utils
                 QuestionCount = r.Next(1, 50),
                 QuestionTimeout = r.Next(0, 120),
                 Category = r.Next(0, 30),
-                Difficulty = r.Next(0, 1) > 0 ? "Easy" : "Hard",
+                Difficulty = r.Next(0, 2) > 0 ? "Easy" : "Hard",
                 SessionID = GetRandomString(7)
             };
         }
 
         public static IEnumerable<QuizItem> GetRandomQuizItems(int count)
         {
+            Random r = new();
             List<QuizItem> quizItems = new();
 
             for (int i = 0; i < count; i++)
@@ -51,7 +52,7 @@ namespace Quizine.Api.Tests.Utils
                 quizItems.Add(
                     new QuizItem(
                         GetRandomString(5),
-                        GetRandomString(4),
+                        r.Next(0, 2) > 0 ? "Easy" : "Hard",
                         GetRandomString(3),
                         GetRandomString(30),
                         i,
