@@ -16,5 +16,9 @@ namespace Quizine.Api.Interfaces
         Task Results(ResultsDto dto);
         Task UserConnected(UserConnectedDto dto);
         Task QuizCompleted();
+
+        // Race game mode
+        Task NextQuestionIncoming(int delay);
+        Task TriggerResults();
     }
 }

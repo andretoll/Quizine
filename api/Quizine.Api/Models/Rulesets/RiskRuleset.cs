@@ -30,7 +30,7 @@ namespace Quizine.Api.Models.Rulesets
 
             foreach (var result in results)
             {
-                if (result.Answer.IsAnswerValid())
+                if (result.IsAnswerValid)
                 {
                     if (result.IsAnswerCorrect)
                         score += PointsFactor;
@@ -52,9 +52,9 @@ namespace Quizine.Api.Models.Rulesets
 
             if (result != null)
             {
-                if (result != null && result.Answer.IsAnswerValid() && result.IsAnswerCorrect)
+                if (result != null && result.IsAnswerValid && result.IsAnswerCorrect)
                     return points;
-                else if (result.Answer.IsAnswerValid())
+                else if (result.IsAnswerValid)
                     return points * -1;
             }
 

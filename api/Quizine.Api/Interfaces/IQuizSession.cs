@@ -30,6 +30,9 @@ namespace Quizine.Api.Interfaces
         QuizItem GetNextQuestion(string connectionId, out bool lastQuestion);
         string SubmitAnswer(string connectionId, string questionId, string answerId, out int points);
         IEnumerable<QuizProgress> GetResults();
+        bool IsAnswerSet(string connectionId, string questionId);
+        bool IsFirstToAnswerCorrectly(string questionId);
+        bool AllUsersAnswered(string questionId);
 
         void Start();
 
