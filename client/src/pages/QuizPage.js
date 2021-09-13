@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
 
     container: {
         background: theme.palette.background.main,
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(${Background})`,
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(${Background})`,
     },
 
     centeredContent: {
