@@ -1,19 +1,17 @@
-import { useEffect, useState, Fragment } from 'react';
+import { useEffect, useState } from 'react';
 import { useConnection } from '../../contexts/HubConnectionContext';
 import { NextQuestion, SubmitAnswer } from '../../services/QuizService';
-import QuizForm from '../QuizForm';
-import StarIcon from '@material-ui/icons/Star';
-import StarEmptyIcon from '@material-ui/icons/StarBorder';
-import CountdownTimerWrapper from '../CountdownTimerWrapper';
+import QuizForm from '../quiz-progress/QuizForm';
+import CountdownTimerWrapper from '../wrappers/CountdownTimerWrapper';
 import {
     makeStyles,
     Typography,
-    Grid,
     Fade,
     Slide,
     Paper,
     Container,
 } from '@material-ui/core';
+import QuizCardHeader from '../quiz-progress/QuizCardHeader';
 
 const useStyles = makeStyles(theme => ({
 
@@ -60,22 +58,6 @@ const useStyles = makeStyles(theme => ({
         padding: '20px',
         display: 'flex',
         justifyContent: 'center',
-    },
-
-    textLeft: {
-        textAlign: 'center',
-
-        [theme.breakpoints.up('sm')]: {
-            textAlign: 'left',
-        },
-    },
-
-    textRight: {
-        textAlign: 'center',
-
-        [theme.breakpoints.up('sm')]: {
-            textAlign: 'right',
-        },
     },
 
     pointsPopup: {
@@ -177,38 +159,6 @@ function QuizProgress(props) {
         }, 1000);
     }
 
-    function renderDifficulty() {
-
-        switch (quizContent?.difficulty) {
-            case 'easy':
-                return (
-                    <Fragment>
-                        <StarIcon />
-                        <StarEmptyIcon />
-                        <StarEmptyIcon />
-                    </Fragment>
-                )
-            case 'medium':
-                return (
-                    <Fragment>
-                        <StarIcon />
-                        <StarIcon />
-                        <StarEmptyIcon />
-                    </Fragment>
-                )
-            case 'hard':
-                return (
-                    <Fragment>
-                        <StarIcon />
-                        <StarIcon />
-                        <StarIcon />
-                    </Fragment>
-                )
-            default:
-                break;
-        }
-    }
-
     function getPointsGained() {
 
         if (pointsGained < 0) {
@@ -239,17 +189,12 @@ function QuizProgress(props) {
                     <Slide in={slide} timeout={500} direction={slide ? 'left' : 'right'}>
                         <Paper className={classes.quizContent} elevation={10}>
                             <div style={{ padding: '10px' }}>
-                                <Grid container alignItems="center">
-                                    <Grid item xs={12} sm={5} className={classes.textLeft} style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                        <Typography variant="overline">{quizContent?.category}</Typography>
-                                    </Grid>
-                                    <Grid item xs={6} sm={2} style={{ textAlign: 'center' }}>
-                                        <Typography variant="overline">{quizContent?.questionIndex} / {questionCount}</Typography>
-                                    </Grid>
-                                    <Grid item xs={6} sm={5} className={classes.textRight}>
-                                        {renderDifficulty()}
-                                    </Grid>
-                                </Grid>
+                                <QuizCardHeader
+                                    category={quizContent?.category}
+                                    difficulty={quizContent?.difficulty}
+                                    questionIndex={quizContent?.questionIndex}
+                                    questionCount={questionCount}
+                                />
                                 <hr />
                                 {questionTimeout > 0 &&
                                     <div className={classes.timerContainer}>

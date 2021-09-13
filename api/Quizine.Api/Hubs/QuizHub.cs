@@ -141,9 +141,8 @@ namespace Quizine.Api.Hubs
             _logger.LogTrace($"({Context.ConnectionId}) Called '{nameof(SubmitAnswer)}' endpoint");
 
             var session = _sessionRepository.GetSessionBySessionId(sessionId);
-            
-            string correctAnswerId = session.SubmitAnswer(Context.ConnectionId, questionId, answerId, out int points);
-            await Clients.Caller.ValidateAnswer(new ValidateAnswerDto(correctAnswerId, points));
+
+            await session.Ruleset.SubmitAnswer(this, session, questionId, answerId);
         }
 
         public async Task NextQuestion(string sessionId)
@@ -152,8 +151,7 @@ namespace Quizine.Api.Hubs
 
             var session = _sessionRepository.GetSessionBySessionId(sessionId);
 
-            var nextQuestion = session.GetNextQuestion(Context.ConnectionId, out bool lastQuestion);
-            await Clients.Caller.NextQuestion(new NextQuestionDto(nextQuestion, lastQuestion));
+            await session.Ruleset.NextQuestion(this, session);
         }
 
         public async Task GetResults(string sessionId)
@@ -162,16 +160,7 @@ namespace Quizine.Api.Hubs
 
             var session = _sessionRepository.GetSessionBySessionId(sessionId);
 
-            var results = session.GetResults();
-            
-            await Clients.Group(sessionId).Results(new ResultsDto(results));
-
-            // Notify users if quiz is completed
-            if (_sessionRepository.SessionCompleted(sessionId))
-            {
-                _logger.LogDebug("Quiz completed. Notifying all users...");
-                await Clients.Group(sessionId).QuizCompleted();
-            }
+            await session.Ruleset.GetResults(this, session);
         }
 
         #endregion

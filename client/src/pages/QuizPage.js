@@ -10,8 +10,9 @@ import QuizError from '../components/quiz-states/QuizError';
 import QuizConnecting from '../components/quiz-states/QuizConnecting';
 import QuizWaiting from '../components/quiz-states/QuizWaiting';
 import QuizProgress from '../components/quiz-states/QuizProgress';
+import QuizRaceProgress from '../components/quiz-states/QuizRaceProgress';
 import QuizResults from '../components/quiz-states/QuizResults';
-import PromptWrapper from '../components/PromptWrapper';
+import PromptWrapper from '../components/wrappers/PromptWrapper';
 import Background from '../assets/abstract_background.png';
 import {
     makeStyles,
@@ -45,11 +46,11 @@ function QuizPage() {
     const classes = useStyles();
 
     const { connection } = useConnection();
-    const [eventsSubscribedTo, setEventsSubscribedTo] = useState(false);
     const { notifySuccess, notifyError } = useSnackbar();
     const { openModal, closeModal } = useErrorModal();
-
+    
     // Quiz state
+    const [eventsSubscribedTo, setEventsSubscribedTo] = useState(false);
     const [sessionId, setSessionId] = useState();
     const [username, setUsername] = useState();
     const [quizTitle, setQuizTitle] = useState();
@@ -247,15 +248,27 @@ function QuizPage() {
                     </div>
                 )
             case contentStates.IN_PROGRESS:
-                return (
-                    <QuizProgress
-                        sessionId={sessionId}
-                        questionCount={questionCount}
-                        questionTimeout={questionTimeout}
-                        enableSkip={enableSkip}
-                        onFinal={handleOnFinal}
-                    />
-                )
+                switch (ruleset.rule.toLowerCase()) {
+                    case "race":
+                        return (
+                            <QuizRaceProgress
+                                sessionId={sessionId}
+                                questionCount={questionCount}
+                                username={username}
+                                onFinal={handleOnFinal}
+                            />
+                        )
+                    default:
+                        return (
+                            <QuizProgress
+                                sessionId={sessionId}
+                                questionCount={questionCount}
+                                questionTimeout={questionTimeout}
+                                enableSkip={enableSkip}
+                                onFinal={handleOnFinal}
+                            />
+                        )
+                }
             case contentStates.RESULTS:
                 return (
                     <QuizResults

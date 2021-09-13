@@ -44,7 +44,7 @@ namespace Quizine.Api.Models.Rulesets
 
             foreach (var result in results)
             {
-                if (result.Answer.IsAnswerValid() && result.IsAnswerCorrect)
+                if (result.IsAnswerValid && result.IsAnswerCorrect)
                 {
                     score += ConvertDifficultyToPoints(result.Question.Difficulty);
                 }

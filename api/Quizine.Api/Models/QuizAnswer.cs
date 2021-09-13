@@ -26,10 +26,6 @@ namespace Quizine.Api.Models
 
         #region Public Methods
 
-        public bool IsAnswerValid()
-        {
-            return !string.IsNullOrEmpty(ID) && !string.IsNullOrEmpty(Value);
-        }
 
         #endregion
 

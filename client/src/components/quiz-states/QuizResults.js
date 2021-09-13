@@ -5,7 +5,7 @@ import { sendNotification } from '../../services/NotificationService';
 import { useHistory } from 'react-router';
 import TrophyIcon from '@material-ui/icons/EmojiEvents';
 import MenuIcon from '@material-ui/icons/MoreVert';
-import ConfettiWrapper from '../ConfettiWrapper';
+import ConfettiWrapper from '../wrappers/ConfettiWrapper';
 import GoHome from '../GoHome';
 import {
     makeStyles,

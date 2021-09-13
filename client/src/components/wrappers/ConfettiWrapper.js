@@ -1,4 +1,4 @@
-import { useWindowSize } from '../hooks/useWindowSize';
+import { useWindowSize } from '../../hooks/useWindowSize';
 import Confetti from 'react-confetti';
 
 function ConfettiWrapper(props) {

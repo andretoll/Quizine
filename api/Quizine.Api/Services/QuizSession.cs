@@ -125,6 +125,30 @@ namespace Quizine.Api.Services
             return ScoreSorter.Sort(progressList, ScoreSortType.ScoreDescending);
         }
 
+        public bool IsAnswerSet(string connectionId, string questionId)
+        {
+            var progress = _memberProgressList.First(x => x.User.ConnectionID == connectionId);
+            var question = progress.QuizResults.SingleOrDefault(x => x.Question.ID == questionId);
+
+            return question.Answer != null && question.IsAnswerValid;
+        }
+
+        public bool IsFirstToAnswerCorrectly(string questionId)
+        {
+            foreach (var progress in _memberProgressList)
+            {
+                if (progress.QuizResults.Single(x => x.Question.ID == questionId).IsAnswerCorrect)
+                    return false;
+            }
+
+            return true;
+        }
+
+        public bool AllUsersAnswered(string questionId)
+        {
+            return MemberProgressList.All(x => x.QuizResults.Single(y => y.Question.ID == questionId).IsAnswerValid);
+        }
+
         #endregion
     }
 }

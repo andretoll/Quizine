@@ -140,6 +140,9 @@ function App() {
       gradient: {
         main: 'linear-gradient(135deg, #750051 , #005192)',
       },
+      error: {
+        main: '#cd5c5c',
+      },
     },
     typography: {
       h1: {

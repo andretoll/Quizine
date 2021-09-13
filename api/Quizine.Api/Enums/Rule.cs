@@ -5,5 +5,6 @@
         Standard = 0,
         Balanced = 1,
         Risk = 2,
+        Race = 3,
     }
 }
