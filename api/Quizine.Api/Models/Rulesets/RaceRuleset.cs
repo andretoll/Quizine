@@ -28,6 +28,8 @@ namespace Quizine.Api.Models.Rulesets
 
         public override int? NextQuestionDelay => 5;
 
+        public override bool EnableTimeout => false;
+
         #endregion
 
         #region Private Methods

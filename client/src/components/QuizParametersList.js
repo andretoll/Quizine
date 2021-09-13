@@ -121,7 +121,7 @@ function QuizParametersList(props) {
                         <ListItemText primary={difficulty} />
                     </ListItem>
                 }
-                {questionTimeout &&
+                {ruleset?.enableTimeout &&
                     <ListItem disableGutters>
                         <ListItemIcon>
                             <TooltipWrapper title="Time per question">

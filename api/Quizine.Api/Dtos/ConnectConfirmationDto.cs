@@ -51,7 +51,7 @@ namespace Quizine.Api.Dtos
                 QuestionCount = session.QuestionCount,
                 MaxScore = session.MaxScore,
                 EnableSkip = session.Ruleset.EnableSkip,
-                Rule = new RulesetDto(session.Ruleset.Title, session.Ruleset.Description),
+                Rule = new RulesetDto(session.Ruleset),
                 Category = session.SessionParameters.CategoryName,
                 Difficulty = session.SessionParameters.Difficulty,
             };

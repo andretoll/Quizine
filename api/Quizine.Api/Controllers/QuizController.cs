@@ -88,7 +88,7 @@ namespace Quizine.Api.Controllers
             foreach (var rule in Enum.GetValues<Rule>())
             {
                 var ruleset = Ruleset.Parse(rule);
-                rulesets.Add(new RulesetDto(ruleset.Title, ruleset.Description));
+                rulesets.Add(new RulesetDto(ruleset));
             }
 
             _logger.LogDebug($"Returning {rulesets.Count} rulesets");

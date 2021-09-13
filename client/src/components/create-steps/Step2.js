@@ -45,15 +45,10 @@ function Step2(props) {
     const { handleSubmit, setValue, control, formState: { isValid } } = useForm({ mode: 'onChange' });
 
     const [questionCount, setQuestionCount] = useState(data.questionCount ? data.questionCount : 10);
-    const [questionTimeout, setQuestionTimeout] = useState(data.questionTimeout !== undefined ? data.questionTimeout : 30);
 
     useEffect(() => {
         setValue("questionCount", questionCount);
     }, [questionCount, setValue]);
-
-    useEffect(() => {
-        setValue("questionTimeout", questionTimeout);
-    }, [questionTimeout, setValue]);
 
     function onSubmit(formData) {
 
@@ -85,27 +80,6 @@ function Step2(props) {
                                     min={1}
                                     max={50}
                                     step={1}
-                                />
-                            )} />
-
-                    </FormControl>
-                    <FormControl fullWidth className={classes.formControl}>
-                        <FormLabel style={{marginBottom: '5px'}}>
-                            Time per question: {questionTimeout > 0 ? `${questionTimeout} seconds` : `Unlimited`}
-                        </FormLabel>
-                        <Controller
-                            control={control}
-                            name="questionTimeout"
-                            render={() => (
-                                <Slider
-
-                                    onChange={(_, value) => {
-                                        setQuestionTimeout(value);
-                                    }}
-                                    value={questionTimeout}
-                                    min={0}
-                                    max={120}
-                                    step={5}
                                 />
                             )} />
 

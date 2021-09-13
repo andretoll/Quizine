@@ -23,6 +23,7 @@ namespace Quizine.Api.Models.Base
 
         public virtual int PointsFactor => 100;
         public virtual int? NextQuestionDelay => null;
+        public virtual bool EnableTimeout => true;
 
         #endregion
 
