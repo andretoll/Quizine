@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
         alignItems: 'center',
 
         '& p': {
-            color: theme.palette.error.dark,
+            color: theme.palette.error.main,
             margin: '5px',
         },
     },
