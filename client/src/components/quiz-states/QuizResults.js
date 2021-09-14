@@ -99,7 +99,7 @@ const useStyles = makeStyles(theme => ({
         },
 
         '&.active': {
-            boxShadow: '-5px 5px 10px 0 rgba(0 0 0 / 75%)',
+            boxShadow: '-5px 5px 10px 0 rgba(0 0 0 / 30%)',
 
             [theme.breakpoints.up('xs')]: {
                 '-webkit-animation': '$float 1s ease-in-out infinite',

@@ -75,10 +75,10 @@ const useStyles = makeStyles(theme => ({
 function QuizRaceForm(props) {
 
     const classes = useStyles();
-    console.log("Rendering...");
 
     const correctAnswerBy = props.correctAnswerBy;
     const username = props.username;
+    const lastQuestion = props.lastQuestion;
 
     const [selectedAnswer, setSelectedAnswer] = useState();
     const [nextQuestionCountdown, setNextQuestionCountdown] = useState(props.nextQuestionDelay);
@@ -87,7 +87,6 @@ function QuizRaceForm(props) {
 
     useEffect(() => {
 
-        console.log("Countdown...", props.nextQuestionDelay);
         if (props.nextQuestionDelay > 0)
             startCountdown(props.nextQuestionDelay);
 
@@ -125,7 +124,11 @@ function QuizRaceForm(props) {
                         {correctAnswerBy &&
                             <Typography variant="h5" color={correctAnswerBy === username ? 'primary' : 'error'}>{correctAnswerBy === username ? 'You' : correctAnswerBy} answered correctly!</Typography>
                         }
-                        <Typography variant="body1">Next question in <span className="primary-color">{nextQuestionCountdown}</span> seconds...</Typography>
+                        {lastQuestion ?
+                            <Typography variant="body1">Quiz ends in <span className="primary-color">{nextQuestionCountdown}</span> seconds...</Typography>
+                            :
+                            <Typography variant="body1">Next question in <span className="primary-color">{nextQuestionCountdown}</span> seconds...</Typography>
+                        }
                     </div>
                 </div>
             }

@@ -47,19 +47,19 @@ function CheatSheet(props) {
     function getAnswer(item) {
 
         return (
-            <Accordion expanded={itemOpen === item.id} className="secondary-background" onChange={handleExpanded(item.id)}>
+            <Accordion expanded={itemOpen === item.id} className="secondary-background" elevation={0} onChange={handleExpanded(item.id)}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography variant="body2" color="primary">
                         {item.correctAnswer.value}
                     </Typography>
                 </AccordionSummary>
                 <AccordionDetails style={{padding: '0'}}>
-                    <List dense disablePadding style={{ borderLeft: '1px solid' }}>
+                    <List dense disablePadding>
                         {item.answers.filter(x => x.id !== item.correctAnswer.id).map((answer) => (
                             <Fragment>
-                                <ListItem key={answer.id}>
+                                <ListItem key={answer.id} style={{ padding: '0 10px', margin: '5px 0' }}>
                                     <Typography variant="body2" color="textSecondary">
-                                        {answer.value}
+                                        - {answer.value}
                                     </Typography>
                                 </ListItem>
                             </Fragment>
