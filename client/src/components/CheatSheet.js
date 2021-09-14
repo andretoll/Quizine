@@ -13,7 +13,6 @@ import {
     Accordion,
     AccordionSummary,
     AccordionDetails,
-    Divider,
 } from '@material-ui/core';
 
 function CheatSheet(props) {
