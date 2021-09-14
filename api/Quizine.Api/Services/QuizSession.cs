@@ -25,9 +25,10 @@ namespace Quizine.Api.Services
 
         public SessionParameters SessionParameters { get; }
         public IEnumerable<QuizProgress> MemberProgressList => _memberProgressList;
+        public IEnumerable<QuizItem> Questions => _questions;
         public Ruleset Ruleset => _ruleset;
         public bool IsStarted => _isStarted;
-        public bool IsCompleted => _memberProgressList.Any() & _memberProgressList.All(x => x.HasCompleted);
+        public bool IsCompleted => _memberProgressList.All(x => x.HasCompleted);
         public int QuestionCount => _questions.Count;
         public int MaxScore => _maxScore;
 

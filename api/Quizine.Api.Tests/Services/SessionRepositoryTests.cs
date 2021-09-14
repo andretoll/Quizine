@@ -73,7 +73,6 @@ namespace Quizine.Api.Tests.Services
 
             // Assert
             Assert.That(_sessionRepository.SessionStarted(sessionId), Is.False);
-            Assert.That(_sessionRepository.SessionCompleted(sessionId), Is.False);
             Assert.That(session.GetUsers(), Has.Count.EqualTo(0));
             Assert.That(session.MemberProgressList, Has.Count.EqualTo(0));
             Assert.That(session.Ruleset, Is.Not.Null);

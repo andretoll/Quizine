@@ -95,6 +95,23 @@ namespace Quizine.Api.Controllers
             return Ok(rulesets);
         } 
 
+        [HttpPost("answers")]
+        public ActionResult GetAnswers([FromBody] string sessionid)
+        {
+            if (string.IsNullOrEmpty(sessionid))
+                return BadRequest("Empty session ID");
+            else if (!_sessionRepository.SessionExists(sessionid))
+                return BadRequest("Session does not exist");
+            else if (!_sessionRepository.SessionCompleted(sessionid))
+                return BadRequest("Session not completed");
+
+            var session = _sessionRepository.GetSessionBySessionId(sessionid);
+
+            var questions = session.Questions;
+
+            return Ok(questions);
+        }
+
         #endregion
     }
 }

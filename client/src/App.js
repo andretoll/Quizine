@@ -127,9 +127,10 @@ function App() {
       },
       secondary: {
         main: '#081229',
+        light: '#2e4a61',
       },
       gradient: {
-        main: 'linear-gradient(135deg, #750051 , #005192)',
+        main: 'linear-gradient(135deg, #750051, #005192)',
       },
       error: {
         main: '#cd5c5c',

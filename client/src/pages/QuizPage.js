@@ -274,6 +274,7 @@ function QuizPage() {
                         maxScore={maxScore}
                         username={username}
                         expectedPlayers={players.length}
+                        sessionId={sessionId}
                     />
                 )
             default:
