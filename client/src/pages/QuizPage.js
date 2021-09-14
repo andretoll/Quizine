@@ -13,7 +13,6 @@ import QuizProgress from '../components/quiz-states/QuizProgress';
 import QuizRaceProgress from '../components/quiz-states/QuizRaceProgress';
 import QuizResults from '../components/quiz-states/QuizResults';
 import PromptWrapper from '../components/wrappers/PromptWrapper';
-import Background from '../assets/abstract_background.png';
 import {
     makeStyles,
 } from '@material-ui/core';
@@ -21,7 +20,7 @@ import {
 const useStyles = makeStyles(theme => ({
 
     container: {
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(${Background})`,
+        background: 'rgba(0 0 0 / 50%)',
     },
 
     centeredContent: {

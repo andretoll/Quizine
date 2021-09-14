@@ -44,6 +44,9 @@ namespace Quizine.Api.Models.Rulesets
         {
             var nextQuestion = session.GetNextQuestion(hub.Context.ConnectionId, out bool lastQuestion);
 
+            await hub.Clients.Group(session.SessionParameters.SessionID).NextQuestionIncoming(NextQuestionDelay.Value);
+            await Task.Delay(TimeSpan.FromSeconds(NextQuestionDelay.Value));
+            
             // If previous question was the last
             if (nextQuestion == null)
             {
@@ -53,8 +56,6 @@ namespace Quizine.Api.Models.Rulesets
             else
             {
                 // Advance to next question
-                await hub.Clients.Group(session.SessionParameters.SessionID).NextQuestionIncoming(NextQuestionDelay.Value);
-                await Task.Delay(TimeSpan.FromSeconds(NextQuestionDelay.Value));
                 await hub.Clients.Group(session.SessionParameters.SessionID).NextQuestion(new NextQuestionDto(nextQuestion, lastQuestion));
             }
         }

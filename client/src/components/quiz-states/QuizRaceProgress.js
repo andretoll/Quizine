@@ -133,6 +133,7 @@ function QuizRaceProgress(props) {
                                 nextQuestionDelay={nextQuestionDelay}
                                 correctAnswerBy={correctAnswerBy}
                                 username={props.username}
+                                lastQuestion={quizContent?.lastQuestion}
                                 onSubmit={handleOnSubmitAnswer}
                             />
                         </Paper>
