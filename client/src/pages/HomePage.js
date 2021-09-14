@@ -8,6 +8,7 @@ import {
     Container,
     Button
 } from '@material-ui/core';
+import Particles from 'react-particles-js';
 
 const useStyles = makeStyles(theme => ({
 
@@ -37,6 +38,41 @@ const useStyles = makeStyles(theme => ({
     },
 }))
 
+const particleParams = {
+    "particles": {
+        "number": {
+            "value": 100,
+            "density": {
+                "enable": false
+            }
+        },
+        "size": {
+            "value": 4,
+            "random": true
+        },
+        "move": {
+            "direction": "bottom",
+            "out_mode": "out"
+        },
+        "line_linked": {
+            "enable": false
+        }
+    },
+    "interactivity": {
+        "events": {
+            "onclick": {
+                "enable": true,
+                "mode": "remove"
+            }
+        },
+        "modes": {
+            "remove": {
+                "particles_nb": 10
+            }
+        }
+    }
+}
+
 function HomePage() {
 
     const classes = useStyles();
@@ -46,11 +82,17 @@ function HomePage() {
     return (
         <div>
             <div className={classes.root}>
+                <div style={{ height: '100vh', width: '100vw', position: 'absolute' }}>
+                    <Particles
+                        height="100vh"
+                        params={particleParams}
+                    />
+                </div>
                 <Container className={classes.container}>
                     <div>
                         <Grid container item xs={12}>
                             <Slide in timeout={2000}>
-                                <div style={{ margin: 'auto' }}>
+                                <div style={{ margin: 'auto', zIndex: 1 }}>
                                     <Brand size={150} />
                                 </div>
                             </Slide>

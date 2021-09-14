@@ -25,7 +25,7 @@ const GlobalCss = withStyles(theme => ({
       "-webkit-font-smoothing": 'antialiased',
       "-moz-osx-font-smoothing": 'grayscale',
       margin: '0',
-      background: theme.palette.background.main,
+      background: theme.palette.gradient.main,
       overflow: 'hidden',
     },
 
@@ -127,15 +127,6 @@ function App() {
       },
       secondary: {
         main: '#081229',
-      },
-      background: {
-        main: 'linear-gradient(115deg, #000 -15%, #fe6b6b 50%, #2196F3 50%, #000 115%)'
-      },
-      primaryBackground: {
-        main: '#fe6b6b ',
-      },
-      secondaryBackground: {
-        main: '#2196F3',
       },
       gradient: {
         main: 'linear-gradient(135deg, #750051 , #005192)',
