@@ -88,12 +88,29 @@ namespace Quizine.Api.Controllers
             foreach (var rule in Enum.GetValues<Rule>())
             {
                 var ruleset = Ruleset.Parse(rule);
-                rulesets.Add(new RulesetDto(ruleset.Title, ruleset.Description));
+                rulesets.Add(new RulesetDto(ruleset));
             }
 
             _logger.LogDebug($"Returning {rulesets.Count} rulesets");
             return Ok(rulesets);
         } 
+
+        [HttpPost("answers")]
+        public ActionResult GetAnswers([FromBody] string sessionid)
+        {
+            if (string.IsNullOrEmpty(sessionid))
+                return BadRequest("Empty session ID");
+            else if (!_sessionRepository.SessionExists(sessionid))
+                return BadRequest("Session does not exist");
+            else if (!_sessionRepository.SessionCompleted(sessionid))
+                return BadRequest("Session not completed");
+
+            var session = _sessionRepository.GetSessionBySessionId(sessionid);
+
+            var questions = session.Questions;
+
+            return Ok(questions);
+        }
 
         #endregion
     }

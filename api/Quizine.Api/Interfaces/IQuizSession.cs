@@ -10,6 +10,7 @@ namespace Quizine.Api.Interfaces
 
         SessionParameters SessionParameters { get; }
         IEnumerable<QuizProgress> MemberProgressList { get; }
+        IEnumerable<QuizItem> Questions { get; }
         Ruleset Ruleset { get; }
         bool IsStarted { get; }
         bool IsCompleted { get; }

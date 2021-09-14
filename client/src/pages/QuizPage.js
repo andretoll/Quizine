@@ -21,7 +21,6 @@ import {
 const useStyles = makeStyles(theme => ({
 
     container: {
-        background: theme.palette.background.main,
         backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(${Background})`,
     },
 
@@ -275,6 +274,7 @@ function QuizPage() {
                         maxScore={maxScore}
                         username={username}
                         expectedPlayers={players.length}
+                        sessionId={sessionId}
                     />
                 )
             default:

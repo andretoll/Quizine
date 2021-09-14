@@ -3,10 +3,12 @@ import { v4 as uuid } from 'uuid';
 import { useConnection } from '../../contexts/HubConnectionContext';
 import { sendNotification } from '../../services/NotificationService';
 import { useHistory } from 'react-router';
-import TrophyIcon from '@material-ui/icons/EmojiEvents';
-import MenuIcon from '@material-ui/icons/MoreVert';
+import { useErrorModal } from '../../contexts/ErrorModalContext';
 import ConfettiWrapper from '../wrappers/ConfettiWrapper';
 import GoHome from '../GoHome';
+import CheatSheet from '../CheatSheet';
+import TrophyIcon from '@material-ui/icons/EmojiEvents';
+import MenuIcon from '@material-ui/icons/MoreVert';
 import {
     makeStyles,
     Grid,
@@ -188,17 +190,21 @@ function QuizResults(props) {
     const username = props.username;
     const maxScore = props.maxScore;
     const expectedPlayers = props.expectedPlayers;
+    const sessionId = props.sessionId;
 
     const classes = useStyles();
 
     const { connection } = useConnection();
+    const { openModal, closeModal } = useErrorModal();
 
     const [quizCompleted, setQuizCompleted] = useState(false);
     const [finalScore, setFinalScore] = useState([]);
+    const [cheatSheet, setCheatSheet] = useState(null);
 
     const [tabValue, setTabValue] = useState(0);
     const [anchorEl, setAnchorEl] = useState(null);
     const [confetti, setConfetti] = useState(true);
+    const [cheatSheetModalOpen, setCheatSheetModalOpen] = useState(false);
 
     const history = useHistory();
 
@@ -276,6 +282,38 @@ function QuizResults(props) {
         setAnchorEl(null);
     };
 
+    function openCheatSheet() {
+        fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/answers`, {
+            method: 'POST',
+            body: JSON.stringify(sessionId),
+            headers: {
+                'Content-Type': 'application/json',
+                'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
+            }
+        }).then((response) => {
+
+            if (response.status === 200) {
+                response.json().then(result => {
+                    setCheatSheet(result);
+                    setCheatSheetModalOpen(prevValue => !prevValue);
+                })
+            } else {
+                openModal({
+                    title: `Error code ${response.status}`,
+                    message: "Failed to retreive cheat sheet",
+                    actionText: "Ok",
+                    action: () => {
+                        closeModal();
+                    }
+                });
+            }
+        }).catch((error) => {
+            console.error(error);
+        }).finally(() => {
+            handleMenuClose();
+        });
+    }
+
     return (
         <div className={classes.container}>
             <AppBar position="relative" color="secondary">
@@ -300,7 +338,8 @@ function QuizResults(props) {
                         onClose={handleMenuClose}
                         PaperProps={{ className: "secondary-background-light" }}
                     >
-                        <MenuItem onClick={() => history.push("/create")}>Create new quiz</MenuItem>
+                        <MenuItem onClick={openCheatSheet}>Cheat Sheet</MenuItem>
+                        <MenuItem onClick={() => history.push("/create")}>New Quiz</MenuItem>
                         <Divider />
                         <MenuItem disabled={!quizCompleted}>
                             <FormGroup row>
@@ -313,6 +352,11 @@ function QuizResults(props) {
                     </Menu>
                 </Toolbar>
             </AppBar>
+            <CheatSheet
+                data={cheatSheet}
+                open={cheatSheetModalOpen}
+                onClose={() => setCheatSheetModalOpen(false)}
+            />
             <Typography style={{ textAlign: 'center', margin: '20px 0' }} variant="h2">{quizCompleted ? 'Final Results' : `Awaiting ${expectedPlayers - finalScore.length} player(s)...`}</Typography>
             <div className={classes.tabItemContainer}>
                 {quizCompleted && isPlayerTopThree() && confetti &&
@@ -347,7 +391,7 @@ function QuizResults(props) {
                 }
                 {tabValue === 1 &&
                     <Container maxWidth="sm">
-                        <Paper className="secondary-background-light" elevation={10}>
+                        <Paper className="secondary-background" elevation={10}>
                             <TableContainer>
                                 <Table>
                                     <TableHead>

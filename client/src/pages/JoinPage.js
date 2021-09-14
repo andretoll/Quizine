@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
         alignContent: 'center',
 
         '& p': {
-            color: theme.palette.error.dark,
+            color: theme.palette.error.main,
             margin: '5px',
         },
     },
