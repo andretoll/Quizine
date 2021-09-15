@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Quizine.Api.Helpers;
 using Quizine.Api.Hubs;
 using Quizine.Api.Interfaces;
+using Quizine.Api.Models;
 using Quizine.Api.Services;
 using System;
 using System.Text.Json.Serialization;
@@ -48,7 +49,9 @@ namespace Quizine.Api
             });
             services.AddSingleton<ISessionRepository, SessionRepository>();
             services.AddSingleton<ITriviaRespository, TriviaRepository>();
+            services.AddSingleton<IResourceManagerParameters, ResourceManagerParameters>();
             services.AddHttpClient<ITriviaRespository, TriviaRepository>();
+            services.AddHostedService<ResourceManagerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

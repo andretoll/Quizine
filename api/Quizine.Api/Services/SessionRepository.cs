@@ -2,6 +2,7 @@
 using Quizine.Api.Helpers;
 using Quizine.Api.Interfaces;
 using Quizine.Api.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -97,6 +98,26 @@ namespace Quizine.Api.Services
 
             quizSession.Start();
             return true;
+        }
+
+        public int DisposeSessions(TimeSpan lifetime)
+        {
+            _logger.LogTrace($"{nameof(DisposeSessions)}()");
+
+            if (!_quizSessions.Any())
+                return 0;
+
+            var quizSessions = _quizSessions.Where(x => x.Created.AddMinutes(lifetime.TotalMinutes) < DateTime.UtcNow).ToList();
+
+            int affected = 0;
+            for (int i = 0; i < quizSessions.Count; i++)
+            {
+                _logger.LogTrace("Removing session from collection");
+                _quizSessions.Remove(quizSessions[i]);
+                affected++;
+            }
+
+            return affected;
         }
 
         #endregion
