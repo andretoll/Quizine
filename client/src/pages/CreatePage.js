@@ -74,7 +74,7 @@ function CreatePage() {
     const [sessionId, setSessionId] = useState();
     const [hostname, setHostname] = useState();
 
-    useTitle("Create quiz");
+    useTitle("Create");
 
     // On first render
     useEffect(() => {

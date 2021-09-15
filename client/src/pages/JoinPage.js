@@ -66,7 +66,7 @@ function JoinPage() {
         }
     });
 
-    useTitle("Join quiz");
+    useTitle("Join");
 
     useEffect(() => {
         register("sessionId", { required: true });
