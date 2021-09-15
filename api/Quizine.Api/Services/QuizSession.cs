@@ -13,11 +13,12 @@ namespace Quizine.Api.Services
     {
         #region Private Members
 
+        private readonly DateTime _created;
         private readonly Ruleset _ruleset;
         private readonly List<QuizItem> _questions;
         private readonly List<QuizProgress> _memberProgressList;
-        private bool _isStarted;
         private readonly int _maxScore;
+        private bool _isStarted;
 
         #endregion
 
@@ -26,6 +27,7 @@ namespace Quizine.Api.Services
         public SessionParameters SessionParameters { get; }
         public IEnumerable<QuizProgress> MemberProgressList => _memberProgressList;
         public IEnumerable<QuizItem> Questions => _questions;
+        public DateTime Created => _created;
         public Ruleset Ruleset => _ruleset;
         public bool IsStarted => _isStarted;
         public bool IsCompleted => _memberProgressList.All(x => x.HasCompleted);
@@ -39,6 +41,7 @@ namespace Quizine.Api.Services
         public QuizSession(SessionParameters sessionParameters, IEnumerable<QuizItem> quizItems)
         {
             SessionParameters = sessionParameters;
+            _created = DateTime.UtcNow;
             _ruleset = Ruleset.Parse(sessionParameters.Rule);
             _memberProgressList = new List<QuizProgress>();
             _questions = new List<QuizItem>(quizItems);

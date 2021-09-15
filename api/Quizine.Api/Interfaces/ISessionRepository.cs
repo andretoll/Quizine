@@ -1,4 +1,5 @@
 ﻿using Quizine.Api.Models;
+using System;
 using System.Collections.Generic;
 
 namespace Quizine.Api.Interfaces
@@ -15,6 +16,8 @@ namespace Quizine.Api.Interfaces
         bool SessionCompleted(string sessionId);
         IQuizSession GetSessionBySessionId(string sessionId);
         IQuizSession GetSessionByConnectionId(string connectionId);
+
+        int DisposeSessions(TimeSpan lifetime);
 
         #endregion
     }

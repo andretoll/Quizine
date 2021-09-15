@@ -2,6 +2,7 @@ import StepperNavigationActions from '../StepperNavigationActions';
 import { useForm } from 'react-hook-form';
 import { useData } from '../../contexts/CreateFormDataContext';
 import QuizParameterList from '../QuizParametersList';
+import WarningIcon from '@material-ui/icons/Warning';
 import {
     makeStyles,
     Typography,
@@ -83,6 +84,10 @@ function ConfirmStep(props) {
                         />
                     </div>
                 </Fade>
+            </div>
+            <div style={{ display: 'flex' }}>
+                <WarningIcon color="primary" style={{ marginRight: '10px' }} />
+                <Typography>Remember: Sessions do not last forever.</Typography>
             </div>
             <StepperNavigationActions onPreviousStep={previousStep} nextActionText="Finish" />
         </form>

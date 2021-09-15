@@ -1,5 +1,6 @@
 ﻿using Quizine.Api.Models;
 using Quizine.Api.Models.Base;
+using System;
 using System.Collections.Generic;
 
 namespace Quizine.Api.Interfaces
@@ -11,6 +12,7 @@ namespace Quizine.Api.Interfaces
         SessionParameters SessionParameters { get; }
         IEnumerable<QuizProgress> MemberProgressList { get; }
         IEnumerable<QuizItem> Questions { get; }
+        DateTime Created { get; }
         Ruleset Ruleset { get; }
         bool IsStarted { get; }
         bool IsCompleted { get; }
