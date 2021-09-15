@@ -5,11 +5,11 @@ import {
     IconButton
 } from '@material-ui/core';
 
-function GoHome() {
+function GoHome(props) {
 
     return (
         <Tooltip title="Go home" arrow placement="right">
-            <Link to="/">
+            <Link to="/" {...props}>
                 <IconButton>
                     <HomeIcon />
                 </IconButton>

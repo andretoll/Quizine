@@ -232,10 +232,10 @@ function CreatePage() {
                 <Container maxWidth="sm">
                     <Fade in timeout={1500}>
                         <Paper elevation={10} className={classes.content}>
-                            <div>
-                                <GoHome />
+                            <div style={{ display: 'flex', alignItems: 'center', height: '60px' }}>
+                                <GoHome style={{ position: 'absolute' }} />
+                                {content !== contentStates.SUCCESS && <Typography variant="h3" style={{ textAlign: 'center', flex: '1' }}>Create quiz</Typography>}
                             </div>
-                            {content !== contentStates.SUCCESS && <Typography variant="h3" style={{ textAlign: 'center' }}>Create quiz</Typography>}
                             <Typography style={{ textAlign: 'center', marginTop: '10px' }} color="error" gutterBottom>{errorMessage}</Typography>
                             {getContent(content)}
                         </Paper>

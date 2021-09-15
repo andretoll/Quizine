@@ -101,8 +101,10 @@ function JoinPage() {
             <Container maxWidth="sm">
                 <Fade in timeout={1500}>
                     <Paper elevation={10} className={classes.content}>
-                        <GoHome />
-                        <Typography variant="h3" style={{ textAlign: 'center' }}>Join quiz</Typography>
+                        <div style={{ display: 'flex', alignItems: 'center', margin: '10px 0' }}>
+                            <GoHome style={{ position: 'absolute' }} />
+                            <Typography variant="h3" style={{ textAlign: 'center', flex: '1' }}>Join quiz</Typography>
+                        </div>
                         <form onSubmit={handleSubmit(onHandleSubmit)} className={classes.form}>
 
                             <FormControl margin="dense" fullWidth>
