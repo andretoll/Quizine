@@ -42,7 +42,7 @@ function Brand(props) {
         <Paper className={classes.innerContainer} variant="elevation" elevation={12}>
             <div className={classes.icon}>
                 <Logo fill="#fff" height={props.size} />
-                <Typography variant="h1">?</Typography>
+                <Typography variant="h1" style={{fontSize: props.size / 2}}>?</Typography>
             </div>
             <Typography className={classes.text} variant="h4">
                 Quizine
