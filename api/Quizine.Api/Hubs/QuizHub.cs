@@ -77,6 +77,12 @@ namespace Quizine.Api.Hubs
             await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
         }
 
+        private async Task ReportErrorAsync(string message)
+        {
+            _logger.LogDebug($"Error reported: {message}");
+            await Clients.Caller.ReportError(message);
+        }
+
         #endregion
 
         #region IQuizApi Implementation
@@ -142,7 +148,10 @@ namespace Quizine.Api.Hubs
 
             var session = _sessionRepository.GetSessionBySessionId(sessionId);
 
-            await session.Ruleset.SubmitAnswer(this, session, questionId, answerId);
+            if (session == null)
+                await ReportErrorAsync("Session expired.");
+            else
+                await session.Ruleset.SubmitAnswer(this, session, questionId, answerId);
         }
 
         public async Task NextQuestion(string sessionId)
@@ -151,7 +160,10 @@ namespace Quizine.Api.Hubs
 
             var session = _sessionRepository.GetSessionBySessionId(sessionId);
 
-            await session.Ruleset.NextQuestion(this, session);
+            if (session == null)
+                await ReportErrorAsync("Session expired.");
+            else
+                await session.Ruleset.NextQuestion(this, session);
         }
 
         public async Task GetResults(string sessionId)
@@ -160,7 +172,10 @@ namespace Quizine.Api.Hubs
 
             var session = _sessionRepository.GetSessionBySessionId(sessionId);
 
-            await session.Ruleset.GetResults(this, session);
+            if (session == null)
+                await ReportErrorAsync("Session expired.");
+            else
+                await session.Ruleset.GetResults(this, session);
         }
 
         #endregion
