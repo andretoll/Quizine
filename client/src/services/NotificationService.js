@@ -1,7 +1,27 @@
 const isSupported = () =>
-// 'Notification' in window &&
+'Notification' in window &&
 'serviceWorker' in navigator &&
 'PushManager' in window;
+
+export function getNotificationsPermission() {
+
+    try {
+
+        // Check if browser supports it
+        if (!isSupported) {
+            console.debug("Notifications not supported");
+        }
+
+        else {
+
+            // Return notification permission
+            return Notification.permission;
+        }
+
+    } catch (error) {
+        console.error("Unexpected error when getting permission to push notifications")
+    }
+}
 
 export function requestNotificationsPermission() {
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useConfirm } from 'material-ui-confirm';
 import { Start } from '../../services/QuizService';
-import { sendNotification, requestNotificationsPermission } from '../../services/NotificationService';
+import { sendNotification, requestNotificationsPermission, getNotificationsPermission } from '../../services/NotificationService';
 import { useConnection } from '../../contexts/HubConnectionContext';
 import ShareQuiz from '../ShareQuiz';
 import PlayerList from '../PlayerList';
@@ -51,7 +51,7 @@ function QuizWaiting(props) {
     const confirm = useConfirm();
 
     const [shareDialogOpen, setShareDialogOpen] = useState(false);
-    const [notificationsPermission, setNotificationsPermission] = useState(Notification.permission);
+    const [notificationsPermission, setNotificationsPermission] = useState(getNotificationsPermission());
 
     // When any new player joins
     useEffect(() => {
