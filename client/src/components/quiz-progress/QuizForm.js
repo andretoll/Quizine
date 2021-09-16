@@ -44,21 +44,21 @@ const useStyles = makeStyles(theme => ({
         animation: '$ellipsis 1s infinite',
 
         '&:hover': {
-            background: '#228b22',
+            background: theme.palette.success.main,
         }
     },
 
     incorrect: {
-        background: '#cd5c5c',
+        background: theme.palette.error.light,
 
         '&:hover': {
-            background: '#cd5c5c',
+            background: theme.palette.error.light,
         }
     },
 
     "@keyframes ellipsis": {
         "50%": {
-            background: '#61b861',
+            background: theme.palette.success.light,
         }
     },
     "@-webkit-keyframes ellipsis": {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import {
+    useTheme,
     Typography
 } from '@material-ui/core';
 
@@ -10,12 +11,14 @@ function CountdownTimerWrapper(props) {
     const isPlaying = props.on;
     const onTimeout = props.onTimeout;
 
+    const theme = useTheme();
     const [timer, setTimer] = useState(0);
     const [completed, setCompleted] = useState(false);
 
     useEffect(() => {
 
         if (isPlaying) {
+            setTimeout(false);
             setTimer(prevState => prevState + 1);
         }
 
@@ -25,7 +28,6 @@ function CountdownTimerWrapper(props) {
 
         if (completed) {
             onTimeout();
-            setCompleted(false);
         }
     }, [completed, onTimeout])
 
@@ -47,7 +49,9 @@ function CountdownTimerWrapper(props) {
             strokeWidth={3}
             onComplete={() => setCompleted(true)}
             strokeLinecap="square"
-            colors={[["#26a300", 0.33], ["#F7B801", 0.33], ["#A30000"]]}>
+            trailStrokeWidth={2}
+            trailColor={completed ? theme.palette.error.main : theme.palette.text.primary}
+            colors={[[theme.palette.success.main, 0.33], [theme.palette.warning.main, 0.50], [theme.palette.error.main, 1]]}>
             {renderTime}
         </CountdownCircleTimer>
     )

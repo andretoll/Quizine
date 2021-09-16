@@ -57,6 +57,7 @@ const useStyles = makeStyles(theme => ({
         padding: '20px',
         display: 'flex',
         justifyContent: 'center',
+        height: '60px',
     },
 
     pointsPopup: {
@@ -121,7 +122,8 @@ function QuizProgress(props) {
                 setCorrectAnswer(null);
                 setPointsGained(null);
                 setSlide(true);         // Trigger slide animation (in)
-                setTimerPlaying(true);  // Enable timer
+                setTimerPlaying(false);  // Disable timer (reset)
+                setTimerPlaying(true);  // Enable timer (reset)
                 setQuizContent(response);
             });
             connection.on('ValidateAnswer', (response) => {
@@ -134,7 +136,6 @@ function QuizProgress(props) {
 
     function handleOnTimeout() {
         console.info("Question timed out. Submitting answer...");
-        setTimerPlaying(false);
         SubmitAnswer(connection, sessionId, quizContent.id, null);
     }
 
@@ -192,13 +193,11 @@ function QuizProgress(props) {
                                     questionCount={questionCount}
                                 />
                                 <hr />
-                                {questionTimeout > 0 &&
-                                    <div className={classes.timerContainer}>
-                                        {timerPlaying &&
-                                            <CountdownTimerWrapper questionTimeout={questionTimeout} on={timerPlaying} onTimeout={handleOnTimeout} />
-                                        }
-                                    </div>
-                                }
+                                <div className={classes.timerContainer}>
+                                    {timerPlaying &&
+                                        <CountdownTimerWrapper questionTimeout={questionTimeout} on={timerPlaying} onTimeout={handleOnTimeout} />
+                                    }
+                                </div>
                             </div>
                             <div style={{ padding: '10px' }}>
                                 <Typography variant="body1" className={classes.questionText}>{quizContent?.question}</Typography>
