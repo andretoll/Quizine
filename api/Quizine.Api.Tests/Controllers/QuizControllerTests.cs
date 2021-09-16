@@ -19,6 +19,7 @@ namespace Quizine.Api.Tests.Controllers
     {
         private ISessionRepository _sessionRepository;
         private ITriviaRespository _triviaRespository;
+        private IResourceManagerParameters _parameters;
         private QuizController _controller;
 
         [SetUp]
@@ -26,7 +27,8 @@ namespace Quizine.Api.Tests.Controllers
         {
             _sessionRepository = new SessionRepository(new ILoggerStub<SessionRepository>());
             _triviaRespository = new TriviaRepositoryStub();
-            _controller = new QuizController(_sessionRepository, _triviaRespository, new ILoggerStub<QuizController>());
+            _parameters = new ResourceManagerParametersStub(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(1));
+            _controller = new QuizController(_sessionRepository, _triviaRespository, _parameters, new ILoggerStub<QuizController>());
             _controller.ControllerContext.ActionDescriptor = new ControllerActionDescriptor() { ActionName = "" };
         }
 
@@ -51,6 +53,20 @@ namespace Quizine.Api.Tests.Controllers
             Assert.That(result, Is.TypeOf<OkObjectResult>());
             Assert.That((result as OkObjectResult).Value, Is.TypeOf<List<RulesetDto>>());
             Assert.That(((result as OkObjectResult).Value as List<RulesetDto>), Has.Count.EqualTo(Enum.GetNames<Rule>().Length));
+        }
+
+        [Test]
+        public void ShouldGetSessionLifetime()
+        {
+            // Arrange & Act
+            var result = _controller.GetSessionLifetime();
+            _ = double.TryParse((result as OkObjectResult).Value.ToString(), out double value);
+
+            // Assert
+            Assert.That(result, Is.TypeOf<OkObjectResult>());
+            Assert.That((result as OkObjectResult).Value, Is.TypeOf<double>());
+            Assert.That(value, Is.GreaterThan(0));
+            Assert.That(TimeSpan.FromMinutes(value), Is.EqualTo(_parameters.SessionLifetime));
         }
 
         [TestCase(Rule.Standard, "A title", 9, 10, 30, 0, "Hard", Description = "Asserts that quiz sessions can be created and that session ID is returned.")]

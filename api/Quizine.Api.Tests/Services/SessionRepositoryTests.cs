@@ -22,7 +22,8 @@ namespace Quizine.Api.Tests.Services
         public void Setup()
         {
             _sessionRepository = new SessionRepository(new ILoggerStub<SessionRepository>());
-            _quizController = new QuizController(_sessionRepository, new TriviaRepositoryStub(), new ILoggerStub<QuizController>());
+            var parameters = new ResourceManagerParametersStub(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(1));
+            _quizController = new QuizController(_sessionRepository, new TriviaRepositoryStub(), parameters, new ILoggerStub<QuizController>());
             _quizController.ControllerContext.ActionDescriptor = new ControllerActionDescriptor() { ActionName = "" };
         }
 
