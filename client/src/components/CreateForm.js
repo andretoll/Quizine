@@ -25,6 +25,7 @@ function CreateForm(props) {
     const categories = props.categories;
     const difficulties = props.difficulties;
     const rules = props.rules;
+    const sessionLifetime = props.sessionLifetime;
 
     const [activeStep, setActiveStep] = useState(0);
 
@@ -59,7 +60,7 @@ function CreateForm(props) {
             case 2:
                 return <Step3 onNextStep={handleNextStep} onPreviousStep={handlePreviousStep} rules={rules} />
             case 3:
-                return <ConfirmStep onNextStep={handleSubmit} onPreviousStep={handlePreviousStep} rules={rules} categories={categories} />
+                return <ConfirmStep onNextStep={handleSubmit} onPreviousStep={handlePreviousStep} rules={rules} categories={categories} sessionLifetime={sessionLifetime} />
             default:
                 break;
         }

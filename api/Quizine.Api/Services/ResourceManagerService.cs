@@ -38,7 +38,7 @@ namespace Quizine.Api.Services
 
         private void DisposeSessions(object state)
         {
-            _logger.LogDebug("Evaluating sessions to dispose");
+            _logger.LogTrace("Evaluating sessions to dispose");
             int affected = _sessionRepository.DisposeSessions(_parameters.SessionLifetime);
             _logger.LogTrace($"Disposed {affected} sessions");
         }

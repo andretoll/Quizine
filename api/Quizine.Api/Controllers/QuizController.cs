@@ -23,19 +23,25 @@ namespace Quizine.Api.Controllers
 
         private readonly ISessionRepository _sessionRepository;
         private readonly ITriviaRespository _triviaRepository;
+        private readonly IResourceManagerParameters _parameters;
         private readonly ILogger _logger;
 
         #endregion
 
         #region Constructor
 
-        public QuizController(ISessionRepository sessionRepository, ITriviaRespository triviaRespository, ILogger<QuizController> logger)
+        public QuizController(
+            ISessionRepository sessionRepository, 
+            ITriviaRespository triviaRespository,
+            IResourceManagerParameters parameters,
+            ILogger<QuizController> logger)
         {
             _logger = logger;
             _logger.LogTrace("Constructor");
 
             _sessionRepository = sessionRepository;
             _triviaRepository = triviaRespository;
+            _parameters = parameters;
         }
 
         #endregion
@@ -110,6 +116,12 @@ namespace Quizine.Api.Controllers
             var questions = session.Questions;
 
             return Ok(questions);
+        }
+
+        [HttpGet("session-lifetime")]
+        public ActionResult GetSessionLifetime()
+        {
+            return Ok(_parameters.SessionLifetime.TotalMinutes);
         }
 
         #endregion

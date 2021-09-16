@@ -69,6 +69,7 @@ function CreatePage() {
 
     const [categories, setCategories] = useState([]);
     const [rules, setRules] = useState([]);
+    const [sessionLifetime, setSessionLifetime] = useState(0);
     const [errorMessage, setErrorMessage] = useState();
     const [content, setContent] = useState(contentStates.LOADING);
     const [sessionId, setSessionId] = useState();
@@ -80,6 +81,7 @@ function CreatePage() {
     useEffect(() => {
         fetchCategories();
         fetchRules();
+        fetchSessionLifetime();
     }, []);
 
     // On categories or rules state update
@@ -140,6 +142,30 @@ function CreatePage() {
         })
     }
 
+    // Gets the session lifetime from the server
+    async function fetchSessionLifetime() {
+
+        console.info("Fetching session lifetime...");
+
+        await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/session-lifetime`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
+            }
+        }).then(response => {
+            response.json().then(result => {
+
+                console.info("Successfully fetched session lifetime.");
+
+                setSessionLifetime(result);
+            })
+        }).catch(error => {
+            console.error(error);
+            setErrorMessage("Failed to connect to the server. Refresh to try again.");
+        })
+    }
+
     // Handle form submission
     async function handleOnSubmit(data) {
 
@@ -194,7 +220,7 @@ function CreatePage() {
                 )
             case contentStates.FORM:
                 return (
-                    <CreateForm onSubmit={handleOnSubmit} categories={categories} difficulties={difficulties} rules={rules} />
+                    <CreateForm onSubmit={handleOnSubmit} categories={categories} difficulties={difficulties} rules={rules} sessionLifetime={sessionLifetime} />
                 )
             case contentStates.IN_PROGRESS:
                 return (
