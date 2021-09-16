@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTitle } from '../hooks/useTitle';
 import Brand from '../components/Brand';
@@ -36,6 +37,31 @@ const useStyles = makeStyles(theme => ({
         flexDirection: 'column',
         justifyContent: 'space-evenly',
     },
+
+    fade: {
+        '-webkit-animation': '$fade 3s ease-in-out',
+        '-moz-animation': '$fade 3s ease-in-out',
+        '-o-animation': '$fade 3s ease-in-out',
+        animation: '$fade 3s ease-in-out',
+    },
+
+    "@keyframes fade": {
+        '0%': {
+            opacity: '0',
+        },
+        '100%': {
+            opacity: '1',
+        },
+    },
+
+    "@-webkit-keyframes fade": {
+        '0%': {
+            opacity: '0',
+        },
+        '100%': {
+            opacity: '1',
+        },
+    }
 }))
 
 const particleParams = {
@@ -47,7 +73,7 @@ const particleParams = {
             }
         },
         "size": {
-            "value": 4,
+            "value": 2,
             "random": true
         },
         "move": {
@@ -60,38 +86,46 @@ const particleParams = {
     },
     "interactivity": {
         "events": {
-            "onclick": {
+            "onhover": {
                 "enable": true,
-                "mode": "remove"
-            }
+                "mode": "repulse",
+            },
         },
-        "modes": {
-            "remove": {
-                "particles_nb": 10
-            }
-        }
     }
 }
 
 function HomePage() {
 
+    const delay = 2000;
     const classes = useStyles();
-    
+
+    const [ready, setReady] = useState(false);
+
     useTitle("Home");
+
+    useEffect(() => {
+
+        setTimeout(() => {
+            setReady(true);
+        }, delay);
+    }, []);
 
     return (
         <div>
             <div className={classes.root}>
                 <div style={{ height: '100vh', width: '100vw', position: 'absolute' }}>
-                    <Particles
-                        height="100vh"
-                        params={particleParams}
-                    />
+                    {ready &&
+                        <Particles
+                            className={classes.fade}
+                            height="100vh"
+                            params={particleParams}
+                        />
+                    }
                 </div>
                 <Container className={classes.container}>
                     <div>
                         <Grid container item xs={12}>
-                            <Slide in timeout={2000}>
+                            <Slide in timeout={delay}>
                                 <div style={{ margin: 'auto', zIndex: 1 }}>
                                     <Brand size={150} />
                                 </div>
@@ -100,7 +134,7 @@ function HomePage() {
                     </div>
                     <div>
                         <Grid container spacing={4}>
-                            <Slide in timeout={2000} direction="right">
+                            <Slide in timeout={delay} direction="right">
                                 <Grid item xs={12} sm={6}>
                                     <Link to="/create">
                                         <Button variant="contained" color="secondary">
@@ -109,7 +143,7 @@ function HomePage() {
                                     </Link>
                                 </Grid>
                             </Slide>
-                            <Slide in timeout={2000} direction="left">
+                            <Slide in timeout={delay} direction="left">
                                 <Grid item xs={12} sm={6}>
                                     <Link to="/join">
                                         <Button variant="contained" color="secondary">
