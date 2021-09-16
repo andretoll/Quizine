@@ -1,5 +1,5 @@
 const isSupported = () =>
-'Notification' in window &&
+// 'Notification' in window &&
 'serviceWorker' in navigator &&
 'PushManager' in window;
 
