@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useConfirm } from 'material-ui-confirm';
 import { Start } from '../../services/QuizService';
-import { sendNotification } from '../../services/NotificationService';
+import { sendNotification, requestNotificationsPermission } from '../../services/NotificationService';
 import { useConnection } from '../../contexts/HubConnectionContext';
 import ShareQuiz from '../ShareQuiz';
 import PlayerList from '../PlayerList';
@@ -64,15 +64,19 @@ function QuizWaiting(props) {
     }, [players, expectedPlayers]);
 
     // Request permission for notifications
-    function requestNotificationsPermission() {
+    function handleNotificationsPermission() {
 
-        Notification.requestPermission().then((response) => {
-            console.info("Request notifications: " + response);
+        try {
 
-            setNotificationsPermission(response);
-        }).catch((error) => {
-            console.error(error);
-        })
+            requestNotificationsPermission().then((response) => {
+                console.info("Request notifications: " + response);
+                setNotificationsPermission(response);
+            }).catch((error) => {
+                console.error(error);
+            });
+        } catch (error) {
+            console.error("Unexpected error when requesting permission to push notifications")
+        }
     }
 
     function handleOnStart() {
@@ -149,7 +153,7 @@ function QuizWaiting(props) {
                         <div>
                             <Tooltip title={getNotificationsTooltipText()} arrow>
                                 <span>
-                                    <IconButton onClick={requestNotificationsPermission} className={notificationsPermission === 'granted' && classes.notificationsActive} disabled={notificationsPermission === 'denied'}>
+                                    <IconButton onClick={handleNotificationsPermission} className={notificationsPermission === 'granted' && classes.notificationsActive} disabled={notificationsPermission === 'denied'}>
                                         {notificationsPermission === 'granted' ?
                                             <NotificationsActiveIcon />
                                             :
@@ -166,7 +170,7 @@ function QuizWaiting(props) {
                         </div>
                         <Dialog open={shareDialogOpen} onClose={handleOnCloseShareDialog} PaperProps={{ className: 'secondary-background' }}>
                             <DialogTitle>Share Quiz</DialogTitle>
-                            <DialogContent dividers style={{padding: '50px'}}>
+                            <DialogContent dividers style={{ padding: '50px' }}>
                                 <DialogContentText>
                                     Share the quiz with your friends (or rivals).
                                 </DialogContentText>
