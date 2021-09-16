@@ -6,7 +6,6 @@ import CountdownTimerWrapper from '../wrappers/CountdownTimerWrapper';
 import {
     makeStyles,
     Typography,
-    Fade,
     Slide,
     Paper,
     Container,
@@ -114,7 +113,6 @@ function QuizProgress(props) {
 
     // Timer
     const [timerPlaying, setTimerPlaying] = useState(true);
-    const [timerVisible, setTimerVisible] = useState(true);
 
     useEffect(() => {
         if (connection) {
@@ -124,7 +122,6 @@ function QuizProgress(props) {
                 setPointsGained(null);
                 setSlide(true);         // Trigger slide animation (in)
                 setTimerPlaying(true);  // Enable timer
-                setTimerVisible(true);  // Show timer
                 setQuizContent(response);
             });
             connection.on('ValidateAnswer', (response) => {
@@ -144,7 +141,6 @@ function QuizProgress(props) {
     function handleOnSubmitAnswer(answer) {
         console.info("Submitting answer...");
         setTimerPlaying(false);
-        setTimerVisible(false);
         SubmitAnswer(connection, sessionId, quizContent.id, answer?.id);
     }
 
@@ -198,11 +194,9 @@ function QuizProgress(props) {
                                 <hr />
                                 {questionTimeout > 0 &&
                                     <div className={classes.timerContainer}>
-                                        <Fade in={timerVisible} timeout={500}>
-                                            <div>
-                                                <CountdownTimerWrapper questionTimeout={questionTimeout} on={timerPlaying} onTimeout={handleOnTimeout} />
-                                            </div>
-                                        </Fade>
+                                        {timerPlaying &&
+                                            <CountdownTimerWrapper questionTimeout={questionTimeout} on={timerPlaying} onTimeout={handleOnTimeout} />
+                                        }
                                     </div>
                                 }
                             </div>
