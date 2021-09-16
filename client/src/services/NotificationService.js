@@ -1,9 +1,14 @@
+const isSupported = () =>
+'Notification' in window &&
+'serviceWorker' in navigator &&
+'PushManager' in window;
+
 export function requestNotificationsPermission() {
 
     try {
 
         // Check if browser supports it
-        if (!("Notification" in window)) {
+        if (!isSupported) {
             console.debug("Notifications not supported");
         }
 
@@ -24,7 +29,7 @@ export function sendNotification(title, message, onClick) {
     try {
 
         // Check if browser supports it
-        if (!("Notification" in window)) {
+        if (!isSupported) {
             console.debug("Notifications not supported");
         }
 
