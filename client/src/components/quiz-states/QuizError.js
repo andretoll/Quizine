@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import ErrorIcon from '@material-ui/icons/ErrorOutline';
 import {
     makeStyles,
@@ -32,17 +33,15 @@ function QuizError(props) {
 
     const classes = useStyles();
 
-    function refresh() {
-        window.location.reload();
-    }
-
     return (
         <Paper className={classes.container}>
             <div>
                 <ErrorIcon color="error" />
             </div>
             <Typography variant="overline" gutterBottom>{errorMessage}</Typography>
-            <Button variant="outlined" color="primary" size="large" onClick={refresh}>Reload session</Button>
+            <Link to="/">
+                <Button variant="outlined" color="primary" size="large">Go home</Button>
+            </Link>
         </Paper>
     )
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useLocation } from "react-router-dom";
-import { Connect, NextQuestion, GetResults } from '../services/QuizService';
+import { Connect, NextQuestion, GetResults, Disconnect } from '../services/QuizService';
 import { useConnection } from '../contexts/HubConnectionContext';
 import { useSnackbar } from '../contexts/SnackbarContext';
 import { useErrorModal } from '../contexts/ErrorModalContext';
@@ -178,7 +178,7 @@ function QuizPage() {
                 notifyError(`${response.username} disconnected.`);
             });
             connection.on('ConfirmStart', (response) => {
-                console.log(response);
+                console.info(response);
                 if (response) {
                     console.info("Start confirmed!");
                     setContent(contentStates.IN_PROGRESS);
@@ -186,6 +186,12 @@ function QuizPage() {
                 } else {
                     reportError("Failed to start session (Error code 4).");
                 }
+            });
+            connection.on('ReportError', (_) => {
+                console.info("Session expired");
+
+                Disconnect(connection);
+                reportError("Session has expired.");
             });
 
             setEventsSubscribedTo(true);
