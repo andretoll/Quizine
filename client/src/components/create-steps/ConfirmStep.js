@@ -87,7 +87,7 @@ function ConfirmStep(props) {
             </div>
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <WarningIcon color="primary" style={{ marginRight: '10px' }} />
-                <Typography variant="body2" color="primary">Sessions expires after {props.sessionLifetime} minutes.</Typography>
+                <Typography variant="body2" color="primary">Sessions expire after {props.sessionLifetime} minutes.</Typography>
             </div>
             <StepperNavigationActions onPreviousStep={previousStep} nextActionText="Finish" />
         </form>
