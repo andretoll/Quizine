@@ -13,6 +13,9 @@ const useStyles = makeStyles((theme) => ({
         position: 'relative',
         background: theme.palette.gradient.main,
         overflow: 'hidden',
+        height: '90vh',
+        display: 'flex',
+        alignItems: 'center',
     },
 
     particlesContainer: {

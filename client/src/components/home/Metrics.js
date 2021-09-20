@@ -63,7 +63,7 @@ function Metrics() {
                 {({ isVisible }) => (
                     <div style={{ height: '500px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {isVisible ?
-                            <Fade in timeout={1000}>
+                            <Fade in timeout={2000}>
                                 <Grid container spacing={4}>
                                     <Grid item xs={12} style={{ textAlign: 'center' }}>
                                         <Typography variant="overline">With an ever-growing library...</Typography>

@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
             '& svg': {
                 transition: 'transform 0.5s',
                 transformOrigin: 'left',
-                height: '50px',
+                height: '40px',
                 fill: 'inherit',
             },
 

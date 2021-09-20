@@ -2,10 +2,16 @@ import Metrics from '../components/home/Metrics';
 import useTitle from '../hooks/useTitle';
 import Navbar from '../components/home/Navbar';
 import Hero from '../components/home/Hero';
-import {
-    makeStyles, Typography
-} from '@material-ui/core';
+import Introduction from '../components/home/Introduction';
 import Features from '../components/home/Features';
+import Faq from '../components/home/Faq';
+import ScrollToTopIcon from '@material-ui/icons/ArrowUpward';
+import {
+    makeStyles,
+    useScrollTrigger,
+    Fab,
+    Zoom,
+} from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -14,9 +20,8 @@ const useStyles = makeStyles((theme) => ({
     },
 
     section: {
-        minHeight: '500px', //TODO: Remove
-        display: 'flex',
-        alignItems: 'center'
+        padding: '100px 0',
+        position: 'relative',
     },
 
     oddSection: {
@@ -25,8 +30,9 @@ const useStyles = makeStyles((theme) => ({
     },
 
     evenSection: {
-        background: theme.palette.secondary.main,
+        background: theme.palette.secondary.dark,
         color: '#fff',
+        boxShadow: '0 0 4px 4px rgba(0 0 0 / 50%)',
     },
 }));
 
@@ -36,12 +42,24 @@ function HomePage() {
 
     const classes = useStyles();
 
+    const trigger = useScrollTrigger({
+        disableHysteresis: true,
+        threshold: 100,
+    });
+
+    function scrollToTop() {
+        window.scrollTo({
+            behavior: 'smooth',
+            top: 0
+        })
+    };
+
     return (
         <div className={classes.root}>
             <Navbar>Home!</Navbar>
             <Hero />
             <section className={`${classes.section} ${classes.evenSection}`}>
-                {/* What do we put here? */}
+                <Introduction />
             </section>
             <section className={`${classes.section} ${classes.oddSection}`}>
                 <Features />
@@ -50,9 +68,15 @@ function HomePage() {
                 <Metrics />
             </section>
             <section className={`${classes.section} ${classes.oddSection}`}>
-                {/* Screenshots */}
-                <Typography variant="h2">Media</Typography>
+                <Faq />
             </section>
+            <div style={{ position: 'fixed', right: '0', bottom: '0', margin: '20px' }}>
+                <Zoom in={trigger}>
+                    <Fab onClick={scrollToTop} color="primary">
+                        <ScrollToTopIcon />
+                    </Fab>
+                </Zoom>
+            </div>
         </div>
     )
 }
