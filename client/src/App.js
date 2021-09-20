@@ -7,6 +7,7 @@ import { ConnectionProvider } from './contexts/HubConnectionContext';
 import { SnackbarProvider } from './contexts/SnackbarContext';
 import NotFoundPage from './pages/error/NotFoundPage';
 import HomePage from './pages/HomePage';
+import StartPage from './pages/StartPage';
 import CreatePage from './pages/CreatePage';
 import JoinPage from './pages/JoinPage';
 import QuizPage from './pages/QuizPage';
@@ -26,7 +27,6 @@ const GlobalCss = withStyles(theme => ({
       "-moz-osx-font-smoothing": 'grayscale',
       margin: '0',
       background: theme.palette.gradient.main,
-      overflow: 'hidden',
     },
 
     a: {
@@ -148,6 +148,9 @@ function App() {
         fontFamily: 'Oleo Script, Roboto',
         fontWeight: 100,
       },
+      h4: {
+        fontWeight: 700,
+      },
       overline: {
         fontSize: '1rem',
       },
@@ -171,15 +174,10 @@ function App() {
         <SnackbarProvider>
           <Router>
             <Switch>
-              <Route exact path="/">
-                <HomePage />
-              </Route>
-              <Route exact path="/create">
-                <CreatePage />
-              </Route>
-              <Route path="/join">
-                <JoinPage />
-              </Route>
+              <Route exact path="/" component={HomePage} />
+              <Route exact path="/start" component={StartPage} />
+              <Route exact path="/create" component={CreatePage} />
+              <Route path="/join" component={JoinPage} />
               <Route path="/quiz">
                 <ConnectionProvider>
                   <ErrorModalProvider>

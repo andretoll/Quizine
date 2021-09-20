@@ -28,6 +28,8 @@ const useStyles = makeStyles(theme => ({
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '100vh',
+        position: 'relative',
+        overflow: 'hidden',
     },
 }));
 

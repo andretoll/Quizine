@@ -4,12 +4,12 @@ export function useTitle(title, prevailOnUnmount = false) {
     const defaultTitle = useRef(document.title);
 
     useEffect(() => {
-        document.title = title;
+        document.title = "Quizine | " + title;
     }, [title]);
 
     useEffect(() => () => {
         if (!prevailOnUnmount) {
-            document.title = defaultTitle.current;
+            document.title = "Quizine | " + defaultTitle.current;
         }
     }, [prevailOnUnmount, ])
 }
