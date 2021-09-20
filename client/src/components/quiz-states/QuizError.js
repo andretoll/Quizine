@@ -39,8 +39,8 @@ function QuizError(props) {
                 <ErrorIcon color="error" />
             </div>
             <Typography variant="overline" gutterBottom>{errorMessage}</Typography>
-            <Link to="/">
-                <Button variant="outlined" color="primary" size="large">Go home</Button>
+            <Link to="/start">
+                <Button variant="outlined" color="primary" size="large">Exit</Button>
             </Link>
         </Paper>
     )

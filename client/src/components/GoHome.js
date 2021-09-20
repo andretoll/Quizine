@@ -8,8 +8,8 @@ import {
 function GoHome(props) {
 
     return (
-        <Tooltip title="Go home" arrow placement="right">
-            <Link to="/" {...props}>
+        <Tooltip title="Back to start" arrow placement="right">
+            <Link to="/start" {...props}>
                 <IconButton>
                     <HomeIcon />
                 </IconButton>
