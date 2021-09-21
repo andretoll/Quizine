@@ -1,9 +1,11 @@
 import VisibilitySensor from 'react-visibility-sensor';
+import Image from '../../assets/quizine.png';
 import {
     makeStyles,
     Container,
     Fade,
-    Typography
+    Typography,
+    Badge
 } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
@@ -30,13 +32,18 @@ function Introduction() {
 
             <VisibilitySensor partialVisibility>
                 {({ isVisible }) => (
-                    <div style={{ height: '150px', display: 'flex', justifyContent: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <Fade in={isVisible} timeout={2000}>
                             <div>
-                                <Typography variant="h2" color="primary" gutterBottom>Quizine</Typography>
-                                <Typography variant="overline">
-                                    A modern and sophisticated quiz game.
-                                </Typography>
+                                <div>
+                                    <Badge badgeContent="Alpha" color="primary" anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+                                        <Typography variant="h2" color="primary" gutterBottom>Quizine</Typography>
+                                    </Badge>
+                                </div>
+                                <Typography variant="overline">A modern and sophisticated quiz game.</Typography>
+                                <div style={{ maxWidth: '500px' }}>
+                                    <img src={Image} alt="screenshot" style={{ margin: '20px 0', maxWidth: '100%', maxHeight: '100%' }} />
+                                </div>
                             </div>
                         </Fade>
                         <Fade in={!isVisible} timeout={1000}>

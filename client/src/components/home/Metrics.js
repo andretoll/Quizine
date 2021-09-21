@@ -61,36 +61,38 @@ function Metrics() {
         <Container maxWidth="md">
             <VisibilitySensor partialVisibility>
                 {({ isVisible }) => (
-                    <div style={{ height: '500px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {isVisible ?
-                            <Fade in timeout={2000}>
-                                <Grid container spacing={4}>
-                                    <Grid item xs={12} style={{ textAlign: 'center' }}>
-                                        <Typography variant="overline">With an ever-growing library...</Typography>
-                                    </Grid>
-                                    <Grid item xs={12} sm={4}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Fade in={isVisible} timeout={2000}>
+                            <Grid container spacing={4}>
+                                <Grid item xs={12} style={{ textAlign: 'center' }}>
+                                    <Typography variant="overline">With an ever-growing library...</Typography>
+                                </Grid>
+                                <Grid item xs={12} sm={4}>
+                                    {isVisible &&
                                         <CountUpWrapper
                                             value={categoryCount}
                                             suffix="Categories"
                                         />
-                                    </Grid>
-                                    <Grid item xs={12} sm={4}>
+                                    }
+                                </Grid>
+                                <Grid item xs={12} sm={4}>
+                                    {isVisible &&
                                         <CountUpWrapper
                                             value={questionCount}
                                             suffix="Questions"
                                         />
-                                    </Grid>
-                                    <Grid item xs={12} sm={4}>
+                                    }
+                                </Grid>
+                                <Grid item xs={12} sm={4}>
+                                    {isVisible &&
                                         <CountUpWrapper
                                             value={pendingQuestionCount}
                                             suffix="Pending"
                                         />
-                                    </Grid>
+                                    }
                                 </Grid>
-                            </Fade>
-                            :
-                            null
-                        }
+                            </Grid>
+                        </Fade>
                     </div>
                 )}
             </VisibilitySensor>
