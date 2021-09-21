@@ -6,6 +6,7 @@ name: Deploy to Firebase Hosting
       
 env: 
   REACT_APP_QUIZINE_API_KEY: ${{ secrets.REACT_APP_QUIZINE_API_KEY }}
+  CI: false
 
 jobs:
   build_and_deploy:
