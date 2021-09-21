@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import MenuIcon from '@material-ui/icons/Menu';
 import CloseIcon from '@material-ui/icons/Close';
 import { ReactComponent as Logo } from '../../assets/logo/logo.svg';
@@ -14,6 +13,7 @@ import {
     ListItem,
     ListItemText
 } from '@material-ui/core';
+import { Fragment } from 'react';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -27,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
             alignItems: 'center',
             fill: '#fff',
             color: '#fff',
+            pointerEvents: 'none',
 
             [theme.breakpoints.down('xs')]: {
                 margin: 'auto',
@@ -45,6 +46,15 @@ const useStyles = makeStyles((theme) => ({
                 transition: 'transform 0.5s ease-out',
                 transformOrigin: 'left',
                 color: 'inherit',
+            },
+        },
+
+        '& .navLinks': {
+            display: 'flex',
+            marginLeft: 'auto',
+
+            [theme.breakpoints.down('xs')]: {
+                display: 'none',
             },
         },
 
@@ -111,6 +121,23 @@ function Navbar() {
         setMenuAnchor(null);
     }
 
+    function getLinks() {
+
+        return (
+            <Fragment>
+                <ListItem>
+                            <ListItemText primary="ListItem 1" />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemText primary="ListItem 2" />
+                        </ListItem>
+                        <ListItem>
+                            <ListItemText primary="ListItem 3" />
+                        </ListItem>
+            </Fragment>
+        )
+    }
+
     return (
         <AppBar elevation={navbarSolid ? 10 : 0} color="secondary" className={`${classes.appbar} ${navbarSolid ? 'solid' : ''}`}>
             <Toolbar variant="regular">
@@ -129,21 +156,16 @@ function Navbar() {
                         </IconButton>
                     </Toolbar>
                     <List>
-                        <ListItem>
-                            <ListItemText primary="ListItem 1" />
-                        </ListItem>
-                        <ListItem>
-                            <ListItemText primary="ListItem 2" />
-                        </ListItem>
-                        <ListItem>
-                            <ListItemText primary="ListItem 3" />
-                        </ListItem>
+                        {/* getLinks() */}
                     </List>
                 </Drawer>
-                <Link to="/" className="title">
+                <div className="title">
                     <Logo />
                     <Typography variant="h2" color="textPrimary">Quizine</Typography>
-                </Link>
+                </div>
+                <List className="navLinks">
+                    {/* getLinks() */}
+                </List>
             </Toolbar>
         </AppBar>
     )

@@ -5,6 +5,7 @@ import Hero from '../components/home/Hero';
 import Introduction from '../components/home/Introduction';
 import Features from '../components/home/Features';
 import Faq from '../components/home/Faq';
+import Footer from '../components/home/Footer';
 import ScrollToTopIcon from '@material-ui/icons/ArrowUpward';
 import {
     makeStyles,
@@ -25,14 +26,13 @@ const useStyles = makeStyles((theme) => ({
     },
 
     oddSection: {
-        background: theme.palette.gradient.main,
-        color: '#fff',
+        background: '#fff',
+        color: '#000',
     },
 
     evenSection: {
         background: theme.palette.secondary.dark,
         color: '#fff',
-        boxShadow: '0 0 4px 4px rgba(0 0 0 / 50%)',
     },
 }));
 
@@ -70,6 +70,7 @@ function HomePage() {
             <section className={`${classes.section} ${classes.oddSection}`}>
                 <Faq />
             </section>
+            <Footer />
             <div style={{ position: 'fixed', right: '0', bottom: '0', margin: '20px' }}>
                 <Zoom in={trigger}>
                     <Fab onClick={scrollToTop} color="primary">

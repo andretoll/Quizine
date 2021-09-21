@@ -39,6 +39,15 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'space-evenly',
     },
 
+    brandContainer: {
+        transition: 'all 0.5s',
+
+        '&:hover': {
+            transform: 'translateY(-5px)',
+            boxShadow: theme.shadows[8]
+        },
+    },
+
     fade: {
         maxHeight: '100vh',
         '-webkit-animation': '$fade 3s ease-in-out',
@@ -130,7 +139,9 @@ function StartPage() {
                             <Slide in timeout={delay}>
                                 <div style={{ margin: 'auto', zIndex: 1 }}>
                                     <Link to="/">
-                                        <Brand size={150} />
+                                        <div className={classes.brandContainer}>
+                                            <Brand size={150} />
+                                        </div>
                                     </Link>
                                 </div>
                             </Slide>
