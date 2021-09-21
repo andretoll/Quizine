@@ -14,6 +14,7 @@ function ConfettiWrapper(props) {
             numberOfPieces={200}
             gravity={0.045}
             colors={colors}
+            style={{ position: 'fixed' }}
         />
     )
 }

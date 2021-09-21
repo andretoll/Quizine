@@ -20,7 +20,8 @@ import {
 const useStyles = makeStyles(theme => ({
 
     container: {
-        background: 'rgba(0 0 0 / 50%)',
+        background: 'rgba(0 0 0 / 25%)',
+        overflow: 'hidden',
     },
 
     centeredContent: {
@@ -29,7 +30,6 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
         minHeight: '100vh',
         position: 'relative',
-        overflow: 'hidden',
     },
 }));
 

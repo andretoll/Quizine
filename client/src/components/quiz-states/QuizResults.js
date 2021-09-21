@@ -58,6 +58,7 @@ const useStyles = makeStyles(theme => ({
         flex: '1',
         justifyContent: 'center',
         alignItems: 'flex-start',
+        position: 'relative',
 
         [theme.breakpoints.up('md')]: {
             marginTop: '50px',
