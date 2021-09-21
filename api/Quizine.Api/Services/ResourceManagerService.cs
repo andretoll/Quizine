@@ -39,7 +39,7 @@ namespace Quizine.Api.Services
         private void DisposeSessions(object state)
         {
             _logger.LogTrace("Evaluating sessions to dispose");
-            int affected = _sessionRepository.DisposeSessions(_parameters.SessionLifetime);
+            int affected = _sessionRepository.DisposeSessions(_parameters.SessionLifetime, _parameters.StartedSessionLifetime);
             _logger.LogTrace($"Disposed {affected} sessions");
         }
 
@@ -51,6 +51,7 @@ namespace Quizine.Api.Services
         {
             _logger.LogDebug("ResourceManagerService is starting");
             _logger.LogDebug($"Session lifetime: {_parameters.SessionLifetime}");
+            _logger.LogDebug($"Started session lifetime: {_parameters.StartedSessionLifetime}");
             _logger.LogDebug($"Poll interval: {_parameters.PollInterval}");
 
             _timer = new Timer(DisposeSessions, null, TimeSpan.Zero, _parameters.PollInterval);

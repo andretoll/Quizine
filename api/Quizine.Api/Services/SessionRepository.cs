@@ -100,21 +100,33 @@ namespace Quizine.Api.Services
             return true;
         }
 
-        public int DisposeSessions(TimeSpan lifetime)
+        public int DisposeSessions(TimeSpan lifetime, TimeSpan startedLifetime)
         {
             _logger.LogTrace($"{nameof(DisposeSessions)}()");
 
             if (!_quizSessions.Any())
                 return 0;
 
-            var quizSessions = _quizSessions.Where(x => x.Created.AddMinutes(lifetime.TotalMinutes) < DateTime.UtcNow).ToList();
+            var sessions = _quizSessions.ToList();
 
             int affected = 0;
-            for (int i = 0; i < quizSessions.Count; i++)
+            for (int i = 0; i < _quizSessions.Count; i++)
             {
-                _logger.LogTrace("Removing session from collection");
-                _quizSessions.Remove(quizSessions[i]);
-                affected++;
+                bool shouldRemove = false;
+                if (sessions[i].IsStarted)
+                {
+                    shouldRemove = sessions[i].Created.AddMinutes(startedLifetime.TotalMinutes) < DateTime.UtcNow;
+                }
+                else
+                {
+                    shouldRemove = sessions[i].Created.AddMinutes(lifetime.TotalMinutes) < DateTime.UtcNow;
+                }
+
+                if (shouldRemove)
+                {
+                    _quizSessions.Remove(sessions[i]);
+                    affected++;
+                }
             }
 
             return affected;

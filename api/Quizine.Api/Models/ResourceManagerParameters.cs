@@ -7,7 +7,8 @@ namespace Quizine.Api.Models
     {
         #region Private Members
 
-        private const int SESSION_LIFETIME = 45;
+        private const int SESSION_LIFETIME = 2;
+        private const int STARTED_SESSION_LIFETIME = 1;
         private const int POLL_INTERVAL = 1;
 
         #endregion
@@ -15,7 +16,8 @@ namespace Quizine.Api.Models
         #region Public Properties
 
         public TimeSpan SessionLifetime => TimeSpan.FromMinutes(SESSION_LIFETIME);
-        public TimeSpan PollInterval => TimeSpan.FromMinutes(POLL_INTERVAL); 
+        public TimeSpan StartedSessionLifetime => TimeSpan.FromMinutes(STARTED_SESSION_LIFETIME);
+        public TimeSpan PollInterval => TimeSpan.FromMinutes(POLL_INTERVAL);
 
         #endregion
     }
