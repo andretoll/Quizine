@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -47,9 +48,15 @@ namespace Quizine.Api
             {
                 opt.ClientTimeoutInterval = TimeSpan.FromMinutes(3);
             });
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(opt =>
+                {
+                    opt.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
+                });
             services.AddSingleton<ISessionRepository, SessionRepository>();
             services.AddSingleton<ITriviaRespository, TriviaRepository>();
             services.AddSingleton<IResourceManagerParameters, ResourceManagerParameters>();
+            services.AddSingleton<IUserIdentityMapper<string>, UserIdentityMapper<string>>();
             services.AddHttpClient<ITriviaRespository, TriviaRepository>();
             services.AddHostedService<ResourceManagerService>();
         }
@@ -61,7 +68,6 @@ namespace Quizine.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseRouting();
 
             app.UseCors(policy =>
             {
@@ -72,9 +78,12 @@ namespace Quizine.Api
                 .AllowAnyHeader();
             });
 
-            app.UseHttpsRedirection();
+            app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseHttpsRedirection();
 
             app.UseEndpoints(endpoints =>
             {

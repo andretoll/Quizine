@@ -52,9 +52,9 @@ namespace Quizine.Api.Services
 
         #region IQuizSession Implementation
 
-        public void AddUser(string connectionId, string username)
+        public void AddUser(string userId, string username)
         {
-            var user = new User { ConnectionID = connectionId, Username = username };
+            var user = new User { UserID = userId, Username = username };
             _memberProgressList.Add(new QuizProgress(user, _questions));
         }
 
@@ -63,27 +63,32 @@ namespace Quizine.Api.Services
             return _memberProgressList.Select(x => x.User).ToList();
         }
 
-        public User GetUser(string connectionId)
+        public User GetUser(string userId)
         {
-            return _memberProgressList.Select(x => x.User).FirstOrDefault(x => x.ConnectionID == connectionId);
+            return _memberProgressList.Select(x => x.User).FirstOrDefault(x => x.UserID == userId);
         }
 
-        public string RemoveUser(string connectionId)
+        public string RemoveUser(string userId)
         {
-            var progress = _memberProgressList.Single(x => x.User.ConnectionID == connectionId);
+            var progress = _memberProgressList.Single(x => x.User.UserID == userId);
             _memberProgressList.Remove(progress);
 
             return progress.User.Username;
         }
 
-        public bool UserExists(string connectionId)
+        public bool UserExists(string userId)
         {
-            return _memberProgressList.Any(x => x.User.ConnectionID == connectionId);
+            return _memberProgressList.Any(x => x.User.UserID == userId);
         }
 
         public bool UsernameTaken(string username)
         {
             return _memberProgressList.Any(x => x.User.Username.ToLower() == username.ToLower());
+        }
+
+        public bool UserCompleted(string userId)
+        {
+            return _memberProgressList.Single(x => x.User.UserID == userId).HasCompleted;
         }
 
         public void Start()
@@ -97,17 +102,17 @@ namespace Quizine.Api.Services
             _isStarted = true;
         }
 
-        public QuizItem GetNextQuestion(string connectionId, out bool lastQuestion)
+        public QuizItem GetNextQuestion(string userId, out bool lastQuestion)
         {
-            var progress = _memberProgressList.First(x => x.User.ConnectionID == connectionId);
+            var progress = _memberProgressList.First(x => x.User.UserID == userId);
             lastQuestion = progress.IsLastQuestion;
 
             return progress.NextQuestion;
         }
 
-        public string SubmitAnswer(string connectionId, string questionId, string answerId, out int points)
+        public string SubmitAnswer(string userId, string questionId, string answerId, out int points)
         {
-            var progress = _memberProgressList.First(x => x.User.ConnectionID == connectionId);
+            var progress = _memberProgressList.First(x => x.User.UserID == userId);
             progress.AddResult(questionId, answerId);
 
             points = Ruleset.GetQuestionPoints(progress.QuizResults.Single(x => x.Question.ID == questionId));
@@ -129,9 +134,9 @@ namespace Quizine.Api.Services
             return ScoreSorter.Sort(progressList, ScoreSortType.ScoreDescending);
         }
 
-        public bool IsAnswerSet(string connectionId, string questionId)
+        public bool IsAnswerSet(string userId, string questionId)
         {
-            var progress = _memberProgressList.First(x => x.User.ConnectionID == connectionId);
+            var progress = _memberProgressList.First(x => x.User.UserID == userId);
             var question = progress.QuizResults.SingleOrDefault(x => x.Question.ID == questionId);
 
             return question.Answer != null && question.IsAnswerValid;

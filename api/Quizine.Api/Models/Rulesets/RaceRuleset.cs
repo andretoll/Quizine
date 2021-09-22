@@ -42,7 +42,7 @@ namespace Quizine.Api.Models.Rulesets
         /// <returns></returns>
         private async Task AdvanceToNextQuestion(QuizHub hub, IQuizSession session)
         {
-            var nextQuestion = session.GetNextQuestion(hub.Context.ConnectionId, out bool lastQuestion);
+            var nextQuestion = session.GetNextQuestion(hub.Context.UserIdentifier, out bool lastQuestion);
 
             await hub.Clients.Group(session.SessionParameters.SessionID).NextQuestionIncoming(NextQuestionDelay.Value);
             await Task.Delay(TimeSpan.FromSeconds(NextQuestionDelay.Value));
@@ -86,7 +86,7 @@ namespace Quizine.Api.Models.Rulesets
             try
             {
                 bool firstToAnswerCorrectly = session.IsFirstToAnswerCorrectly(questionId);
-                string correctAnswerId = session.SubmitAnswer(hub.Context.ConnectionId, questionId, answerId, out int points);
+                string correctAnswerId = session.SubmitAnswer(hub.Context.UserIdentifier, questionId, answerId, out int points);
                 bool isCorrectAnswer = answerId == correctAnswerId;
 
                 // If answer is correct and first
@@ -95,21 +95,21 @@ namespace Quizine.Api.Models.Rulesets
                     // Set blank answers for all other clients
                     foreach (var user in session.GetUsers())
                     {
-                        if (user.ConnectionID == hub.Context.ConnectionId || session.IsAnswerSet(user.ConnectionID, questionId))
+                        if (user.UserID == hub.Context.UserIdentifier || session.IsAnswerSet(user.UserID, questionId))
                             continue;
 
-                        session.SubmitAnswer(user.ConnectionID, questionId, null, out _);
+                        session.SubmitAnswer(user.UserID, questionId, null, out _);
                     }
 
                     // Set correct answer for calling client and advance to next question
-                    await hub.Clients.Group(session.SessionParameters.SessionID).ValidateAnswer(new ValidateAnswerDto(correctAnswerId, points, session.GetUser(hub.Context.ConnectionId).Username));
+                    await hub.Clients.Group(session.SessionParameters.SessionID).ValidateAnswer(new ValidateAnswerDto(correctAnswerId, points, session.GetUser(hub.Context.UserIdentifier).Username));
                     await AdvanceToNextQuestion(hub, session);
                     return;
                 }
-                // Otherwise, send answer to caller
+                // Otherwise, send answer to user
                 else
                 {
-                    await hub.Clients.Caller.ValidateAnswer(new ValidateAnswerDto(correctAnswerId, points));
+                    await hub.Clients.User(hub.Context.UserIdentifier).ValidateAnswer(new ValidateAnswerDto(correctAnswerId, points));
                 }
 
                 // If all members have submitted answers, advance to next question

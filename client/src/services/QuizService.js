@@ -1,5 +1,5 @@
-export function Connect(connection, sessionId, user) {
-    return connection.send('Connect', sessionId, user);
+export function Connect(connection, sessionId) {
+    return connection.send('Connect', sessionId);
 }
 
 export function Disconnect(connection) {
@@ -20,4 +20,16 @@ export function NextQuestion(connection, sessionId) {
 
 export function GetResults(connection, sessionId) {
     return connection.send('GetResults', sessionId);
+}
+
+export async function Join(data) {
+    return await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/join`, {
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json',
+            'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
+        }
+    });
 }

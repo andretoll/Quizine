@@ -23,17 +23,18 @@ namespace Quizine.Api.Interfaces
 
         #region Methods
 
-        void AddUser(string connectionId, string username);
-        string RemoveUser(string connectionId);
+        void AddUser(string userId, string username);
+        string RemoveUser(string userId);
         IEnumerable<User> GetUsers();
-        User GetUser(string connectionId);
-        bool UserExists(string connectionId);
+        User GetUser(string userId);
+        bool UserExists(string userId);
         bool UsernameTaken(string username);
+        bool UserCompleted(string userId);
 
-        QuizItem GetNextQuestion(string connectionId, out bool lastQuestion);
-        string SubmitAnswer(string connectionId, string questionId, string answerId, out int points);
+        QuizItem GetNextQuestion(string userId, out bool lastQuestion);
+        string SubmitAnswer(string userId, string questionId, string answerId, out int points);
         IEnumerable<QuizProgress> GetResults();
-        bool IsAnswerSet(string connectionId, string questionId);
+        bool IsAnswerSet(string userId, string questionId);
         bool IsFirstToAnswerCorrectly(string questionId);
         bool AllUsersAnswered(string questionId);
 

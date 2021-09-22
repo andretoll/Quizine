@@ -1,4 +1,5 @@
-﻿using Quizine.Api.Interfaces;
+﻿using Quizine.Api.Enums;
+using Quizine.Api.Interfaces;
 using System.Linq;
 
 namespace Quizine.Api.Dtos
@@ -19,6 +20,18 @@ namespace Quizine.Api.Dtos
         public RulesetDto Rule { get; private set; }
         public string Category { get; private set; }
         public string Difficulty { get; private set; }
+        public PlayerState State { get; private set; }
+
+        #endregion
+
+        #region Public Methods
+
+        public ConnectConfirmationDto ForceState(PlayerState state)
+        {
+            State = state;
+
+            return this;
+        }
 
         #endregion
 

@@ -7,7 +7,7 @@ namespace Quizine.Api.Interfaces
     /// </summary>
     public interface IQuizApi
     {
-        Task Connect(string sessionId, string username);
+        Task Connect(string sessionId);
         Task Disconnect();
         Task Start(string sessionId);
         Task SubmitAnswer(string sessionId, string questionId, string answerId);

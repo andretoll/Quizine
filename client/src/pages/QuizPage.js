@@ -48,7 +48,7 @@ function QuizPage() {
     const { connection } = useConnection();
     const { notifySuccess, notifyError } = useSnackbar();
     const { openModal, closeModal } = useErrorModal();
-    
+
     // Quiz state
     const [eventsSubscribedTo, setEventsSubscribedTo] = useState(false);
     const [sessionId, setSessionId] = useState();
@@ -85,7 +85,7 @@ function QuizPage() {
             try {
                 await connection.start().then(_ => {
                     console.info("Connecting to session...");
-                    Connect(connection, sessionId, username).catch((error) => {
+                    Connect(connection, sessionId).catch((error) => {
                         console.log(error);
                         reportError("Failed to connect to session (Error code 2).")
                     });
@@ -96,7 +96,7 @@ function QuizPage() {
             }
         }
 
-    }, [connection, sessionId, username])
+    }, [connection, sessionId])
 
     useEffect(() => {
 
@@ -155,7 +155,24 @@ function QuizPage() {
                     setRuleset(response.rule);
                     setCategory(response.category);
                     setDifficulty(response.difficulty);
-                    setContent(contentStates.WAITING);
+
+                    switch (response.state) {
+                        case 0:
+                            setContent(contentStates.WAITING);
+                            break;
+                        case 1:
+                            setContent(contentStates.IN_PROGRESS);
+                            NextQuestion(connection, sessionId);
+                            break;
+                        case 2:
+                            setContent(contentStates.RESULTS);
+                            GetResults(connection, sessionId);
+                            break;
+                        default:
+                            setContent(contentStates.WAITING);
+                            break;
+                    }
+
                 } else {
                     console.warn("Connection rejected: ", response.errorMessage);
 

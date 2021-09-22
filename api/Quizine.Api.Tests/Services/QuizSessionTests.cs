@@ -106,16 +106,16 @@ namespace Quizine.Api.Tests.Services
             // Arrange
             var sessionParameters = TestData.GetRandomSessionParameters();
             var quizItems = TestData.GetRandomQuizItems(2);
-            string connectionId = TestData.GetRandomString(8);
+            string userId = TestData.GetRandomString(8);
             string username = TestData.GetRandomString(8);
             var session = CreateSession(sessionParameters, quizItems);
-            AddUser(session, connectionId, username);
-            var progress = session.MemberProgressList.First(x => x.User.ConnectionID == connectionId);
+            AddUser(session, userId, username);
+            var progress = session.MemberProgressList.First(x => x.User.UserID == userId);
 
             // Act
-            var question = session.GetNextQuestion(connectionId, out bool expectingFalse);
+            var question = session.GetNextQuestion(userId, out bool expectingFalse);
             var answer = question.CorrectAnswer;
-            session.SubmitAnswer(connectionId, question.ID, answer.ID, out _);
+            session.SubmitAnswer(userId, question.ID, answer.ID, out _);
             var result = progress.QuizResults.First(x => x.Question.ID == question.ID);
 
             // Assert
@@ -129,13 +129,13 @@ namespace Quizine.Api.Tests.Services
             // Arrange
             var sessionParameters = TestData.GetRandomSessionParameters();
             var quizItems = TestData.GetRandomQuizItems(2);
-            string connectionId = TestData.GetRandomString(8);
+            string userId = TestData.GetRandomString(8);
             string username = TestData.GetRandomString(8);
             var session = CreateSession(sessionParameters, quizItems);
-            AddUser(session, connectionId, username);
+            AddUser(session, userId, username);
 
             // Act
-            var progress = session.MemberProgressList.First(x => x.User.ConnectionID == connectionId);
+            var progress = session.MemberProgressList.First(x => x.User.UserID == userId);
 
             // Assert
             Assert.That(progress.QuizResults.All(x => x.Answer == null));
@@ -148,18 +148,18 @@ namespace Quizine.Api.Tests.Services
             // Arrange
             var sessionParameters = TestData.GetRandomSessionParameters(rule);
             var quizItems = TestData.GetRandomQuizItems(4);
-            string connectionId = TestData.GetRandomString(8);
+            string userId = TestData.GetRandomString(8);
             string username = TestData.GetRandomString(8);
             var session = CreateSession(sessionParameters, quizItems);
-            AddUser(session, connectionId, username);
+            AddUser(session, userId, username);
 
             // Act
             for (int i = 0; i < quizItems.Count(); i++)
             {
-                var question = session.GetNextQuestion(connectionId, out _);
-                session.SubmitAnswer(connectionId, question.ID, question.CorrectAnswer.ID, out _);
+                var question = session.GetNextQuestion(userId, out _);
+                session.SubmitAnswer(userId, question.ID, question.CorrectAnswer.ID, out _);
             }
-            var result = session.GetResults().First(x => x.User.ConnectionID == connectionId);
+            var result = session.GetResults().First(x => x.User.UserID == userId);
 
             // Assert
             Assert.That(result.Score, Is.EqualTo(session.MaxScore));

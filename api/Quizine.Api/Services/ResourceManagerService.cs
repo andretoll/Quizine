@@ -21,8 +21,8 @@ namespace Quizine.Api.Services
         #region Constructor
 
         public ResourceManagerService(
-            IResourceManagerParameters parameters, 
-            ISessionRepository sessionRepository, 
+            IResourceManagerParameters parameters,
+            ISessionRepository sessionRepository,
             ILogger<ResourceManagerService> logger)
         {
             _logger = logger;
