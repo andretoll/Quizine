@@ -73,7 +73,11 @@ namespace Quizine.Api.Services
 
         public string RemoveUser(string userId)
         {
-            var progress = _memberProgressList.Single(x => x.User.UserID == userId);
+            var progress = _memberProgressList.SingleOrDefault(x => x.User.UserID == userId);
+
+            if (progress == null)
+                return null;
+
             _memberProgressList.Remove(progress);
 
             return progress.User.Username;

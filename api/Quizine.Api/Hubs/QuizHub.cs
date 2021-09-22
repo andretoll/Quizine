@@ -72,7 +72,8 @@ namespace Quizine.Api.Hubs
                     _logger.LogDebug($"User {Context.UserIdentifier} is not connected. Removing...");
                     string username = session.RemoveUser(Context.UserIdentifier);
 
-                    await Clients.Group(session.SessionParameters.SessionID).ConfirmDisconnect(new DisconnectConfirmationDto(session.GetUsers(), username));
+                    if (username != null)
+                        await Clients.Group(session.SessionParameters.SessionID).ConfirmDisconnect(new DisconnectConfirmationDto(session.GetUsers(), username));
                 }
 
                 // Notify users if quiz is completed after disconnect
