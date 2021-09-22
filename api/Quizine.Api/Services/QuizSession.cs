@@ -30,7 +30,7 @@ namespace Quizine.Api.Services
         public DateTime Created => _created;
         public Ruleset Ruleset => _ruleset;
         public bool IsStarted => _isStarted;
-        public bool IsCompleted => _memberProgressList.All(x => x.HasCompleted);
+        public bool IsCompleted => _isStarted && _memberProgressList.All(x => x.HasCompleted);
         public int QuestionCount => _questions.Count;
         public int MaxScore => _maxScore;
 
@@ -54,6 +54,9 @@ namespace Quizine.Api.Services
 
         public void AddUser(string userId, string username)
         {
+            if (_isStarted)
+                throw new InvalidOperationException("Session has already started.");
+
             var user = new User { UserID = userId, Username = username };
             _memberProgressList.Add(new QuizProgress(user, _questions));
         }
@@ -104,7 +107,7 @@ namespace Quizine.Api.Services
 
         public QuizItem GetNextQuestion(string userId, out bool lastQuestion)
         {
-            var progress = _memberProgressList.First(x => x.User.UserID == userId);
+            var progress = _memberProgressList.Single(x => x.User.UserID == userId);
             lastQuestion = progress.IsLastQuestion;
 
             return progress.NextQuestion;
@@ -112,11 +115,11 @@ namespace Quizine.Api.Services
 
         public string SubmitAnswer(string userId, string questionId, string answerId, out int points)
         {
-            var progress = _memberProgressList.First(x => x.User.UserID == userId);
+            var progress = _memberProgressList.Single(x => x.User.UserID == userId);
             progress.AddResult(questionId, answerId);
 
             points = Ruleset.GetQuestionPoints(progress.QuizResults.Single(x => x.Question.ID == questionId));
-            return _questions.First(x => x.ID == questionId).CorrectAnswer.ID;
+            return _questions.Single(x => x.ID == questionId).CorrectAnswer.ID;
         }
 
         public IEnumerable<QuizProgress> GetResults()
@@ -136,7 +139,7 @@ namespace Quizine.Api.Services
 
         public bool IsAnswerSet(string userId, string questionId)
         {
-            var progress = _memberProgressList.First(x => x.User.UserID == userId);
+            var progress = _memberProgressList.Single(x => x.User.UserID == userId);
             var question = progress.QuizResults.SingleOrDefault(x => x.Question.ID == questionId);
 
             return question.Answer != null && question.IsAnswerValid;

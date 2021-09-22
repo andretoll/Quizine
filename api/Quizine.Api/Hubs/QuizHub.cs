@@ -37,7 +37,7 @@ namespace Quizine.Api.Hubs
 
         public override Task OnConnectedAsync()
         {
-            _logger.LogInformation($"Client connected: '{Context.UserIdentifier}' ({Context.ConnectionId})");
+            _logger.LogDebug($"Client connected: '{Context.UserIdentifier}' ({Context.ConnectionId})");
 
             // Add ConnectionID to mapper
             _identityMapper.AddConnection(Context.UserIdentifier, Context.ConnectionId);
@@ -47,7 +47,7 @@ namespace Quizine.Api.Hubs
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            _logger.LogInformation($"Client disconnected: '{Context.UserIdentifier}' ({Context.ConnectionId})");
+            _logger.LogDebug($"Client disconnected: '{Context.UserIdentifier}' ({Context.ConnectionId})");
 
             if (exception != null)
                 _logger.LogError(exception, "Unexpected error occurred");
@@ -60,7 +60,7 @@ namespace Quizine.Api.Hubs
             if (session != null)
             {
                 // Remove user and return username
-                _logger.LogDebug("Removing user...");
+                _logger.LogDebug("Removing connection from group...");
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, session.SessionParameters.SessionID);
 
                 if (await IsUserStillConnected(Context.UserIdentifier))
@@ -69,7 +69,9 @@ namespace Quizine.Api.Hubs
                 }
                 else
                 {
+                    _logger.LogDebug($"User {Context.UserIdentifier} is not connected. Removing...");
                     string username = session.RemoveUser(Context.UserIdentifier);
+
                     await Clients.Group(session.SessionParameters.SessionID).ConfirmDisconnect(new DisconnectConfirmationDto(session.GetUsers(), username));
                 }
 
@@ -94,23 +96,24 @@ namespace Quizine.Api.Hubs
 
             if (_sessionRepository.SessionFull(sessionId))
             {
-                _logger.LogTrace($"Session with ID '{sessionId}' is full");
+                _logger.LogDebug($"Session with ID '{sessionId}' is full");
                 await Clients.User(Context.UserIdentifier).ConfirmConnect(ConnectConfirmationDto.CreateErrorResponse("Session is full."));
                 return;
             }
             else if (session.IsStarted)
             {
-                _logger.LogTrace($"Session with ID '{sessionId}' already started");
+                _logger.LogDebug($"Session with ID '{sessionId}' already started");
                 await Clients.User(Context.UserIdentifier).ConfirmConnect(ConnectConfirmationDto.CreateErrorResponse("Session already started."));
                 return;
             }
             else if (session.UsernameTaken(Context.User.Identity.Name))
             {
-                _logger.LogTrace($"Session with ID '{sessionId}' already contains user with username '{Context.User.Identity.Name}'");
+                _logger.LogDebug($"Session with ID '{sessionId}' already contains user with username '{Context.User.Identity.Name}'");
                 await Clients.User(Context.UserIdentifier).ConfirmConnect(ConnectConfirmationDto.CreateErrorResponse($"Username '{Context.User.Identity.Name}' taken."));
                 return;
             }
 
+            _logger.LogDebug($"Adding user '{Context.UserIdentifier}' to session");
             session.AddUser(Context.UserIdentifier, Context.User.Identity.Name);
 
             await Clients.User(Context.UserIdentifier).ConfirmConnect(ConnectConfirmationDto.CreateSuccessResponse(_sessionRepository.GetSessionBySessionId(sessionId)));
@@ -123,10 +126,11 @@ namespace Quizine.Api.Hubs
 
             if (session.IsStarted)
             {
-                _logger.LogTrace($"Session with ID '{sessionId}' already started");
+                _logger.LogDebug($"Session with ID '{sessionId}' already started");
 
                 if (session.UserCompleted(Context.UserIdentifier))
                 {
+                    _logger.LogDebug($"Triggering state: {PlayerState.Completed}");
                     await Clients.User(Context.UserIdentifier).ConfirmConnect(
                         ConnectConfirmationDto.CreateSuccessResponse(_sessionRepository.GetSessionBySessionId(sessionId))
                         .ForceState(PlayerState.Completed)
@@ -134,6 +138,7 @@ namespace Quizine.Api.Hubs
                 }
                 else
                 {
+                    _logger.LogDebug($"Triggering state: {PlayerState.InProgress}");
                     await Clients.User(Context.UserIdentifier).ConfirmConnect(
                         ConnectConfirmationDto.CreateSuccessResponse(_sessionRepository.GetSessionBySessionId(sessionId))
                         .ForceState(PlayerState.InProgress)
@@ -142,6 +147,7 @@ namespace Quizine.Api.Hubs
             }
             else
             {
+                _logger.LogDebug($"Triggering state: {PlayerState.NotStarted}");
                 await Clients.User(Context.UserIdentifier).ConfirmConnect(
                         ConnectConfirmationDto.CreateSuccessResponse(_sessionRepository.GetSessionBySessionId(sessionId))
                         .ForceState(PlayerState.NotStarted)
@@ -173,7 +179,7 @@ namespace Quizine.Api.Hubs
             // Check if session exists
             if (!_sessionRepository.SessionExists(sessionId))
             {
-                _logger.LogDebug($"Session with ID '{sessionId}' does not exist");
+                _logger.LogDebug($"Session with ID '{sessionId}' does not exist.");
                 await Clients.User(Context.UserIdentifier).ConfirmConnect(ConnectConfirmationDto.CreateErrorResponse("Session does not exist."));
                 return;
             }
@@ -209,7 +215,7 @@ namespace Quizine.Api.Hubs
 
             bool success = _sessionRepository.StartSession(sessionId);
 
-            _logger.LogTrace($"Quiz started: {success}");
+            _logger.LogDebug($"Quiz started: {success}");
 
             if (success)
                 await Clients.Group(sessionId).ConfirmStart(success);
@@ -224,9 +230,14 @@ namespace Quizine.Api.Hubs
             var session = _sessionRepository.GetSessionBySessionId(sessionId);
 
             if (session == null)
+            {
+                _logger.LogDebug("Session expired");
                 await ReportErrorAsync("Session expired.");
+            }
             else
+            {
                 await session.Ruleset.SubmitAnswer(this, session, questionId, answerId);
+            }
         }
 
         public async Task NextQuestion(string sessionId)
@@ -236,9 +247,14 @@ namespace Quizine.Api.Hubs
             var session = _sessionRepository.GetSessionBySessionId(sessionId);
 
             if (session == null)
+            {
+                _logger.LogDebug("Session expired");
                 await ReportErrorAsync("Session expired.");
+            }
             else
+            {
                 await session.Ruleset.NextQuestion(this, session);
+            }
         }
 
         public async Task GetResults(string sessionId)
@@ -248,9 +264,14 @@ namespace Quizine.Api.Hubs
             var session = _sessionRepository.GetSessionBySessionId(sessionId);
 
             if (session == null)
+            {
+                _logger.LogDebug("Session expired");
                 await ReportErrorAsync("Session expired.");
+            }
             else
+            {
                 await session.Ruleset.GetResults(this, session);
+            }
         }
 
         #endregion

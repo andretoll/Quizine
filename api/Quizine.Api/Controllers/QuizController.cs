@@ -54,7 +54,7 @@ namespace Quizine.Api.Controllers
         [HttpPost("create")]
         public async Task<ActionResult> Create([FromBody] SessionParameters parameters)
         {
-            _logger.LogInformation($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
+            _logger.LogTrace($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
 
             string sessionId = UIDGenerator.Generate();
             parameters.SessionID = sessionId;
@@ -72,7 +72,7 @@ namespace Quizine.Api.Controllers
         [HttpPost("join")]
         public async Task<ActionResult> Join([FromBody] JoinDto dto)
         {
-            _logger.LogInformation($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
+            _logger.LogTrace($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
             
             if (!_sessionRepository.SessionExists(dto.SessionId))
             {
@@ -109,7 +109,7 @@ namespace Quizine.Api.Controllers
         [HttpGet("categories")]
         public async Task<ActionResult> GetCategories()
         {
-            _logger.LogInformation($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
+            _logger.LogTrace($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
 
             var response = await _triviaRepository.GetCategoriesJsonString();
 
@@ -127,7 +127,7 @@ namespace Quizine.Api.Controllers
         [HttpGet("rules")]
         public ActionResult GetRules()
         {
-            _logger.LogInformation($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
+            _logger.LogTrace($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
 
             List<RulesetDto> rulesets = new();
 
@@ -144,12 +144,23 @@ namespace Quizine.Api.Controllers
         [HttpPost("answers")]
         public ActionResult GetAnswers([FromBody] string sessionid)
         {
+            _logger.LogTrace($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
+
             if (string.IsNullOrEmpty(sessionid))
+            {
+                _logger.LogDebug("Empty session ID");
                 return BadRequest("Empty session ID");
+            }
             else if (!_sessionRepository.SessionExists(sessionid))
+            {
+                _logger.LogDebug("Session does not exist");
                 return BadRequest("Session does not exist");
+            }
             else if (!_sessionRepository.SessionCompleted(sessionid))
+            {
+                _logger.LogDebug("Session not completed");
                 return BadRequest("Session not completed");
+            }
 
             var session = _sessionRepository.GetSessionBySessionId(sessionid);
 
@@ -161,6 +172,8 @@ namespace Quizine.Api.Controllers
         [HttpGet("session-lifetime")]
         public ActionResult GetSessionLifetime()
         {
+            _logger.LogTrace($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
+
             return Ok(_parameters.SessionLifetime.TotalMinutes);
         }
 

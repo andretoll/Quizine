@@ -139,7 +139,7 @@ namespace Quizine.Api.Services
             var request = new HttpRequestMessage(HttpMethod.Get, query);
 
             _logger.LogDebug($"Fetching trivia from '{uri.AbsoluteUri}'...");
-            _logger.LogDebug($"Parameters: count- {questionCount}, category- {category}, difficulty- {difficulty}");
+            _logger.LogDebug($"Parameters: count={questionCount}, category={category}, difficulty={difficulty}");
             var response = await _httpClient.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
