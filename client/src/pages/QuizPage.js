@@ -305,11 +305,15 @@ function QuizPage() {
 
     return (
         <div className={classes.container}>
-            <PromptWrapper
-                title="Progress will be lost."
-                message="Leaving this page will result in a disconnect and all progress will be lost. Continue?"
-                when={content !== contentStates.ERROR && content !== contentStates.CONNECTING}
-            />
+            {content !== contentStates.ERROR && content !== contentStates.CONNECTING ?
+                <PromptWrapper
+                    title="Progress will be lost."
+                    message="Leaving this page will result in a disconnect and all progress will be lost. Continue?"
+                    when={content !== contentStates.ERROR && content !== contentStates.CONNECTING}
+                />
+                :
+                null
+            }
             {getContent(content)}
         </div>
     )

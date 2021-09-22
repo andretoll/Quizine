@@ -14,9 +14,12 @@ function PromptWrapper(props) {
 
     useEffect(() => {
 
+        console.debug("Adding eventlistener for 'beforeunload' event.");
         window.addEventListener("beforeunload", handleBeforeUnload);
 
         function handleBeforeUnload(e) {
+
+            console.debug("beforeUnload triggered");
 
             if (when) {
                 var confirmationMessage = { message };
@@ -27,6 +30,7 @@ function PromptWrapper(props) {
         }
 
         return function cleanup() {
+            console.debug("Removing eventlistener for 'beforeunload' event.");
             window.removeEventListener("beforeunload", handleBeforeUnload);
         }
     }, [message, when]);
