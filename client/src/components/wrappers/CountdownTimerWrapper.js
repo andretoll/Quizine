@@ -18,18 +18,17 @@ function CountdownTimerWrapper(props) {
     useEffect(() => {
 
         if (isPlaying) {
-            setTimeout(false);
+            setCompleted(false);
             setTimer(prevState => prevState + 1);
         }
 
     }, [isPlaying]);
 
-    useEffect(() => {
 
-        if (completed) {
-            onTimeout();
-        }
-    }, [completed, onTimeout])
+    function handleOnCompleted() {
+        setCompleted(true);
+        onTimeout();
+    }
 
     function renderTime({ remainingTime }) {
 
@@ -47,7 +46,7 @@ function CountdownTimerWrapper(props) {
             isPlaying={isPlaying}
             duration={questionTimeout}
             strokeWidth={3}
-            onComplete={() => setCompleted(true)}
+            onComplete={handleOnCompleted}
             strokeLinecap="square"
             trailStrokeWidth={2}
             trailColor={completed ? theme.palette.error.main : theme.palette.text.primary}

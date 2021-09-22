@@ -61,7 +61,7 @@ namespace Quizine.Api.Services
             bool containsKey = _connections.ContainsKey(userIdentity);
             _logger.LogInformation($"User still connected: {containsKey}");
 
-            return !containsKey;
+            return containsKey;
         }
     }
 }

@@ -193,11 +193,15 @@ function QuizProgress(props) {
                                     questionCount={questionCount}
                                 />
                                 <hr />
-                                <div className={classes.timerContainer}>
-                                    {timerPlaying &&
-                                        <CountdownTimerWrapper questionTimeout={questionTimeout} on={timerPlaying} onTimeout={handleOnTimeout} />
-                                    }
-                                </div>
+                                {questionTimeout ?
+                                    <div className={classes.timerContainer}>
+                                        {timerPlaying &&
+                                            <CountdownTimerWrapper questionTimeout={questionTimeout} on={timerPlaying} onTimeout={handleOnTimeout} />
+                                        }
+                                    </div>
+                                    :
+                                    null
+                                }
                             </div>
                             <div style={{ padding: '10px' }}>
                                 <Typography variant="body1" className={classes.questionText}>{quizContent?.question}</Typography>

@@ -12,6 +12,8 @@ namespace Quizine.Api.Hubs
     {
         #region Private Members
 
+        private const int USER_DISCONNECTED_TIMEOUT = 3000;
+
         private readonly ISessionRepository _sessionRepository;
         private readonly IUserIdentityMapper<string> _identityMapper;
         private readonly ILogger _logger;
@@ -35,7 +37,7 @@ namespace Quizine.Api.Hubs
 
         public override Task OnConnectedAsync()
         {
-            _logger.LogInformation($"Client connected: '{Context.ConnectionId}'");
+            _logger.LogInformation($"Client connected: '{Context.UserIdentifier}' ({Context.ConnectionId})");
 
             // Add ConnectionID to mapper
             _identityMapper.AddConnection(Context.UserIdentifier, Context.ConnectionId);
@@ -45,7 +47,7 @@ namespace Quizine.Api.Hubs
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            _logger.LogInformation($"Client disconnected: '{Context.ConnectionId}'");
+            _logger.LogInformation($"Client disconnected: '{Context.UserIdentifier}' ({Context.ConnectionId})");
 
             if (exception != null)
                 _logger.LogError(exception, "Unexpected error occurred");
@@ -61,7 +63,11 @@ namespace Quizine.Api.Hubs
                 _logger.LogDebug("Removing user...");
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, session.SessionParameters.SessionID);
 
-                if (await ScheduleRemoveUser(Context.UserIdentifier))
+                if (await IsUserStillConnected(Context.UserIdentifier))
+                {
+                    _logger.LogDebug($"User {Context.UserIdentifier} is still connected. Aborting...");
+                }
+                else
                 {
                     string username = session.RemoveUser(Context.UserIdentifier);
                     await Clients.Group(session.SessionParameters.SessionID).ConfirmDisconnect(new DisconnectConfirmationDto(session.GetUsers(), username));
@@ -149,9 +155,9 @@ namespace Quizine.Api.Hubs
             await Clients.User(Context.UserIdentifier).ReportError(message);
         }
 
-        private async Task<bool> ScheduleRemoveUser(string userId)
+        private async Task<bool> IsUserStillConnected(string userId)
         {
-            await Task.Delay(2000); //TODO: Const?
+            await Task.Delay(USER_DISCONNECTED_TIMEOUT);
 
             return _identityMapper.UserConnected(userId);
         }
