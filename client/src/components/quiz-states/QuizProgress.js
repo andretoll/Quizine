@@ -118,7 +118,7 @@ function QuizProgress(props) {
     useEffect(() => {
         if (connection) {
             connection.on('NextQuestion', (response) => {
-                console.info("Received next question");
+                console.debug("Received next question");
                 setCorrectAnswer(null);
                 setPointsGained(null);
                 setSlide(true);         // Trigger slide animation (in)
@@ -127,7 +127,7 @@ function QuizProgress(props) {
                 setQuizContent(response);
             });
             connection.on('ValidateAnswer', (response) => {
-                console.info("Received correct answer");
+                console.debug("Received correct answer");
                 setCorrectAnswer(response.answerId);
                 setPointsGained(response.points);
             });
@@ -135,12 +135,12 @@ function QuizProgress(props) {
     }, [connection]);
 
     function handleOnTimeout() {
-        console.info("Question timed out. Submitting answer...");
+        console.debug("Question timed out. Submitting answer...");
         SubmitAnswer(connection, sessionId, quizContent.id, null);
     }
 
     function handleOnSubmitAnswer(answer) {
-        console.info("Submitting answer...");
+        console.debug("Submitting answer...");
         setTimerPlaying(false);
         SubmitAnswer(connection, sessionId, quizContent.id, answer?.id);
     }
@@ -151,7 +151,7 @@ function QuizProgress(props) {
         setSlide(false);
 
         setTimeout(() => {
-            console.info("Requesting next question...");
+            console.debug("Requesting next question...");
             NextQuestion(connection, sessionId); // Request next question
         }, 1000);
     }

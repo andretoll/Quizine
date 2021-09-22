@@ -172,8 +172,7 @@ function CreatePage() {
     // Handle form submission
     async function handleOnSubmit(data) {
 
-        console.info("Submitting quiz parameters...");
-        console.trace(data);
+        console.info("Creating quiz...");
 
         setErrorMessage(null);
         setContent(contentStates.IN_PROGRESS);
@@ -190,7 +189,7 @@ function CreatePage() {
             if (response.status === 200) {
                 response.json().then(result => {
 
-                    console.info("Successfully submitted quiz paramters.");
+                    console.info("Successfully created quiz.");
 
                     setSessionId(result);
                     setHostname(data.hostname);
@@ -218,7 +217,7 @@ function CreatePage() {
                 });
             }
         }).catch(error => {
-            console.log(error);
+            console.error(error);
             setErrorMessage("Failed to connect to the server.");
         }).finally(_ => {
             setInProgress(false);

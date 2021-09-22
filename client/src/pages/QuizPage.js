@@ -76,7 +76,7 @@ function QuizPage() {
     useEffect(() => {
 
         if (connection && connection.state === 'Disconnected') {
-            console.info("Starting socket connection...");
+            console.debug("Starting socket connection...");
             start();
         }
 
@@ -84,14 +84,14 @@ function QuizPage() {
 
             try {
                 await connection.start().then(_ => {
-                    console.info("Connecting to session...");
+                    console.debug("Connecting to session...");
                     Connect(connection, sessionId).catch((error) => {
-                        console.log(error);
+                        console.error(error);
                         reportError("Failed to connect to session (Error code 2).")
                     });
                 });
             } catch (error) {
-                console.log(error);
+                console.error(error);
                 reportError("Error connecting to server (Error code 1).");
             }
         }
@@ -130,7 +130,7 @@ function QuizPage() {
             });
             // When connection is restored
             connection.onreconnected(response => {
-                console.info(response);
+                console.info("Successfully reconnected to server");
                 closeModal();
                 notifySuccess("Reconnected to the server.");
             });
@@ -143,7 +143,7 @@ function QuizPage() {
             connection.on('ConfirmConnect', (response) => {
 
                 if (response.connected) {
-                    console.info("Connection confirmed!");
+                    console.debug("Connection confirmed!");
 
                     setQuizTitle(response.quizTitle);
                     setExpectedPlayers(response.expectedUsers);
@@ -181,25 +181,22 @@ function QuizPage() {
                     else
                         history.push('/join', { errorMessage: response.errorMessage });
                 }
-
-                console.trace(response);
             });
             connection.on('UserConnected', (response) => {
-                console.info("Another user connected");
+                console.debug("Another user connected");
 
                 setPlayers(response.users);
                 notifySuccess(`${response.username} joined!`);
             });
             connection.on('ConfirmDisconnect', (response) => {
-                console.info("Another user disconnected");
+                console.debug("Another user disconnected");
 
                 setPlayers(response.users);
                 notifyError(`${response.username} disconnected.`);
             });
             connection.on('ConfirmStart', (response) => {
-                console.info(response);
                 if (response) {
-                    console.info("Start confirmed!");
+                    console.debug("Start confirmed!");
                     setContent(contentStates.IN_PROGRESS);
                     NextQuestion(connection, sessionId);
                 } else {
@@ -207,7 +204,7 @@ function QuizPage() {
                 }
             });
             connection.on('ReportError', (_) => {
-                console.info("Session expired");
+                console.debug("Session expired");
 
                 Disconnect(connection);
                 reportError("Session has expired.");
@@ -227,7 +224,7 @@ function QuizPage() {
 
     // See results
     function handleOnFinal() {
-        console.info("Getting results...");
+        console.debug("Getting results...");
         setContent(contentStates.RESULTS);
         GetResults(connection, sessionId);
     }

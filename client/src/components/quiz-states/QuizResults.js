@@ -213,12 +213,12 @@ function QuizResults(props) {
 
         if (connection) {
             connection.on('Results', (response) => {
-                console.info("Received results");
+                console.debug("Received results");
                 setQuizCompleted(response.sessionCompleted);
                 setFinalScore(response.scores);
             });
             connection.on('QuizCompleted', () => {
-                console.info("Quiz completed");
+                console.debug("Quiz completed");
                 setQuizCompleted(true);
             });
         }

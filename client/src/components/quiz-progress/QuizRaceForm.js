@@ -95,12 +95,12 @@ function QuizRaceForm(props) {
     function startCountdown(initial) {
         let timeleft = initial;
         setNextQuestionCountdown(timeleft);
-        console.log(timeleft);
+        console.trace(timeleft);
         timeleft--;
 
         setInterval(() => {
             if (timeleft >= 0) {
-                console.log(timeleft);
+                console.trace(timeleft);
                 setNextQuestionCountdown(timeleft);
                 timeleft--;
             }

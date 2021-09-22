@@ -22,7 +22,7 @@ export const SnackbarProvider = ({ children }) => {
 
     function handleClose(_, reason) {
 
-        console.debug("Closing snackbar...");
+        console.trace("Closing snackbar...");
 
         if (reason === 'clickaway') {
             return;
@@ -33,7 +33,7 @@ export const SnackbarProvider = ({ children }) => {
 
     function notifySuccess(message) {
 
-        console.debug("Opening success snackbar...");
+        console.trace("Opening success snackbar...");
 
         setMessage(message);
         setType(snackbarTypes.SUCCESS);
@@ -42,7 +42,7 @@ export const SnackbarProvider = ({ children }) => {
 
     function notifyError(message) {
         
-        console.debug("Opening error snackbar...");
+        console.trace("Opening error snackbar...");
 
         setMessage(message);
         setType(snackbarTypes.ERROR);

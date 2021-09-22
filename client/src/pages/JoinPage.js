@@ -94,12 +94,13 @@ function JoinPage() {
     async function onHandleSubmit(data) {
 
         setInProgress(true);
-        console.info("Joining session...");
+        console.info("Joining quiz...");
 
         setErrorMessage(null);
 
         await Join(data).then(response => {
             if (response.status === 200) {
+                console.info("Successfully joined quiz.");
                 history.push(`/quiz/${data.sessionId}`, { sessionId: data.sessionId, username: data.username, url: location.pathname + location.hash });
             } else {
                 response.text().then(result => {
@@ -107,7 +108,7 @@ function JoinPage() {
                 });
             }
         }).catch(error => {
-            console.log(error);
+            console.error(error);
             setErrorMessage("Failed to connect to the server.");
         }).finally(_ => {
             setInProgress(false);

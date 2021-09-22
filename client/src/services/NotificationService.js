@@ -9,7 +9,7 @@ export function getNotificationsPermission() {
 
         // Check if browser supports it
         if (!isSupported) {
-            console.debug("Notifications not supported");
+            console.info("Notifications not supported");
         }
 
         else {
@@ -29,7 +29,7 @@ export function requestNotificationsPermission() {
 
         // Check if browser supports it
         if (!isSupported) {
-            console.debug("Notifications not supported");
+            console.info("Notifications not supported");
         }
 
         else {
@@ -50,7 +50,7 @@ export function sendNotification(title, message, onClick) {
 
         // Check if browser supports it
         if (!isSupported) {
-            console.debug("Notifications not supported");
+            console.info("Notifications not supported");
         }
 
         else {
