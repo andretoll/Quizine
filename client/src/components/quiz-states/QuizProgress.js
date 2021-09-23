@@ -3,6 +3,7 @@ import { useConnection } from '../../contexts/HubConnectionContext';
 import { NextQuestion, SubmitAnswer } from '../../services/QuizService';
 import QuizForm from '../quiz-progress/QuizForm';
 import CountdownTimerWrapper from '../wrappers/CountdownTimerWrapper';
+import { useTimeoutCache } from '../../hooks/useTimeoutCache';
 import {
     makeStyles,
     Typography,
@@ -104,7 +105,9 @@ function QuizProgress(props) {
     const classes = useStyles();
 
     const { connection } = useConnection();
+    const [, setTimeoutCache] = useTimeoutCache(questionTimeout);
 
+    const [eventsSubscribedTo, setEventsSubscribedTo] = useState(false);
     const [correctAnswer, setCorrectAnswer] = useState(null);
     const [quizContent, setQuizContent] = useState(null);
     const [pointsGained, setPointsGained] = useState(null);
@@ -116,7 +119,7 @@ function QuizProgress(props) {
     const [timerPlaying, setTimerPlaying] = useState(true);
 
     useEffect(() => {
-        if (connection) {
+        if (connection && !eventsSubscribedTo) {
             connection.on('NextQuestion', (response) => {
                 console.debug("Received next question");
                 setCorrectAnswer(null);
@@ -130,9 +133,12 @@ function QuizProgress(props) {
                 console.debug("Received correct answer");
                 setCorrectAnswer(response.answerId);
                 setPointsGained(response.points);
+                setTimeoutCache(questionTimeout); // Reset timer despite cache
             });
+            setEventsSubscribedTo(true);
+
         }
-    }, [connection]);
+    }, [connection, questionTimeout, setTimeoutCache, eventsSubscribedTo]);
 
     function handleOnTimeout() {
         console.debug("Question timed out. Submitting answer...");

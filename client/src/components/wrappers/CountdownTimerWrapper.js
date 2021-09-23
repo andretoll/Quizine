@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+import { useTimeoutCache } from '../../hooks/useTimeoutCache';
 import {
     useTheme,
     Typography
@@ -12,8 +13,18 @@ function CountdownTimerWrapper(props) {
     const onTimeout = props.onTimeout;
 
     const theme = useTheme();
+    const [timeoutCache, setTimeoutCache] = useTimeoutCache(questionTimeout);
+
     const [timer, setTimer] = useState(0);
     const [completed, setCompleted] = useState(false);
+    const [remainingTime, setRemainingTime] = useState(timeoutCache);
+
+    useEffect(() => {
+
+        if (remainingTime > 0)
+            setTimeoutCache(remainingTime);
+
+    }, [remainingTime, setTimeoutCache]);
 
     useEffect(() => {
 
@@ -32,6 +43,8 @@ function CountdownTimerWrapper(props) {
 
     function renderTime({ remainingTime }) {
 
+        setRemainingTime(remainingTime);
+
         return (
             <div>
                 <Typography variant="h5">{remainingTime}</Typography>
@@ -45,6 +58,7 @@ function CountdownTimerWrapper(props) {
             size={60}
             isPlaying={isPlaying}
             duration={questionTimeout}
+            initialRemainingTime={remainingTime}
             strokeWidth={3}
             onComplete={handleOnCompleted}
             strokeLinecap="square"

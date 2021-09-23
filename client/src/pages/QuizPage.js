@@ -6,6 +6,7 @@ import { useConnection } from '../contexts/HubConnectionContext';
 import { useSnackbar } from '../contexts/SnackbarContext';
 import { useErrorModal } from '../contexts/ErrorModalContext';
 import useTitle from '../hooks/useTitle';
+import { useTimeoutCache } from '../hooks/useTimeoutCache';
 import QuizError from '../components/quiz-states/QuizError';
 import QuizConnecting from '../components/quiz-states/QuizConnecting';
 import QuizWaiting from '../components/quiz-states/QuizWaiting';
@@ -48,6 +49,7 @@ function QuizPage() {
     const { connection } = useConnection();
     const { notifySuccess, notifyError } = useSnackbar();
     const { openModal, closeModal } = useErrorModal();
+    const [, setCachedTimeout] = useTimeoutCache();
 
     // Quiz state
     const [eventsSubscribedTo, setEventsSubscribedTo] = useState(false);
@@ -197,6 +199,7 @@ function QuizPage() {
             connection.on('ConfirmStart', (response) => {
                 if (response) {
                     console.debug("Start confirmed!");
+                    setCachedTimeout(null); // Reset timeout cache
                     setContent(contentStates.IN_PROGRESS);
                     NextQuestion(connection, sessionId);
                 } else {
@@ -213,7 +216,18 @@ function QuizPage() {
             setEventsSubscribedTo(true);
         }
 
-    }, [connection, sessionId, notifyError, notifySuccess, eventsSubscribedTo, history, location, username, openModal, closeModal]);
+    }, [connection, 
+        sessionId, 
+        notifyError, 
+        notifySuccess, 
+        eventsSubscribedTo, 
+        history, 
+        location, 
+        username, 
+        openModal, 
+        closeModal,
+        setCachedTimeout
+    ]);
 
     // Report error
     function reportError(message) {
