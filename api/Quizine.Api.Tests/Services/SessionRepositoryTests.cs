@@ -105,23 +105,23 @@ namespace Quizine.Api.Tests.Services
         {
             // Arrange
             string username = TestData.GetRandomString(8);
-            string connectionId = TestData.GetRandomString(10);
+            string userId = TestData.GetRandomString(10);
             string usernameToRemove = TestData.GetRandomString(8);
-            string connectionIdToRemove = TestData.GetRandomString(10);
+            string userIdToRemove = TestData.GetRandomString(10);
             var sessionParameters = TestData.GetRandomSessionParameters();
 
             // Act
             var sessionId = await CreateSession(sessionParameters);
             var session = _sessionRepository.GetSessionBySessionId(sessionId);
-            session.AddUser(connectionId, username);
-            session.AddUser(connectionIdToRemove, usernameToRemove);
-            session.RemoveUser(connectionIdToRemove);
+            session.AddUser(userId, username);
+            session.AddUser(userIdToRemove, usernameToRemove);
+            session.RemoveUser(userIdToRemove);
 
             // Assert
             Assert.That(session.GetUsers(), Has.Count.EqualTo(1));
             Assert.That(session.MemberProgressList, Has.Count.EqualTo(1));
-            Assert.That(session.UserExists(connectionId), Is.True);
-            Assert.That(session.UserExists(connectionIdToRemove), Is.False);
+            Assert.That(session.UserExists(userId), Is.True);
+            Assert.That(session.UserExists(userIdToRemove), Is.False);
         }
 
         [Test]

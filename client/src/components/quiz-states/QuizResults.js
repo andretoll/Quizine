@@ -318,40 +318,42 @@ function QuizResults(props) {
     return (
         <div className={classes.container}>
             <AppBar position="relative" color="secondary">
-                <Toolbar>
-                    <GoHome />
-                    <Tabs value={tabValue} onChange={handleTabChange} indicatorColor="primary" className={classes.tabs}>
-                        <Tab tabIndex={0} label="Top 3" />
-                        <Tab tabIndex={1} label="Standings" />
-                    </Tabs>
-                    <Tooltip title="Menu" arrow>
-                        <IconButton onClick={handleMenuOpen}>
-                            <MenuIcon />
-                        </IconButton>
-                    </Tooltip>
-                    <Menu
-                        anchorEl={anchorEl}
-                        getContentAnchorEl={null}
-                        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                        transformOrigin={{ vertical: "top", horizontal: "right" }}
-                        keepMounted
-                        open={Boolean(anchorEl)}
-                        onClose={handleMenuClose}
-                        PaperProps={{ className: "secondary-background-light" }}
-                    >
-                        <MenuItem onClick={openCheatSheet}>Cheat Sheet</MenuItem>
-                        <MenuItem onClick={() => history.push("/create")}>New Quiz</MenuItem>
-                        <Divider />
-                        <MenuItem disabled={!quizCompleted}>
-                            <FormGroup row>
-                                <FormControlLabel label="Confetti" control={
-                                    <Switch color="primary" checked={confetti} onChange={(event) => setConfetti(event.target.checked)} />
-                                }>
-                                </FormControlLabel>
-                            </FormGroup>
-                        </MenuItem>
-                    </Menu>
-                </Toolbar>
+                <Container maxWidth="md">
+                    <Toolbar>
+                        <GoHome />
+                        <Tabs value={tabValue} onChange={handleTabChange} indicatorColor="primary" className={classes.tabs}>
+                            <Tab tabIndex={0} label="Top 3" />
+                            <Tab tabIndex={1} label="Standings" />
+                        </Tabs>
+                        <Tooltip title="Menu" arrow>
+                            <IconButton onClick={handleMenuOpen}>
+                                <MenuIcon />
+                            </IconButton>
+                        </Tooltip>
+                        <Menu
+                            anchorEl={anchorEl}
+                            getContentAnchorEl={null}
+                            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                            transformOrigin={{ vertical: "top", horizontal: "right" }}
+                            keepMounted
+                            open={Boolean(anchorEl)}
+                            onClose={handleMenuClose}
+                            PaperProps={{ className: "secondary-background-light" }}
+                        >
+                            <MenuItem onClick={openCheatSheet}>Cheat Sheet</MenuItem>
+                            <MenuItem onClick={() => history.push("/create")}>New Quiz</MenuItem>
+                            <Divider />
+                            <MenuItem disabled={!quizCompleted}>
+                                <FormGroup row>
+                                    <FormControlLabel label="Confetti" control={
+                                        <Switch color="primary" checked={confetti} onChange={(event) => setConfetti(event.target.checked)} />
+                                    }>
+                                    </FormControlLabel>
+                                </FormGroup>
+                            </MenuItem>
+                        </Menu>
+                    </Toolbar>
+                </Container>
             </AppBar>
             <CheatSheet
                 data={cheatSheet}
