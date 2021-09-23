@@ -7,7 +7,7 @@ export function useTimeoutCache(initialValue) {
     const [cachedValue, setCachedValue] = useState(() => {
 
         try {
-            const item = localStorage.getItem(key);
+            const item = window.localStorage.getItem(key);
             return item ? parseInt(item) : initialValue;
         } catch (error) {
             console.error(error);
@@ -20,12 +20,12 @@ export function useTimeoutCache(initialValue) {
         try {
 
             if (value === null) {
-                localStorage.removeItem(key);
+                window.localStorage.removeItem(key);
                 return;
             }
 
             setCachedValue(value);
-            localStorage.setItem(key, value);
+            window.localStorage.setItem(key, value);
         } catch (error) {
             console.error(error);
         }

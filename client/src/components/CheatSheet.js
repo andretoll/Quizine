@@ -58,7 +58,7 @@ function CheatSheet(props) {
                         {item.answers.filter(x => x.id !== item.correctAnswer.id).map((answer) => (
                             <ListItem key={answer.id} style={{ padding: '0 10px', margin: '5px 0' }}>
                                 <Typography variant="body2" color="textSecondary">
-                                    - {answer.value}
+                                    {answer.value}
                                 </Typography>
                             </ListItem>
                         ))}
@@ -80,10 +80,9 @@ function CheatSheet(props) {
             <DialogContent dividers>
                 <List>
                     {data?.map((item) => (
-                        <ListItem key={item.id}>
-                            <ListItemText primary={getQuestion(item)}>
-                                {getAnswer(item)}
-                            </ListItemText>
+                        <ListItem key={item.id} style={{ display: 'block' }}>
+                            <ListItemText primary={getQuestion(item)} />
+                            <div>{getAnswer(item)}</div>
                         </ListItem>
                     ))}
                 </List>
