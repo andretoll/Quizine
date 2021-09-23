@@ -45,7 +45,7 @@ namespace Quizine.Api.Models.Base
 
         public virtual async Task NextQuestion(QuizHub hub, IQuizSession session)
         {
-            var nextQuestion = session.GetNextQuestion(hub.Context.UserIdentifier, out bool lastQuestion);
+            var nextQuestion = session.GetNextUserQuestion(hub.Context.UserIdentifier, out bool lastQuestion);
             await hub.Clients.User(hub.Context.UserIdentifier).NextQuestion(new NextQuestionDto(nextQuestion, lastQuestion));
         }
 
@@ -61,6 +61,14 @@ namespace Quizine.Api.Models.Base
                 await hub.Clients.Group(session.SessionParameters.SessionID).QuizCompleted();
             }
         }
+
+        /// <summary>
+        /// This method is called when a user has disconnected.
+        /// </summary>
+        /// <param name="hub"></param>
+        /// <param name="session"></param>
+        /// <returns></returns>
+        public virtual Task OnUserRemoved(QuizHub hub, IQuizSession session) { return Task.CompletedTask; }
 
         #endregion
 

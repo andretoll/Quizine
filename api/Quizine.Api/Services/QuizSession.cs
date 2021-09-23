@@ -30,7 +30,7 @@ namespace Quizine.Api.Services
         public DateTime Created => _created;
         public Ruleset Ruleset => _ruleset;
         public bool IsStarted => _isStarted;
-        public bool IsCompleted => _isStarted && _memberProgressList.All(x => x.HasCompleted);
+        public bool IsCompleted => _isStarted && _memberProgressList.All(x => x.HasCompleted || !x.Valid);
         public int QuestionCount => _questions.Count;
         public int MaxScore => _maxScore;
 
@@ -78,7 +78,7 @@ namespace Quizine.Api.Services
             if (progress == null)
                 return null;
 
-            _memberProgressList.Remove(progress);
+            progress.Invalidate();
 
             return progress.User.Username;
         }
@@ -109,12 +109,39 @@ namespace Quizine.Api.Services
             _isStarted = true;
         }
 
-        public QuizItem GetNextQuestion(string userId, out bool lastQuestion)
+        public QuizItem GetNextUserQuestion(string userId, out bool lastQuestion)
         {
             var progress = _memberProgressList.Single(x => x.User.UserID == userId);
             lastQuestion = progress.IsLastQuestion;
 
             return progress.NextQuestion;
+        }
+
+        public QuizItem GetNextSessionQuestion(string previousQuestionId, out bool lastQuestion)
+        {
+            QuizItem nextQuestion;
+
+            if (string.IsNullOrEmpty(previousQuestionId))
+            {
+                nextQuestion = _questions.First();
+            }
+            else
+            {
+                int index = _questions.IndexOf(_questions.Single(x => x.ID == previousQuestionId));
+
+                if (index + 1 >= _questions.Count)
+                {
+                    lastQuestion = true;
+                    return null;
+                }
+
+                nextQuestion = _questions[index + 1];
+
+            }
+
+            lastQuestion = nextQuestion == _questions.Last();
+
+            return nextQuestion;
         }
 
         public string SubmitAnswer(string userId, string questionId, string answerId, out int points)
@@ -149,20 +176,20 @@ namespace Quizine.Api.Services
             return question.Answer != null && question.IsAnswerValid;
         }
 
-        public bool IsFirstToAnswerCorrectly(string questionId)
-        {
-            foreach (var progress in _memberProgressList)
-            {
-                if (progress.QuizResults.Single(x => x.Question.ID == questionId).IsAnswerCorrect)
-                    return false;
-            }
+        //public bool IsFirstToAnswerCorrectly(string questionId)
+        //{
+        //    foreach (var progress in _memberProgressList)
+        //    {
+        //        if (progress.QuizResults.Single(x => x.Question.ID == questionId).IsAnswerCorrect)
+        //            return false;
+        //    }
 
-            return true;
-        }
+        //    return true;
+        //}
 
         public bool AllUsersAnswered(string questionId)
         {
-            return MemberProgressList.All(x => x.QuizResults.Single(y => y.Question.ID == questionId).IsAnswerValid);
+            return MemberProgressList.Where(x => x.Valid).All(x => x.QuizResults.Single(y => y.Question.ID == questionId).IsAnswerValid);
         }
 
         #endregion

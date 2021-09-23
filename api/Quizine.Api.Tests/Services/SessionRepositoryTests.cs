@@ -8,6 +8,7 @@ using Quizine.Api.Services;
 using Quizine.Api.Tests.Stubs;
 using Quizine.Api.Tests.Utils;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Quizine.Api.Tests.Services
@@ -118,10 +119,11 @@ namespace Quizine.Api.Tests.Services
             session.RemoveUser(userIdToRemove);
 
             // Assert
-            Assert.That(session.GetUsers(), Has.Count.EqualTo(1));
-            Assert.That(session.MemberProgressList, Has.Count.EqualTo(1));
+            Assert.That(session.MemberProgressList.Single(x => x.User.UserID == userIdToRemove).Valid, Is.False);
+            Assert.That(session.GetUsers(), Has.Count.EqualTo(2));
+            Assert.That(session.MemberProgressList, Has.Count.EqualTo(2));
             Assert.That(session.UserExists(userId), Is.True);
-            Assert.That(session.UserExists(userIdToRemove), Is.False);
+            Assert.That(session.UserExists(userIdToRemove), Is.True);
         }
 
         [Test]

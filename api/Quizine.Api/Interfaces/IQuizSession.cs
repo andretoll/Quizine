@@ -31,11 +31,11 @@ namespace Quizine.Api.Interfaces
         bool UsernameTaken(string username);
         bool UserCompleted(string userId);
 
-        QuizItem GetNextQuestion(string userId, out bool lastQuestion);
+        QuizItem GetNextUserQuestion(string userId, out bool lastQuestion);
+        QuizItem GetNextSessionQuestion(string previousQuestionId, out bool lastQuestion);
         string SubmitAnswer(string userId, string questionId, string answerId, out int points);
         IEnumerable<QuizProgress> GetResults();
         bool IsAnswerSet(string userId, string questionId);
-        bool IsFirstToAnswerCorrectly(string questionId);
         bool AllUsersAnswered(string questionId);
 
         void Start();

@@ -59,7 +59,6 @@ namespace Quizine.Api.Hubs
 
             if (session != null)
             {
-                // Remove user and return username
                 _logger.LogDebug("Removing connection from group...");
                 await Groups.RemoveFromGroupAsync(Context.ConnectionId, session.SessionParameters.SessionID);
 
@@ -70,10 +69,17 @@ namespace Quizine.Api.Hubs
                 else
                 {
                     _logger.LogDebug($"User {Context.UserIdentifier} is not connected. Removing...");
+
+
+                    // Remove user and return username
                     string username = session.RemoveUser(Context.UserIdentifier);
 
+                    // Notify users of disconnect
                     if (username != null)
                         await Clients.Group(session.SessionParameters.SessionID).ConfirmDisconnect(new DisconnectConfirmationDto(session.GetUsers(), username));
+
+                    // Check if ruleset needs to run any actions
+                    await session.Ruleset.OnUserRemoved(this, session);
                 }
 
                 // Notify users if quiz is completed after disconnect
