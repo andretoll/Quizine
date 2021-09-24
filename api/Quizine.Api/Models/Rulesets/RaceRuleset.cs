@@ -88,11 +88,19 @@ namespace Quizine.Api.Models.Rulesets
 
         public override async Task NextQuestion(QuizHub hub, IQuizSession session)
         {
-            var nextQuestion = session.Questions.First();
-            bool lastQuestion = nextQuestion == session.Questions.Last();
+            QuizItem nextQuestion;
 
             if (_currentQuestionId == null)
+            {
+                nextQuestion = session.Questions.First();
                 _currentQuestionId = nextQuestion?.ID;
+            }
+            else
+            {
+                nextQuestion = session.Questions.Single(x => x.ID == _currentQuestionId);
+            }
+
+            bool lastQuestion = nextQuestion == session.Questions.Last();
 
             await hub.Clients.User(hub.Context.UserIdentifier).NextQuestion(new NextQuestionDto(nextQuestion, lastQuestion));
         }
