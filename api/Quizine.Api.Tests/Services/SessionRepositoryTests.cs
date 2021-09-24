@@ -119,6 +119,31 @@ namespace Quizine.Api.Tests.Services
             session.RemoveUser(userIdToRemove);
 
             // Assert
+            Assert.That(session.GetUsers(), Has.Count.EqualTo(1));
+            Assert.That(session.MemberProgressList, Has.Count.EqualTo(1));
+            Assert.That(session.UserExists(userId), Is.True);
+            Assert.That(session.UserExists(userIdToRemove), Is.False);
+        }
+
+        [Test]
+        public async Task ShouldNotRemoveUserIfSessionIsStarted()
+        {
+            // Arrange
+            string username = TestData.GetRandomString(8);
+            string userId = TestData.GetRandomString(10);
+            string usernameToRemove = TestData.GetRandomString(8);
+            string userIdToRemove = TestData.GetRandomString(10);
+            var sessionParameters = TestData.GetRandomSessionParameters();
+
+            // Act
+            var sessionId = await CreateSession(sessionParameters);
+            var session = _sessionRepository.GetSessionBySessionId(sessionId);
+            session.AddUser(userId, username);
+            session.AddUser(userIdToRemove, usernameToRemove);
+            session.Start();
+            session.RemoveUser(userIdToRemove);
+
+            // Assert
             Assert.That(session.MemberProgressList.Single(x => x.User.UserID == userIdToRemove).Valid, Is.False);
             Assert.That(session.GetUsers(), Has.Count.EqualTo(2));
             Assert.That(session.MemberProgressList, Has.Count.EqualTo(2));
