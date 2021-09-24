@@ -78,7 +78,10 @@ namespace Quizine.Api.Services
             if (progress == null)
                 return null;
 
-            progress.Invalidate();
+            if (IsStarted)
+                progress.Invalidate();
+            else
+                _memberProgressList.Remove(progress);
 
             return progress.User.Username;
         }
