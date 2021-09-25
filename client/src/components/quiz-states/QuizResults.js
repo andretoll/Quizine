@@ -9,6 +9,9 @@ import GoHome from '../GoHome';
 import CheatSheet from '../CheatSheet';
 import TrophyIcon from '@material-ui/icons/EmojiEvents';
 import MenuIcon from '@material-ui/icons/MoreVert';
+import RematchIcon from '@material-ui/icons/Loop';
+import ListIcon from '@material-ui/icons/ListAlt';
+import AddIcon from '@material-ui/icons/Add';
 import {
     makeStyles,
     Grid,
@@ -30,10 +33,12 @@ import {
     Tooltip,
     Menu,
     MenuItem,
-    Switch,
     FormControlLabel,
     FormGroup,
     Divider,
+    Checkbox,
+    ListItemIcon,
+    ListItemText,
 } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -102,12 +107,10 @@ const useStyles = makeStyles(theme => ({
         '&.active': {
             boxShadow: '-5px 5px 10px 0 rgba(0 0 0 / 30%)',
 
-            [theme.breakpoints.up('xs')]: {
-                '-webkit-animation': '$float 1s ease-in-out infinite',
-                '-moz-animation': '$float 1s ease-in-out infinite',
-                '-o-animation': '$float 1s ease-in-out infinite',
-                animation: '$float 1s ease-in-out infinite',
-            }
+            '-webkit-animation': '$float 1s ease-in-out infinite',
+            '-moz-animation': '$float 1s ease-in-out infinite',
+            '-o-animation': '$float 1s ease-in-out infinite',
+            animation: '$float 1s ease-in-out infinite',
         },
     },
 
@@ -340,13 +343,36 @@ function QuizResults(props) {
                             onClose={handleMenuClose}
                             PaperProps={{ className: "secondary-background-light" }}
                         >
-                            <MenuItem onClick={openCheatSheet}>Cheat Sheet</MenuItem>
-                            <MenuItem onClick={() => history.push("/create")}>New Quiz</MenuItem>
+                            <MenuItem onClick={() => history.push("/create")}>
+                                <ListItemIcon>
+                                    <RematchIcon />
+                                </ListItemIcon>
+                                <ListItemText>
+                                    Rematch
+                                </ListItemText>
+                            </MenuItem>
+                            <MenuItem onClick={() => history.push("/create")}>
+                                <ListItemIcon>
+                                    <AddIcon />
+                                </ListItemIcon>
+                                <ListItemText>
+                                    New quiz
+                                </ListItemText>
+                            </MenuItem>
+                            <Divider />
+                            <MenuItem onClick={openCheatSheet}>
+                                <ListItemIcon>
+                                    <ListIcon />
+                                </ListItemIcon>
+                                <ListItemText>
+                                    Cheat sheet
+                                </ListItemText>
+                            </MenuItem>
                             <Divider />
                             <MenuItem disabled={!quizCompleted}>
                                 <FormGroup row>
                                     <FormControlLabel label="Confetti" control={
-                                        <Switch color="primary" checked={confetti} onChange={(event) => setConfetti(event.target.checked)} />
+                                        <Checkbox color="primary" checked={confetti} onChange={(event) => setConfetti(event.target.checked)} />
                                     }>
                                     </FormControlLabel>
                                 </FormGroup>
@@ -360,7 +386,7 @@ function QuizResults(props) {
                 open={cheatSheetModalOpen}
                 onClose={() => setCheatSheetModalOpen(false)}
             />
-            <Typography style={{ textAlign: 'center', margin: '20px 0' }} variant="h2">{quizCompleted ? 'Final Results' : `Awaiting ${expectedPlayers - finalScore.length} player(s)...`}</Typography>
+            <Typography style={{ textAlign: 'center', margin: '20px 0' }} variant="h2">{quizCompleted ? tabValue === 0 ? 'Top 3' : 'Standings' : `Awaiting ${expectedPlayers - finalScore.length} player(s)...`}</Typography>
             <div className={classes.tabItemContainer}>
                 {quizCompleted && isPlayerTopThree() && confetti &&
                     <ConfettiWrapper colors={getConfettiColors()} />
