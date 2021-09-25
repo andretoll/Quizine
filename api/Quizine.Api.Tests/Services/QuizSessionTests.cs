@@ -34,7 +34,7 @@ namespace Quizine.Api.Tests.Services
             AddUser(session, connectionId, username);
 
             // Act
-            var firstQuestion = session.GetNextQuestion(connectionId, out _);
+            var firstQuestion = session.GetNextUserQuestion(connectionId, out _);
 
             // Assert
             Assert.That(firstQuestion, Is.Not.Null);
@@ -53,9 +53,9 @@ namespace Quizine.Api.Tests.Services
             AddUser(session, connectionId, username);
 
             // Act
-            var firstQuestion = session.GetNextQuestion(connectionId, out bool expectingFalse);
+            var firstQuestion = session.GetNextUserQuestion(connectionId, out bool expectingFalse);
             session.SubmitAnswer(connectionId, firstQuestion.ID, firstQuestion.CorrectAnswer.ID, out _);
-            _ = session.GetNextQuestion(connectionId, out bool expectingTrue);
+            _ = session.GetNextUserQuestion(connectionId, out bool expectingTrue);
 
             // Assert
             Assert.That(expectingFalse, Is.False);
@@ -74,7 +74,7 @@ namespace Quizine.Api.Tests.Services
             AddUser(session, connectionId, username);
 
             // Act
-            var question = session.GetNextQuestion(connectionId, out _);
+            var question = session.GetNextUserQuestion(connectionId, out _);
             string correctAnswerId = session.SubmitAnswer(connectionId, question.ID, question.CorrectAnswer.ID, out _);
 
             // Assert
@@ -93,7 +93,7 @@ namespace Quizine.Api.Tests.Services
             AddUser(session, connectionId, username);
 
             // Act
-            var question = session.GetNextQuestion(connectionId, out _);
+            var question = session.GetNextUserQuestion(connectionId, out _);
             string correctAnswerId = session.SubmitAnswer(connectionId, question.ID, question.Answers.First(x => x.ID != question.CorrectAnswer.ID).ID, out _);
 
             // Assert
@@ -106,16 +106,16 @@ namespace Quizine.Api.Tests.Services
             // Arrange
             var sessionParameters = TestData.GetRandomSessionParameters();
             var quizItems = TestData.GetRandomQuizItems(2);
-            string connectionId = TestData.GetRandomString(8);
+            string userId = TestData.GetRandomString(8);
             string username = TestData.GetRandomString(8);
             var session = CreateSession(sessionParameters, quizItems);
-            AddUser(session, connectionId, username);
-            var progress = session.MemberProgressList.First(x => x.User.ConnectionID == connectionId);
+            AddUser(session, userId, username);
+            var progress = session.MemberProgressList.First(x => x.User.UserID == userId);
 
             // Act
-            var question = session.GetNextQuestion(connectionId, out bool expectingFalse);
+            var question = session.GetNextUserQuestion(userId, out bool expectingFalse);
             var answer = question.CorrectAnswer;
-            session.SubmitAnswer(connectionId, question.ID, answer.ID, out _);
+            session.SubmitAnswer(userId, question.ID, answer.ID, out _);
             var result = progress.QuizResults.First(x => x.Question.ID == question.ID);
 
             // Assert
@@ -129,13 +129,13 @@ namespace Quizine.Api.Tests.Services
             // Arrange
             var sessionParameters = TestData.GetRandomSessionParameters();
             var quizItems = TestData.GetRandomQuizItems(2);
-            string connectionId = TestData.GetRandomString(8);
+            string userId = TestData.GetRandomString(8);
             string username = TestData.GetRandomString(8);
             var session = CreateSession(sessionParameters, quizItems);
-            AddUser(session, connectionId, username);
+            AddUser(session, userId, username);
 
             // Act
-            var progress = session.MemberProgressList.First(x => x.User.ConnectionID == connectionId);
+            var progress = session.MemberProgressList.First(x => x.User.UserID == userId);
 
             // Assert
             Assert.That(progress.QuizResults.All(x => x.Answer == null));
@@ -148,18 +148,18 @@ namespace Quizine.Api.Tests.Services
             // Arrange
             var sessionParameters = TestData.GetRandomSessionParameters(rule);
             var quizItems = TestData.GetRandomQuizItems(4);
-            string connectionId = TestData.GetRandomString(8);
+            string userId = TestData.GetRandomString(8);
             string username = TestData.GetRandomString(8);
             var session = CreateSession(sessionParameters, quizItems);
-            AddUser(session, connectionId, username);
+            AddUser(session, userId, username);
 
             // Act
             for (int i = 0; i < quizItems.Count(); i++)
             {
-                var question = session.GetNextQuestion(connectionId, out _);
-                session.SubmitAnswer(connectionId, question.ID, question.CorrectAnswer.ID, out _);
+                var question = session.GetNextUserQuestion(userId, out _);
+                session.SubmitAnswer(userId, question.ID, question.CorrectAnswer.ID, out _);
             }
-            var result = session.GetResults().First(x => x.User.ConnectionID == connectionId);
+            var result = session.GetResults().First(x => x.User.UserID == userId);
 
             // Assert
             Assert.That(result.Score, Is.EqualTo(session.MaxScore));
@@ -179,7 +179,7 @@ namespace Quizine.Api.Tests.Services
             // Act
             for (int i = 0; i < quizItems.Count() - 1; i++)
             {
-                var question = session.GetNextQuestion(connectionId, out _);
+                var question = session.GetNextUserQuestion(connectionId, out _);
                 session.SubmitAnswer(connectionId, question.ID, question.CorrectAnswer.ID, out _);
             }
             var result = session.GetResults().ToList();
@@ -205,17 +205,17 @@ namespace Quizine.Api.Tests.Services
             // Act
             for (int i = 0; i < quizItems.Count(); i++)
             {
-                var question = session.GetNextQuestion(connectionId1, out _);
+                var question = session.GetNextUserQuestion(connectionId1, out _);
                 session.SubmitAnswer(connectionId1, question.ID, question.CorrectAnswer.ID, out _);
             }
             for (int i = 0; i < quizItems.Count(); i++)
             {
-                var question = session.GetNextQuestion(connectionId2, out _);
+                var question = session.GetNextUserQuestion(connectionId2, out _);
                 session.SubmitAnswer(connectionId2, question.ID, question.CorrectAnswer.ID, out _);
             }
             for (int i = 0; i < quizItems.Count() - 1; i++)
             {
-                var question = session.GetNextQuestion(connectionId3, out _);
+                var question = session.GetNextUserQuestion(connectionId3, out _);
                 session.SubmitAnswer(connectionId3, question.ID, question.CorrectAnswer.ID, out _);
             }
             var result = session.GetResults().ToList();
@@ -237,22 +237,23 @@ namespace Quizine.Api.Tests.Services
             AddUser(session, connectionId1, TestData.GetRandomString(8));
             AddUser(session, connectionId2, TestData.GetRandomString(8));
             AddUser(session, connectionId3, TestData.GetRandomString(8));
+            session.Start();
 
             // Act
             for (int i = 0; i < quizItems.Count(); i++)
             {
-                var question = session.GetNextQuestion(connectionId1, out _);
+                var question = session.GetNextUserQuestion(connectionId1, out _);
                 session.SubmitAnswer(connectionId1, question.ID, question.CorrectAnswer.ID, out _);
             }
             for (int i = 0; i < quizItems.Count(); i++)
             {
-                var question = session.GetNextQuestion(connectionId2, out _);
+                var question = session.GetNextUserQuestion(connectionId2, out _);
                 session.SubmitAnswer(connectionId2, question.ID, question.CorrectAnswer.ID, out _);
             }
             bool expectingFalse = session.IsCompleted;
             for (int i = 0; i < quizItems.Count(); i++)
             {
-                var question = session.GetNextQuestion(connectionId3, out _);
+                var question = session.GetNextUserQuestion(connectionId3, out _);
                 session.SubmitAnswer(connectionId3, question.ID, question.CorrectAnswer.ID, out _);
             }
             var result = session.GetResults().ToList();

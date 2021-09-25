@@ -15,6 +15,7 @@ namespace Quizine.Api.Models.Rulesets
         #region Private Members
 
         private readonly SemaphoreSlim _lock = new(1, 1);
+        private string _currentQuestionId;
 
         #endregion
 
@@ -42,7 +43,8 @@ namespace Quizine.Api.Models.Rulesets
         /// <returns></returns>
         private async Task AdvanceToNextQuestion(QuizHub hub, IQuizSession session)
         {
-            var nextQuestion = session.GetNextQuestion(hub.Context.ConnectionId, out bool lastQuestion);
+            var nextQuestion = session.GetNextSessionQuestion(_currentQuestionId, out bool lastQuestion);
+            _currentQuestionId = nextQuestion?.ID;
 
             await hub.Clients.Group(session.SessionParameters.SessionID).NextQuestionIncoming(NextQuestionDelay.Value);
             await Task.Delay(TimeSpan.FromSeconds(NextQuestionDelay.Value));
@@ -58,6 +60,11 @@ namespace Quizine.Api.Models.Rulesets
                 // Advance to next question
                 await hub.Clients.Group(session.SessionParameters.SessionID).NextQuestion(new NextQuestionDto(nextQuestion, lastQuestion));
             }
+        }
+
+        private bool ShouldAdvanceToNextQuestion(IQuizSession session)
+        {
+            return session.AllUsersAnswered(_currentQuestionId);
         }
 
         #endregion
@@ -79,44 +86,67 @@ namespace Quizine.Api.Models.Rulesets
             return result != null && result.IsAnswerCorrect ? PointsFactor : 0;
         }
 
+        public override async Task NextQuestion(QuizHub hub, IQuizSession session)
+        {
+            QuizItem nextQuestion;
+
+            if (_currentQuestionId == null)
+            {
+                nextQuestion = session.Questions.First();
+                _currentQuestionId = nextQuestion?.ID;
+            }
+            else
+            {
+                nextQuestion = session.Questions.Single(x => x.ID == _currentQuestionId);
+            }
+
+            bool lastQuestion = nextQuestion == session.Questions.Last();
+
+            await hub.Clients.User(hub.Context.UserIdentifier).NextQuestion(new NextQuestionDto(nextQuestion, lastQuestion));
+        }
+
         public override async Task SubmitAnswer(QuizHub hub, IQuizSession session, string questionId, string answerId)
         {
             await _lock.WaitAsync();
 
             try
             {
-                bool firstToAnswerCorrectly = session.IsFirstToAnswerCorrectly(questionId);
-                string correctAnswerId = session.SubmitAnswer(hub.Context.ConnectionId, questionId, answerId, out int points);
+                // Check if answer is correct
+                string correctAnswerId = session.SubmitAnswer(hub.Context.UserIdentifier, questionId, answerId, out int points);
                 bool isCorrectAnswer = answerId == correctAnswerId;
 
-                // If answer is correct and first
-                if (isCorrectAnswer && firstToAnswerCorrectly)
+                // If answer is correct
+                if (isCorrectAnswer)
                 {
                     // Set blank answers for all other clients
                     foreach (var user in session.GetUsers())
                     {
-                        if (user.ConnectionID == hub.Context.ConnectionId || session.IsAnswerSet(user.ConnectionID, questionId))
+                        if (user.UserID == hub.Context.UserIdentifier || session.IsAnswerSet(user.UserID, questionId))
                             continue;
 
-                        session.SubmitAnswer(user.ConnectionID, questionId, null, out _);
+                        session.SubmitAnswer(user.UserID, questionId, null, out _);
                     }
 
-                    // Set correct answer for calling client and advance to next question
-                    await hub.Clients.Group(session.SessionParameters.SessionID).ValidateAnswer(new ValidateAnswerDto(correctAnswerId, points, session.GetUser(hub.Context.ConnectionId).Username));
+                    // Set correct answer for calling client
+                    await hub.Clients.Group(session.SessionParameters.SessionID).ValidateAnswer(new ValidateAnswerDto(correctAnswerId, points, session.GetUser(hub.Context.UserIdentifier).Username));
+                    
+                    // Advance to next question
                     await AdvanceToNextQuestion(hub, session);
+
                     return;
                 }
-                // Otherwise, send answer to caller
+                // Otherwise, send incorrect answer to user
                 else
                 {
-                    await hub.Clients.Caller.ValidateAnswer(new ValidateAnswerDto(correctAnswerId, points));
-                }
+                    await hub.Clients.User(hub.Context.UserIdentifier).ValidateAnswer(new ValidateAnswerDto(correctAnswerId, points));
 
-                // If all members have submitted answers, advance to next question
-                if (session.AllUsersAnswered(questionId))
-                {
-                    await AdvanceToNextQuestion(hub, session);
-                    return;
+                    if (ShouldAdvanceToNextQuestion(session))
+                    {
+                        // Advance to next question
+                        await AdvanceToNextQuestion(hub, session);
+
+                        return;
+                    }
                 }
             }
             catch (Exception)
@@ -127,6 +157,22 @@ namespace Quizine.Api.Models.Rulesets
             {
                 _lock.Release();
             }
+        }
+
+        public override async Task OnUserRemoved(QuizHub hub, IQuizSession session)
+        {
+            if (ShouldAdvanceToNextQuestion(session))
+            {
+                await AdvanceToNextQuestion(hub, session);
+            }
+
+            //var currentQuestion = session.GetNextUserQuestion(hub.Context.UserIdentifier, out _);
+
+            //// If all other members have submitted answers, advance to next question
+            //if (session.AllUsersAnsweredExcept(currentQuestion.ID, hub.Context.UserIdentifier))
+            //{
+            //    await AdvanceToNextQuestion(hub, session, currentQuestion.ID);
+            //}
         }
 
         #endregion

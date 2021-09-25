@@ -20,7 +20,7 @@ export const ErrorModalProvider = ({ children }) => {
 
     function openModal(param) {
 
-        console.debug("Opening error modal...");
+        console.trace("Opening error modal...");
 
         setTitle(param.title);
         setMessage(param.message);
@@ -31,14 +31,14 @@ export const ErrorModalProvider = ({ children }) => {
 
     function closeModal() {
 
-        console.debug("Closing error modal...");
+        console.trace("Closing error modal...");
 
         setOpen(false);
     }
 
     function triggerAction() {
 
-        console.debug("Triggering modal action...");
+        console.trace("Triggering modal action...");
 
         action();
     }

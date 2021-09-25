@@ -75,7 +75,7 @@ function QuizRaceProgress(props) {
     useEffect(() => {
         if (connection && !eventsSubscribedTo) {
             connection.on('NextQuestion', (response) => {
-                console.info("Received next question");
+                console.debug("Received next question");
                 setSlide(false);
                 setCorrectAnswer(null);
 
@@ -87,16 +87,16 @@ function QuizRaceProgress(props) {
                 }, 500);
             });
             connection.on('ValidateAnswer', (response) => {
-                console.info("Received correct answer");
+                console.debug("Received correct answer");
                 setCorrectAnswer(response.answerId);
                 setCorrectAnswerBy(response.answeredBy);
             });
             connection.on('NextQuestionIncoming', (response) => {
-                console.info("Received next question incoming");
+                console.debug("Received next question incoming");
                 setNextQuestionDelay(response);
             });
             connection.on('TriggerResults', (_) => {
-                console.info("Received trigger results");
+                console.debug("Received trigger results");
                 onFinal();
             });
 
@@ -105,7 +105,7 @@ function QuizRaceProgress(props) {
     }, [connection, eventsSubscribedTo, onFinal]);
 
     function handleOnSubmitAnswer(answer) {
-        console.info("Submitting answer...");
+        console.debug("Submitting answer...");
         SubmitAnswer(connection, sessionId, quizContent.id, answer?.id);
     }
 

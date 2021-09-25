@@ -21,8 +21,8 @@ namespace Quizine.Api.Services
         #region Constructor
 
         public ResourceManagerService(
-            IResourceManagerParameters parameters, 
-            ISessionRepository sessionRepository, 
+            IResourceManagerParameters parameters,
+            ISessionRepository sessionRepository,
             ILogger<ResourceManagerService> logger)
         {
             _logger = logger;
@@ -49,10 +49,10 @@ namespace Quizine.Api.Services
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogDebug("ResourceManagerService is starting");
-            _logger.LogDebug($"Session lifetime: {_parameters.SessionLifetime}");
-            _logger.LogDebug($"Started session lifetime: {_parameters.StartedSessionLifetime}");
-            _logger.LogDebug($"Poll interval: {_parameters.PollInterval}");
+            _logger.LogInformation("ResourceManagerService is starting");
+            _logger.LogInformation($"Session lifetime: {_parameters.SessionLifetime}");
+            _logger.LogInformation($"Started session lifetime: {_parameters.StartedSessionLifetime}");
+            _logger.LogInformation($"Poll interval: {_parameters.PollInterval}");
 
             _timer = new Timer(DisposeSessions, null, TimeSpan.Zero, _parameters.PollInterval);
 
@@ -61,7 +61,7 @@ namespace Quizine.Api.Services
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
-            _logger.LogDebug("ResourceManagerService is stopping");
+            _logger.LogInformation("ResourceManagerService is stopping");
 
             _timer.Dispose();
 

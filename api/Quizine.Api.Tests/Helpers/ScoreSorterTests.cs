@@ -15,19 +15,19 @@ namespace Quizine.Api.Tests.Helpers
         public void ShouldSortByDescendingScore()
         {
             // Arrange
-            string connectionId1 = TestData.GetRandomString(8);
-            string connectionId2 = TestData.GetRandomString(8);
-            string connectionId3 = TestData.GetRandomString(8);
-            string connectionId4 = TestData.GetRandomString(8);
-            string connectionId5 = TestData.GetRandomString(8);
+            string userId1 = TestData.GetRandomString(8);
+            string userId2 = TestData.GetRandomString(8);
+            string userId3 = TestData.GetRandomString(8);
+            string userId4 = TestData.GetRandomString(8);
+            string userId5 = TestData.GetRandomString(8);
 
             User[] users = new User[] 
             { 
-                new User { ConnectionID = connectionId1}, 
-                new User { ConnectionID = connectionId2 }, 
-                new User { ConnectionID = connectionId3 },
-                new User { ConnectionID = connectionId4 },
-                new User { ConnectionID = connectionId5 },
+                new User { UserID = userId1}, 
+                new User { UserID = userId2 }, 
+                new User { UserID = userId3 },
+                new User { UserID = userId4 },
+                new User { UserID = userId5 },
             };
             var progressList = TestData.GetRandomQuizProgressList(users, 8).ToList();
 

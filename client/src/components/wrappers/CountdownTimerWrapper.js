@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+import { useTimeoutCache } from '../../hooks/useTimeoutCache';
 import {
     useTheme,
     Typography
@@ -12,26 +13,37 @@ function CountdownTimerWrapper(props) {
     const onTimeout = props.onTimeout;
 
     const theme = useTheme();
+    const [timeoutCache, setTimeoutCache] = useTimeoutCache(questionTimeout);
+
     const [timer, setTimer] = useState(0);
     const [completed, setCompleted] = useState(false);
+    const [remainingTime, setRemainingTime] = useState(timeoutCache);
+
+    useEffect(() => {
+
+        if (remainingTime > 0)
+            setTimeoutCache(remainingTime);
+
+    }, [remainingTime, setTimeoutCache]);
 
     useEffect(() => {
 
         if (isPlaying) {
-            setTimeout(false);
+            setCompleted(false);
             setTimer(prevState => prevState + 1);
         }
 
     }, [isPlaying]);
 
-    useEffect(() => {
 
-        if (completed) {
-            onTimeout();
-        }
-    }, [completed, onTimeout])
+    function handleOnCompleted() {
+        setCompleted(true);
+        onTimeout();
+    }
 
     function renderTime({ remainingTime }) {
+
+        setRemainingTime(remainingTime);
 
         return (
             <div>
@@ -46,8 +58,9 @@ function CountdownTimerWrapper(props) {
             size={60}
             isPlaying={isPlaying}
             duration={questionTimeout}
+            initialRemainingTime={remainingTime}
             strokeWidth={3}
-            onComplete={() => setCompleted(true)}
+            onComplete={handleOnCompleted}
             strokeLinecap="square"
             trailStrokeWidth={2}
             trailColor={completed ? theme.palette.error.main : theme.palette.text.primary}

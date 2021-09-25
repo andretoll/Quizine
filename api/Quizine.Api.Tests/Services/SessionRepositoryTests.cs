@@ -8,6 +8,7 @@ using Quizine.Api.Services;
 using Quizine.Api.Tests.Stubs;
 using Quizine.Api.Tests.Utils;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Quizine.Api.Tests.Services
@@ -84,20 +85,20 @@ namespace Quizine.Api.Tests.Services
         {
             // Arrange
             string username = TestData.GetRandomString(8);
-            string connectionId = TestData.GetRandomString(10);
+            string userId = TestData.GetRandomString(10);
             var sessionParameters = TestData.GetRandomSessionParameters();
 
             // Act
             var sessionId = await CreateSession(sessionParameters);
             var session = _sessionRepository.GetSessionBySessionId(sessionId);
-            session.AddUser(connectionId, username);
+            session.AddUser(userId, username);
 
             // Assert
-            Assert.That(session.UserExists(connectionId), Is.True);
+            Assert.That(session.UserExists(userId), Is.True);
             Assert.That(session.GetUsers(), Has.Count.EqualTo(1));
             Assert.That(session.MemberProgressList, Has.Count.EqualTo(1));
-            Assert.That(session.GetUser(connectionId).ConnectionID, Is.EqualTo(connectionId));
-            Assert.That(session.GetUser(connectionId).Username, Is.EqualTo(username));
+            Assert.That(session.GetUser(userId).UserID, Is.EqualTo(userId));
+            Assert.That(session.GetUser(userId).Username, Is.EqualTo(username));
         }
 
         [Test]
@@ -105,23 +106,49 @@ namespace Quizine.Api.Tests.Services
         {
             // Arrange
             string username = TestData.GetRandomString(8);
-            string connectionId = TestData.GetRandomString(10);
+            string userId = TestData.GetRandomString(10);
             string usernameToRemove = TestData.GetRandomString(8);
-            string connectionIdToRemove = TestData.GetRandomString(10);
+            string userIdToRemove = TestData.GetRandomString(10);
             var sessionParameters = TestData.GetRandomSessionParameters();
 
             // Act
             var sessionId = await CreateSession(sessionParameters);
             var session = _sessionRepository.GetSessionBySessionId(sessionId);
-            session.AddUser(connectionId, username);
-            session.AddUser(connectionIdToRemove, usernameToRemove);
-            session.RemoveUser(connectionIdToRemove);
+            session.AddUser(userId, username);
+            session.AddUser(userIdToRemove, usernameToRemove);
+            session.RemoveUser(userIdToRemove);
 
             // Assert
             Assert.That(session.GetUsers(), Has.Count.EqualTo(1));
             Assert.That(session.MemberProgressList, Has.Count.EqualTo(1));
-            Assert.That(session.UserExists(connectionId), Is.True);
-            Assert.That(session.UserExists(connectionIdToRemove), Is.False);
+            Assert.That(session.UserExists(userId), Is.True);
+            Assert.That(session.UserExists(userIdToRemove), Is.False);
+        }
+
+        [Test]
+        public async Task ShouldNotRemoveUserIfSessionIsStarted()
+        {
+            // Arrange
+            string username = TestData.GetRandomString(8);
+            string userId = TestData.GetRandomString(10);
+            string usernameToRemove = TestData.GetRandomString(8);
+            string userIdToRemove = TestData.GetRandomString(10);
+            var sessionParameters = TestData.GetRandomSessionParameters();
+
+            // Act
+            var sessionId = await CreateSession(sessionParameters);
+            var session = _sessionRepository.GetSessionBySessionId(sessionId);
+            session.AddUser(userId, username);
+            session.AddUser(userIdToRemove, usernameToRemove);
+            session.Start();
+            session.RemoveUser(userIdToRemove);
+
+            // Assert
+            Assert.That(session.MemberProgressList.Single(x => x.User.UserID == userIdToRemove).Valid, Is.False);
+            Assert.That(session.GetUsers(), Has.Count.EqualTo(2));
+            Assert.That(session.MemberProgressList, Has.Count.EqualTo(2));
+            Assert.That(session.UserExists(userId), Is.True);
+            Assert.That(session.UserExists(userIdToRemove), Is.True);
         }
 
         [Test]
@@ -163,14 +190,14 @@ namespace Quizine.Api.Tests.Services
         {
             // Arrange
             string username = TestData.GetRandomString(8);
-            string connectionId = TestData.GetRandomString(10);
+            string userId = TestData.GetRandomString(10);
             var sessionParameters = TestData.GetRandomSessionParameters();
 
             // Act
             var sessionId = await CreateSession(sessionParameters);
             var session = _sessionRepository.GetSessionBySessionId(sessionId);
-            session.AddUser(connectionId, username);
-            session = _sessionRepository.GetSessionByConnectionId(connectionId);
+            session.AddUser(userId, username);
+            session = _sessionRepository.GetSessionByUserId(userId);
 
             // Assert
             Assert.That(session, Is.Not.Null);

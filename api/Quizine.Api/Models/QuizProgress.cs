@@ -16,6 +16,7 @@ namespace Quizine.Api.Models
         public bool HasCompleted => NextQuestion == null;
         public int? Score { get; private set; }
         public DateTime? FinishedTime { get; private set; }
+        public bool Valid { get; private set; } = true;
 
         #endregion
 
@@ -57,6 +58,12 @@ namespace Quizine.Api.Models
                 throw new InvalidOperationException("Error while calculating score: Quiz progress incomplete.");
 
             Score = ruleset.CalculateScore(QuizResults);
+        }
+
+        public void Invalidate()
+        {
+            Valid = false;
+            NextQuestion = null;
         }
 
         #endregion

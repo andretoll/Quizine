@@ -39,14 +39,14 @@ namespace Quizine.Api.Models.Base
 
         public virtual async Task SubmitAnswer(QuizHub hub, IQuizSession session, string questionId, string answerId) 
         {
-            string correctAnswerId = session.SubmitAnswer(hub.Context.ConnectionId, questionId, answerId, out int points);
-            await hub.Clients.Caller.ValidateAnswer(new ValidateAnswerDto(correctAnswerId, points));
+            string correctAnswerId = session.SubmitAnswer(hub.Context.UserIdentifier, questionId, answerId, out int points);
+            await hub.Clients.User(hub.Context.UserIdentifier).ValidateAnswer(new ValidateAnswerDto(correctAnswerId, points));
         }
 
         public virtual async Task NextQuestion(QuizHub hub, IQuizSession session)
         {
-            var nextQuestion = session.GetNextQuestion(hub.Context.ConnectionId, out bool lastQuestion);
-            await hub.Clients.Caller.NextQuestion(new NextQuestionDto(nextQuestion, lastQuestion));
+            var nextQuestion = session.GetNextUserQuestion(hub.Context.UserIdentifier, out bool lastQuestion);
+            await hub.Clients.User(hub.Context.UserIdentifier).NextQuestion(new NextQuestionDto(nextQuestion, lastQuestion));
         }
 
         public virtual async Task GetResults(QuizHub hub, IQuizSession session)
@@ -61,6 +61,14 @@ namespace Quizine.Api.Models.Base
                 await hub.Clients.Group(session.SessionParameters.SessionID).QuizCompleted();
             }
         }
+
+        /// <summary>
+        /// This method is called when a user has disconnected.
+        /// </summary>
+        /// <param name="hub"></param>
+        /// <param name="session"></param>
+        /// <returns></returns>
+        public virtual Task OnUserRemoved(QuizHub hub, IQuizSession session) { return Task.CompletedTask; }
 
         #endregion
 

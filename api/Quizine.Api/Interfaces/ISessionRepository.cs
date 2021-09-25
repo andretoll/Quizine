@@ -15,7 +15,7 @@ namespace Quizine.Api.Interfaces
         bool SessionStarted(string sessionId);
         bool SessionCompleted(string sessionId);
         IQuizSession GetSessionBySessionId(string sessionId);
-        IQuizSession GetSessionByConnectionId(string connectionId);
+        IQuizSession GetSessionByUserId(string userId);
 
         int DisposeSessions(TimeSpan lifetime, TimeSpan startedLifetime);
 

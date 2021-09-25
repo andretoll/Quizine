@@ -6,6 +6,7 @@ import { useConnection } from '../contexts/HubConnectionContext';
 import { useSnackbar } from '../contexts/SnackbarContext';
 import { useErrorModal } from '../contexts/ErrorModalContext';
 import useTitle from '../hooks/useTitle';
+import { useTimeoutCache } from '../hooks/useTimeoutCache';
 import QuizError from '../components/quiz-states/QuizError';
 import QuizConnecting from '../components/quiz-states/QuizConnecting';
 import QuizWaiting from '../components/quiz-states/QuizWaiting';
@@ -48,7 +49,8 @@ function QuizPage() {
     const { connection } = useConnection();
     const { notifySuccess, notifyError } = useSnackbar();
     const { openModal, closeModal } = useErrorModal();
-    
+    const [, setCachedTimeout] = useTimeoutCache();
+
     // Quiz state
     const [eventsSubscribedTo, setEventsSubscribedTo] = useState(false);
     const [sessionId, setSessionId] = useState();
@@ -76,7 +78,7 @@ function QuizPage() {
     useEffect(() => {
 
         if (connection && connection.state === 'Disconnected') {
-            console.info("Starting socket connection...");
+            console.debug("Starting socket connection...");
             start();
         }
 
@@ -84,19 +86,19 @@ function QuizPage() {
 
             try {
                 await connection.start().then(_ => {
-                    console.info("Connecting to session...");
-                    Connect(connection, sessionId, username).catch((error) => {
-                        console.log(error);
+                    console.debug("Connecting to session...");
+                    Connect(connection, sessionId).catch((error) => {
+                        console.error(error);
                         reportError("Failed to connect to session (Error code 2).")
                     });
                 });
             } catch (error) {
-                console.log(error);
+                console.error(error);
                 reportError("Error connecting to server (Error code 1).");
             }
         }
 
-    }, [connection, sessionId, username])
+    }, [connection, sessionId])
 
     useEffect(() => {
 
@@ -130,7 +132,7 @@ function QuizPage() {
             });
             // When connection is restored
             connection.onreconnected(response => {
-                console.info(response);
+                console.info("Successfully reconnected to server");
                 closeModal();
                 notifySuccess("Reconnected to the server.");
             });
@@ -143,7 +145,7 @@ function QuizPage() {
             connection.on('ConfirmConnect', (response) => {
 
                 if (response.connected) {
-                    console.info("Connection confirmed!");
+                    console.debug("Connection confirmed!");
 
                     setQuizTitle(response.quizTitle);
                     setExpectedPlayers(response.expectedUsers);
@@ -155,7 +157,24 @@ function QuizPage() {
                     setRuleset(response.rule);
                     setCategory(response.category);
                     setDifficulty(response.difficulty);
-                    setContent(contentStates.WAITING);
+
+                    switch (response.state) {
+                        case 0:
+                            setContent(contentStates.WAITING);
+                            break;
+                        case 1:
+                            setContent(contentStates.IN_PROGRESS);
+                            NextQuestion(connection, sessionId);
+                            break;
+                        case 2:
+                            setContent(contentStates.RESULTS);
+                            GetResults(connection, sessionId);
+                            break;
+                        default:
+                            setContent(contentStates.WAITING);
+                            break;
+                    }
+
                 } else {
                     console.warn("Connection rejected: ", response.errorMessage);
 
@@ -164,25 +183,23 @@ function QuizPage() {
                     else
                         history.push('/join', { errorMessage: response.errorMessage });
                 }
-
-                console.trace(response);
             });
             connection.on('UserConnected', (response) => {
-                console.info("Another user connected");
+                console.debug("Another user connected");
 
                 setPlayers(response.users);
                 notifySuccess(`${response.username} joined!`);
             });
             connection.on('ConfirmDisconnect', (response) => {
-                console.info("Another user disconnected");
+                console.debug("Another user disconnected");
 
                 setPlayers(response.users);
                 notifyError(`${response.username} disconnected.`);
             });
             connection.on('ConfirmStart', (response) => {
-                console.info(response);
                 if (response) {
-                    console.info("Start confirmed!");
+                    console.debug("Start confirmed!");
+                    setCachedTimeout(null); // Reset timeout cache
                     setContent(contentStates.IN_PROGRESS);
                     NextQuestion(connection, sessionId);
                 } else {
@@ -190,7 +207,7 @@ function QuizPage() {
                 }
             });
             connection.on('ReportError', (_) => {
-                console.info("Session expired");
+                console.debug("Session expired");
 
                 Disconnect(connection);
                 reportError("Session has expired.");
@@ -199,7 +216,18 @@ function QuizPage() {
             setEventsSubscribedTo(true);
         }
 
-    }, [connection, sessionId, notifyError, notifySuccess, eventsSubscribedTo, history, location, username, openModal, closeModal]);
+    }, [connection, 
+        sessionId, 
+        notifyError, 
+        notifySuccess, 
+        eventsSubscribedTo, 
+        history, 
+        location, 
+        username, 
+        openModal, 
+        closeModal,
+        setCachedTimeout
+    ]);
 
     // Report error
     function reportError(message) {
@@ -210,7 +238,7 @@ function QuizPage() {
 
     // See results
     function handleOnFinal() {
-        console.info("Getting results...");
+        console.debug("Getting results...");
         setContent(contentStates.RESULTS);
         GetResults(connection, sessionId);
     }
@@ -291,11 +319,15 @@ function QuizPage() {
 
     return (
         <div className={classes.container}>
-            <PromptWrapper
-                title="Progress will be lost."
-                message="Leaving this page will result in a disconnect and all progress will be lost. Continue?"
-                when={content !== contentStates.ERROR && content !== contentStates.CONNECTING}
-            />
+            {content !== contentStates.ERROR && content !== contentStates.CONNECTING ?
+                <PromptWrapper
+                    title="Progress will be lost."
+                    message="Leaving this page will result in a disconnect and all progress will be lost. Continue?"
+                    when={content !== contentStates.ERROR && content !== contentStates.CONNECTING}
+                />
+                :
+                null
+            }
             {getContent(content)}
         </div>
     )

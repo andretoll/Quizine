@@ -3,6 +3,7 @@ import { useHistory, useLocation } from 'react-router';
 import { useForm, Controller } from 'react-hook-form';
 import { useTitle } from '../hooks/useTitle';
 import { useSnackbar } from '../contexts/SnackbarContext';
+import { Join } from '../services/QuizService';
 import GoHome from '../components/GoHome';
 import {
     makeStyles,
@@ -13,6 +14,7 @@ import {
     Paper,
     FormControl,
     Typography,
+    CircularProgress,
 } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -57,6 +59,8 @@ function JoinPage() {
     // Show error message if state contains one
     const [errorMessage, setErrorMessage] = useState(location.state?.errorMessage);
 
+    const [inProgress, setInProgress] = useState(false);
+
     const hash = history.location.hash.replace('#', '');
 
     const { register, handleSubmit, control, formState: { errors, isValid } } = useForm({
@@ -87,13 +91,28 @@ function JoinPage() {
     }
 
     // Handle form submission
-    function onHandleSubmit(data) {
+    async function onHandleSubmit(data) {
 
-        console.info("Joining session...");
-        console.trace(data);
+        setInProgress(true);
+        console.info("Joining quiz...");
 
         setErrorMessage(null);
-        history.push(`/quiz/${data.sessionId}`, { sessionId: data.sessionId, username: data.username, url: location.pathname + location.hash });
+
+        await Join(data).then(response => {
+            if (response.status === 200) {
+                console.info("Successfully joined quiz.");
+                history.push(`/quiz/${data.sessionId}`, { sessionId: data.sessionId, username: data.username, url: location.pathname + location.hash });
+            } else {
+                response.text().then(result => {
+                    setErrorMessage(result);
+                });
+            }
+        }).catch(error => {
+            console.error(error);
+            setErrorMessage("Failed to connect to the server.");
+        }).finally(_ => {
+            setInProgress(false);
+        });
     }
 
     return (
@@ -130,9 +149,13 @@ function JoinPage() {
                             </FormControl>
 
                             <div style={{ textAlign: 'center', marginTop: '30px ' }}>
-                                <Button variant="contained" color="primary" type="submit" size="large" disabled={!isValid}>
-                                    Join
-                                </Button>
+                                {inProgress ?
+                                    <CircularProgress />
+                                    :
+                                    <Button variant="contained" color="primary" type="submit" size="large" disabled={!isValid}>
+                                        Join
+                                    </Button>
+                                }
                             </div>
 
                         </form>

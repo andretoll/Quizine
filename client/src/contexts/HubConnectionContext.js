@@ -9,7 +9,7 @@ export const ConnectionProvider = ({ children }) => {
 
     useEffect(() => {
 
-        console.debug("Creating new connection...");
+        console.info("Creating new connection...");
 
         const newConnection = new HubConnectionBuilder()
             .withUrl(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}hubs/quiz`, {
@@ -49,7 +49,7 @@ export const ConnectionProvider = ({ children }) => {
         return function cleanup() {
 
             if (connection && connection.connectionState === "Connected") {
-                console.debug("Disconnecting...");
+                console.info("Disconnecting...");
                 Disconnect(connection);
             }
         }

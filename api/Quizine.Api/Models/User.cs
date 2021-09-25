@@ -4,7 +4,7 @@
     {
         #region Public Properties
 
-        public string ConnectionID { get; set; }
+        public string UserID { get; set; }
         public string Username { get; set; } 
 
         #endregion

@@ -94,14 +94,14 @@ function QuizWaiting(props) {
                 }).then(() => {
                     console.info("Starting session...");
                     Start(connection, sessionId).catch((error) => {
-                        console.log(error);
+                        console.error(error);
                         reportError("Failed to start session (Error code 2).")
                     });
                 }).catch(() => { });
             } else {
                 console.info("Starting session...");
                 Start(connection, sessionId).catch((error) => {
-                    console.log(error);
+                    console.error(error);
                     reportError("Failed to start session (Error code 2).")
                 });
             }

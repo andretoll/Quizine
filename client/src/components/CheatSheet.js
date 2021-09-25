@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {
     Dialog,
@@ -53,16 +53,14 @@ function CheatSheet(props) {
                         {item.correctAnswer.value}
                     </Typography>
                 </AccordionSummary>
-                <AccordionDetails style={{padding: '0'}}>
+                <AccordionDetails style={{ padding: '0' }}>
                     <List dense disablePadding>
                         {item.answers.filter(x => x.id !== item.correctAnswer.id).map((answer) => (
-                            <Fragment>
-                                <ListItem key={answer.id} style={{ padding: '0 10px', margin: '5px 0' }}>
-                                    <Typography variant="body2" color="textSecondary">
-                                        - {answer.value}
-                                    </Typography>
-                                </ListItem>
-                            </Fragment>
+                            <ListItem key={answer.id} style={{ padding: '0 10px', margin: '5px 0' }}>
+                                <Typography variant="body2" color="textSecondary">
+                                    {answer.value}
+                                </Typography>
+                            </ListItem>
                         ))}
                     </List>
                 </AccordionDetails>
@@ -77,16 +75,15 @@ function CheatSheet(props) {
             PaperProps={{ className: 'secondary-background' }}
         >
             <DialogTitle style={{ textAlign: 'center' }}>
-                <Typography variant="h3">Cheat Sheet</Typography>
+                Cheat Sheet
             </DialogTitle>
             <DialogContent dividers>
                 <List>
                     {data?.map((item) => (
-                        <Fragment>
-                            <ListItem key={item.id}>
-                                <ListItemText primary={getQuestion(item)} secondary={getAnswer(item)} />
-                            </ListItem>
-                        </Fragment>
+                        <ListItem key={item.id} style={{ display: 'block' }}>
+                            <ListItemText primary={getQuestion(item)} />
+                            <div>{getAnswer(item)}</div>
+                        </ListItem>
                     ))}
                 </List>
 

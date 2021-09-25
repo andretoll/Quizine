@@ -1,7 +1,8 @@
 import { useState, useEffect, Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router';
 import { DataProvider } from '../contexts/CreateFormDataContext';
 import useTitle from '../hooks/useTitle';
+import { Join } from '../services/QuizService';
 import ShareQuiz from '../components/ShareQuiz';
 import CreateForm from '../components/CreateForm';
 import GoHome from '../components/GoHome';
@@ -74,7 +75,9 @@ function CreatePage() {
     const [content, setContent] = useState(contentStates.LOADING);
     const [sessionId, setSessionId] = useState();
     const [hostname, setHostname] = useState();
+    const [inProgress, setInProgress] = useState(false);
 
+    const history = useHistory();
     useTitle("Create");
 
     // On first render
@@ -169,8 +172,7 @@ function CreatePage() {
     // Handle form submission
     async function handleOnSubmit(data) {
 
-        console.info("Submitting quiz parameters...");
-        console.trace(data);
+        console.info("Creating quiz...");
 
         setErrorMessage(null);
         setContent(contentStates.IN_PROGRESS);
@@ -187,7 +189,7 @@ function CreatePage() {
             if (response.status === 200) {
                 response.json().then(result => {
 
-                    console.info("Successfully submitted quiz paramters.");
+                    console.info("Successfully created quiz.");
 
                     setSessionId(result);
                     setHostname(data.hostname);
@@ -200,6 +202,25 @@ function CreatePage() {
         }).catch(_ => {
             setErrorMessage("Could not connect to the server. Please try again later.");
             setContent(contentStates.FORM);
+        });
+    }
+
+    async function joinSession() {
+        setInProgress(true);
+
+        await Join({ sessionId: sessionId, username: hostname }).then(response => {
+            if (response.status === 200) {
+                history.push(`/quiz/${sessionId}`, { sessionId: sessionId, username: hostname });
+            } else {
+                response.text().then(result => {
+                    setErrorMessage(result);
+                });
+            }
+        }).catch(error => {
+            console.error(error);
+            setErrorMessage("Failed to connect to the server.");
+        }).finally(_ => {
+            setInProgress(false);
         });
     }
 
@@ -238,12 +259,11 @@ function CreatePage() {
                         <Typography style={{ textAlign: 'center', margin: '20px 0' }} variant="h3">Quiz created!</Typography>
                         <ShareQuiz sessionId={sessionId} />
                         <div style={{ textAlign: 'center', marginTop: '30px' }}>
-                            <Link to={{
-                                pathname: `/quiz/${sessionId}`,
-                                state: { sessionId: sessionId, username: hostname }
-                            }}>
-                                <Button variant="contained" color="primary" size="large">Join</Button>
-                            </Link>
+                            {inProgress ?
+                                <CircularProgress />
+                                :
+                                <Button variant="contained" color="primary" size="large" onClick={joinSession}>Join</Button>
+                            }
                         </div>
                     </div>
                 )

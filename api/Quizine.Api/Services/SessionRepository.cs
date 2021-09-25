@@ -46,11 +46,11 @@ namespace Quizine.Api.Services
             return _quizSessions.SingleOrDefault(x => x.SessionParameters.SessionID == sessionId);
         }
 
-        public IQuizSession GetSessionByConnectionId(string connectionId)
+        public IQuizSession GetSessionByUserId(string userId)
         {
-            _logger.LogTrace($"{nameof(GetSessionByConnectionId)}()");
+            _logger.LogTrace($"{nameof(GetSessionByUserId)}()");
 
-            return _quizSessions.SingleOrDefault(x => x.GetUsers().Any(x => x.ConnectionID == connectionId));
+            return _quizSessions.SingleOrDefault(x => x.GetUsers().Any(x => x.UserID == userId));
         }
 
         public bool SessionExists(string sessionId)

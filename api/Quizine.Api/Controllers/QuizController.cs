@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Quizine.Api.Attributes;
 using Quizine.Api.Dtos;
@@ -9,6 +11,7 @@ using Quizine.Api.Models;
 using Quizine.Api.Models.Base;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -51,7 +54,7 @@ namespace Quizine.Api.Controllers
         [HttpPost("create")]
         public async Task<ActionResult> Create([FromBody] SessionParameters parameters)
         {
-            _logger.LogInformation($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
+            _logger.LogTrace($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
 
             string sessionId = UIDGenerator.Generate();
             parameters.SessionID = sessionId;
@@ -66,10 +69,47 @@ namespace Quizine.Api.Controllers
             return Ok(JsonSerializer.Serialize(sessionId));
         }
 
+        [HttpPost("join")]
+        public async Task<ActionResult> Join([FromBody] JoinDto dto)
+        {
+            _logger.LogTrace($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
+            
+            if (!_sessionRepository.SessionExists(dto.SessionId))
+            {
+                _logger.LogDebug("Session does not exist");
+                return BadRequest("Session does not exist.");
+            }
+            else if (_sessionRepository.SessionFull(dto.SessionId))
+            {
+                _logger.LogDebug("Session is full");
+                return BadRequest("Session is full.");
+            }
+            else if (_sessionRepository.GetSessionBySessionId(dto.SessionId).UsernameTaken(dto.Username))
+            {
+                _logger.LogDebug("Username is taken");
+                return BadRequest("Username is taken.");
+            }
+
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.NameIdentifier,UIDGenerator.Generate()),
+                new Claim(ClaimTypes.Name, dto.Username)
+            };
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties()
+            {
+                IsPersistent = true,
+            });
+
+            return Ok();
+        }
+
         [HttpGet("categories")]
         public async Task<ActionResult> GetCategories()
         {
-            _logger.LogInformation($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
+            _logger.LogTrace($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
 
             var response = await _triviaRepository.GetCategoriesJsonString();
 
@@ -87,7 +127,7 @@ namespace Quizine.Api.Controllers
         [HttpGet("rules")]
         public ActionResult GetRules()
         {
-            _logger.LogInformation($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
+            _logger.LogTrace($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
 
             List<RulesetDto> rulesets = new();
 
@@ -104,12 +144,23 @@ namespace Quizine.Api.Controllers
         [HttpPost("answers")]
         public ActionResult GetAnswers([FromBody] string sessionid)
         {
+            _logger.LogTrace($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
+
             if (string.IsNullOrEmpty(sessionid))
+            {
+                _logger.LogDebug("Empty session ID");
                 return BadRequest("Empty session ID");
+            }
             else if (!_sessionRepository.SessionExists(sessionid))
+            {
+                _logger.LogDebug("Session does not exist");
                 return BadRequest("Session does not exist");
+            }
             else if (!_sessionRepository.SessionCompleted(sessionid))
+            {
+                _logger.LogDebug("Session not completed");
                 return BadRequest("Session not completed");
+            }
 
             var session = _sessionRepository.GetSessionBySessionId(sessionid);
 
@@ -121,6 +172,8 @@ namespace Quizine.Api.Controllers
         [HttpGet("session-lifetime")]
         public ActionResult GetSessionLifetime()
         {
+            _logger.LogTrace($"Called '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
+
             return Ok(_parameters.SessionLifetime.TotalMinutes);
         }
 

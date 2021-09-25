@@ -121,6 +121,7 @@ function Navbar() {
         setMenuAnchor(null);
     }
 
+    // eslint-disable-next-line
     function getLinks() {
 
         return (

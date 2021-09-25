@@ -3,6 +3,7 @@ import { useConnection } from '../../contexts/HubConnectionContext';
 import { NextQuestion, SubmitAnswer } from '../../services/QuizService';
 import QuizForm from '../quiz-progress/QuizForm';
 import CountdownTimerWrapper from '../wrappers/CountdownTimerWrapper';
+import { useTimeoutCache } from '../../hooks/useTimeoutCache';
 import {
     makeStyles,
     Typography,
@@ -104,7 +105,9 @@ function QuizProgress(props) {
     const classes = useStyles();
 
     const { connection } = useConnection();
+    const [, setTimeoutCache] = useTimeoutCache(questionTimeout);
 
+    const [eventsSubscribedTo, setEventsSubscribedTo] = useState(false);
     const [correctAnswer, setCorrectAnswer] = useState(null);
     const [quizContent, setQuizContent] = useState(null);
     const [pointsGained, setPointsGained] = useState(null);
@@ -116,9 +119,9 @@ function QuizProgress(props) {
     const [timerPlaying, setTimerPlaying] = useState(true);
 
     useEffect(() => {
-        if (connection) {
+        if (connection && !eventsSubscribedTo) {
             connection.on('NextQuestion', (response) => {
-                console.info("Received next question");
+                console.debug("Received next question");
                 setCorrectAnswer(null);
                 setPointsGained(null);
                 setSlide(true);         // Trigger slide animation (in)
@@ -127,20 +130,23 @@ function QuizProgress(props) {
                 setQuizContent(response);
             });
             connection.on('ValidateAnswer', (response) => {
-                console.info("Received correct answer");
+                console.debug("Received correct answer");
                 setCorrectAnswer(response.answerId);
                 setPointsGained(response.points);
+                setTimeoutCache(questionTimeout); // Reset timer despite cache
             });
+            setEventsSubscribedTo(true);
+
         }
-    }, [connection]);
+    }, [connection, questionTimeout, setTimeoutCache, eventsSubscribedTo]);
 
     function handleOnTimeout() {
-        console.info("Question timed out. Submitting answer...");
+        console.debug("Question timed out. Submitting answer...");
         SubmitAnswer(connection, sessionId, quizContent.id, null);
     }
 
     function handleOnSubmitAnswer(answer) {
-        console.info("Submitting answer...");
+        console.debug("Submitting answer...");
         setTimerPlaying(false);
         SubmitAnswer(connection, sessionId, quizContent.id, answer?.id);
     }
@@ -151,7 +157,7 @@ function QuizProgress(props) {
         setSlide(false);
 
         setTimeout(() => {
-            console.info("Requesting next question...");
+            console.debug("Requesting next question...");
             NextQuestion(connection, sessionId); // Request next question
         }, 1000);
     }
@@ -193,11 +199,15 @@ function QuizProgress(props) {
                                     questionCount={questionCount}
                                 />
                                 <hr />
-                                <div className={classes.timerContainer}>
-                                    {timerPlaying &&
-                                        <CountdownTimerWrapper questionTimeout={questionTimeout} on={timerPlaying} onTimeout={handleOnTimeout} />
-                                    }
-                                </div>
+                                {questionTimeout ?
+                                    <div className={classes.timerContainer}>
+                                        {timerPlaying &&
+                                            <CountdownTimerWrapper questionTimeout={questionTimeout} on={timerPlaying} onTimeout={handleOnTimeout} />
+                                        }
+                                    </div>
+                                    :
+                                    null
+                                }
                             </div>
                             <div style={{ padding: '10px' }}>
                                 <Typography variant="body1" className={classes.questionText}>{quizContent?.question}</Typography>
