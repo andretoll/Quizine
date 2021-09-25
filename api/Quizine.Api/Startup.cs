@@ -44,7 +44,7 @@ namespace Quizine.Api
                     opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
             services.AddCors();
-            services.AddSignalR().AddAzureSignalR();
+            services.AddSignalR().AddAzureSignalR("Endpoint=https://quizine-signalr.service.signalr.net;AccessKey=GFcVIsiEDsKl6R3jFxhS6NSzsFloDoZhmEdKt/vHCoQ=;Version=1.0;");
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(opt =>
                 {
