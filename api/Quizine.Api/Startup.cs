@@ -44,10 +44,7 @@ namespace Quizine.Api
                     opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
             services.AddCors();
-            services.AddSignalR(opt =>
-            {
-                opt.ClientTimeoutInterval = TimeSpan.FromMinutes(3);
-            });
+            services.AddSignalR().AddAzureSignalR();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(opt =>
                 {
@@ -88,6 +85,9 @@ namespace Quizine.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+            app.UseAzureSignalR(endpoints =>
+            {
                 endpoints.MapHub<QuizHub>("/hubs/quiz");
             });
         }
