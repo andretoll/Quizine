@@ -65,6 +65,13 @@ const useStyles = makeStyles(theme => ({
         color: 'transparent',
         position: 'relative',
 
+        '&.spinning': {
+            '-webkit-animation': '$spinning 2s infinite linear ease-in',
+            '-moz-animation': '$spinning 2s linear infinite',
+            '-o-animation': '$spinning 2s linear infinite',
+            animation: '$spinning 2s linear infinite',
+        },
+
         '& svg': {
             fontSize: '1.7em',
         },
@@ -78,6 +85,17 @@ const useStyles = makeStyles(theme => ({
     },
     bronze: {
         color: '#cd7f32',
+    },
+
+    "@keyframes spinning": {
+        "to": {
+            transform: 'rotateY(360deg)',
+        },
+    },
+    "@-webkit-keyframes spinning": {
+        "to": {
+            transform: 'rotateY(360deg)',
+        }
     },
 }));
 
@@ -294,7 +312,7 @@ function QuizResults(props) {
                                                 <TableRow key={uuid()}>
                                                     <TableCell className={score.username === username ? 'primary-color' : ''} align="center">
                                                         {index < 3 ?
-                                                            <div className={`${classes.trophyWrapper} ${getTrophyStyle(score)}`}>
+                                                            <div className={`${classes.trophyWrapper} ${getTrophyStyle(score)} ${score.username === username && 'spinning'}`}>
                                                                 <TrophyIcon />
                                                             </div>
                                                             :
