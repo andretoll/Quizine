@@ -308,7 +308,6 @@ function QuizPage() {
                     <QuizResults
                         maxScore={maxScore}
                         username={username}
-                        expectedPlayers={players.length}
                         sessionId={sessionId}
                     />
                 )

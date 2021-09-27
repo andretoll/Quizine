@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { useConnection } from '../../contexts/HubConnectionContext';
 import { sendNotification } from '../../services/NotificationService';
@@ -9,15 +9,12 @@ import GoHome from '../GoHome';
 import CheatSheet from '../CheatSheet';
 import TrophyIcon from '@material-ui/icons/EmojiEvents';
 import MenuIcon from '@material-ui/icons/MoreVert';
-import RematchIcon from '@material-ui/icons/Loop';
+import RematchIcon from '@material-ui/icons/FlashOn';
 import ListIcon from '@material-ui/icons/ListAlt';
-import AddIcon from '@material-ui/icons/Add';
+import AddIcon from '@material-ui/icons/AddBox';
 import {
     makeStyles,
-    Grid,
     Paper,
-    Tabs,
-    Tab,
     Table,
     TableBody,
     TableCell,
@@ -27,7 +24,6 @@ import {
     Typography,
     IconButton,
     Container,
-    CircularProgress,
     AppBar,
     Toolbar,
     Tooltip,
@@ -44,148 +40,44 @@ import {
 const useStyles = makeStyles(theme => ({
 
     container: {
-        height: '100vh',
+        minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
     },
 
-    tabs: {
-        margin: '20px auto',
-
-        [theme.breakpoints.down('xs')]: {
-            margin: '10px auto',
-        }
-    },
-
-    tabItemContainer: {
+    header: {
         display: 'flex',
         flex: '1',
         justifyContent: 'center',
         alignItems: 'flex-start',
         position: 'relative',
-
-        [theme.breakpoints.up('md')]: {
-            marginTop: '50px',
-        }
     },
 
-    cardsContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-
-        [theme.breakpoints.down('sm')]: {
-            flexDirection: 'column',
-        },
-    },
-
-    cardWrapper: {
-        flex: '0 0 auto',
-
-        '&.active': {
-            zIndex: '3',
-
-            '& .spinning': {
-                '-webkit-animation': '$spinning 2s infinite linear ease-in',
-                '-moz-animation': '$spinning 2s linear infinite',
-                '-o-animation': '$spinning 2s linear infinite',
-                animation: '$spinning 2s linear infinite',
-            }
-        },
-    },
-
-    card: {
-        padding: '30px 15px',
-        textAlign: 'center',
-        width: '300px',
+    tableContainer: {
         background: theme.palette.gradient.main,
-
-        [theme.breakpoints.down('sm')]: {
-            padding: '15px',
-        },
-
-        '&.active': {
-            boxShadow: '-5px 5px 10px 0 rgba(0 0 0 / 30%)',
-
-            '-webkit-animation': '$float 1s ease-in-out infinite',
-            '-moz-animation': '$float 1s ease-in-out infinite',
-            '-o-animation': '$float 1s ease-in-out infinite',
-            animation: '$float 1s ease-in-out infinite',
-        },
+        margin: '50px 0'
     },
 
     trophyWrapper: {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        width: '75px',
-        height: '75px',
-        margin: '10px auto',
-        border: '5px double transparent',
         color: 'transparent',
-        borderRadius: '50%',
+        position: 'relative',
 
         '& svg': {
-            fontSize: '3em',
-
-            [theme.breakpoints.down('xs')]: {
-                fontSize: '1.5em',
-            },
-        },
-
-        [theme.breakpoints.down('xs')]: {
-            width: '50px',
-            height: '50px',
-            margin: '5px auto',
+            fontSize: '1.7em',
         },
     },
 
     gold: {
         color: '#ffd700',
-        borderColor: '#ffd700',
     },
     silver: {
         color: '#c0c0c0',
-        borderColor: '#c0c0c0',
     },
     bronze: {
         color: '#cd7f32',
-        borderColor: '#cd7f32',
-    },
-
-    "@keyframes spinning": {
-        "to": {
-            transform: 'rotateY(360deg)',
-        },
-    },
-    "@-webkit-keyframes spinning": {
-        "to": {
-            transform: 'rotateY(360deg)',
-        }
-    },
-
-    "@keyframes float": {
-        "0%": {
-            transform: "translatey(0px)",
-        },
-        "50%": {
-            transform: "translatey(-5px)",
-        },
-        "100%": {
-            transform: "translatey(0px)",
-        }
-    },
-
-    "@-webkit-keyframes float": {
-        "0%": {
-            transform: "translatey(0px)",
-        },
-        "50%": {
-            transform: "translatey(-5px)",
-        },
-        "100%": {
-            transform: "translatey(0px)",
-        }
     },
 }));
 
@@ -193,7 +85,6 @@ function QuizResults(props) {
 
     const username = props.username;
     const maxScore = props.maxScore;
-    const expectedPlayers = props.expectedPlayers;
     const sessionId = props.sessionId;
 
     const classes = useStyles();
@@ -205,7 +96,6 @@ function QuizResults(props) {
     const [finalScore, setFinalScore] = useState([]);
     const [cheatSheet, setCheatSheet] = useState(null);
 
-    const [tabValue, setTabValue] = useState(0);
     const [anchorEl, setAnchorEl] = useState(null);
     const [confetti, setConfetti] = useState(true);
     const [cheatSheetModalOpen, setCheatSheetModalOpen] = useState(false);
@@ -236,10 +126,6 @@ function QuizResults(props) {
             });
         }
     }, [quizCompleted])
-
-    function handleTabChange(_, newValue) {
-        setTabValue(newValue);
-    }
 
     function getTrophyStyle(score) {
 
@@ -320,14 +206,11 @@ function QuizResults(props) {
 
     return (
         <div className={classes.container}>
-            <AppBar position="relative" color="secondary">
+            <AppBar position="relative" color="secondary" style={{ padding: '15px 0' }}>
                 <Container maxWidth="md">
                     <Toolbar>
                         <GoHome />
-                        <Tabs value={tabValue} onChange={handleTabChange} indicatorColor="primary" className={classes.tabs}>
-                            <Tab tabIndex={0} label="Top 3" />
-                            <Tab tabIndex={1} label="Standings" />
-                        </Tabs>
+                        <Typography variant="h2" color="primary" className={classes.header}>Results</Typography>
                         <Tooltip title="Menu" arrow>
                             <IconButton onClick={handleMenuOpen}>
                                 <MenuIcon />
@@ -341,7 +224,7 @@ function QuizResults(props) {
                             keepMounted
                             open={Boolean(anchorEl)}
                             onClose={handleMenuClose}
-                            PaperProps={{ className: "secondary-background-light" }}
+                            PaperProps={{ className: "secondary-background" }}
                         >
                             <MenuItem onClick={() => history.push("/create")}>
                                 <ListItemIcon>
@@ -369,14 +252,16 @@ function QuizResults(props) {
                                 </ListItemText>
                             </MenuItem>
                             <Divider />
-                            <MenuItem disabled={!quizCompleted}>
-                                <FormGroup row>
-                                    <FormControlLabel label="Confetti" control={
-                                        <Checkbox color="primary" checked={confetti} onChange={(event) => setConfetti(event.target.checked)} />
-                                    }>
-                                    </FormControlLabel>
-                                </FormGroup>
-                            </MenuItem>
+                            {isPlayerTopThree() &&
+                                <MenuItem disabled={!quizCompleted}>
+                                    <FormGroup row>
+                                        <FormControlLabel label="Confetti" control={
+                                            <Checkbox color="primary" checked={confetti} onChange={(event) => setConfetti(event.target.checked)} />
+                                        }>
+                                        </FormControlLabel>
+                                    </FormGroup>
+                                </MenuItem>
+                            }
                         </Menu>
                     </Toolbar>
                 </Container>
@@ -386,41 +271,13 @@ function QuizResults(props) {
                 open={cheatSheetModalOpen}
                 onClose={() => setCheatSheetModalOpen(false)}
             />
-            <Typography style={{ textAlign: 'center', margin: '20px 0' }} variant="h2">{quizCompleted ? tabValue === 0 ? 'Top 3' : 'Standings' : `Awaiting ${expectedPlayers - finalScore.length} player(s)...`}</Typography>
-            <div className={classes.tabItemContainer}>
+            <div style={{ height: '100%' }}>
                 {quizCompleted && isPlayerTopThree() && confetti &&
                     <ConfettiWrapper colors={getConfettiColors()} />
                 }
-                {tabValue === 0 &&
-                    <Container>
-
-                        <Grid container className={classes.cardsContainer} spacing={1}>
-                            {finalScore.slice(0, 3).map((score) => {
-
-                                return (
-                                    <Grid key={uuid()} item className={`${classes.cardWrapper} ${score.username === username && 'active'}`} xs={12} sm={12} md={4}>
-                                        <Paper
-                                            className={`${classes.card} ${score.username === username && 'active'}`}
-                                            variant="elevation"
-                                        >
-                                            <div className={`${getTrophyStyle(score)} ${classes.trophyWrapper}`}>
-                                                {quizCompleted ? <TrophyIcon className="spinning" /> : <CircularProgress color="inherit" />}
-                                            </div>
-                                            <Typography variant="h4" color={score.username === username ? 'primary' : 'inherit'} noWrap>{score.username}</Typography>
-                                            <div>
-                                                <Typography variant="h4">{score.points} pts</Typography>
-                                            </div>
-                                        </Paper>
-                                    </Grid>
-                                )
-                            })}
-                        </Grid>
-                    </Container>
-
-                }
-                {tabValue === 1 &&
+                {quizCompleted ?
                     <Container maxWidth="sm">
-                        <Paper className="secondary-background" elevation={10}>
+                        <Paper elevation={10} className={classes.tableContainer}>
                             <TableContainer>
                                 <Table>
                                     <TableHead>
@@ -432,12 +289,19 @@ function QuizResults(props) {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {finalScore.map((score) => {
-
+                                        {finalScore.map((score, index) => {
                                             return (
                                                 <TableRow key={uuid()}>
                                                     <TableCell className={score.username === username ? 'primary-color' : ''} align="center">
-                                                        {finalScore.indexOf(score) + 1}
+                                                        {index < 3 ?
+                                                            <div className={`${classes.trophyWrapper} ${getTrophyStyle(score)}`}>
+                                                                <TrophyIcon />
+                                                            </div>
+                                                            :
+                                                            <Fragment>
+                                                                {index + 1}
+                                                            </Fragment>
+                                                        }
                                                     </TableCell>
                                                     <TableCell className={score.username === username ? 'primary-color' : ''} align="left">
                                                         {score.username}
@@ -456,6 +320,10 @@ function QuizResults(props) {
                             </TableContainer>
                         </Paper>
                     </Container>
+                    :
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                        <Typography variant="overline" className="loadingAnimation" style={{ minWidth: '250px' }}>Waiting for all players</Typography>
+                    </div>
                 }
             </div>
 
