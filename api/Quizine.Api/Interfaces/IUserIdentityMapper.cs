@@ -5,5 +5,6 @@
         void AddConnection(T userIdentity, string connectionId);
         void RemoveConnection(T userIdentity, string connectionId);
         bool UserConnected(T userIdentity);
+        string[] GetUserConnections(T userIdentity);
     }
 }

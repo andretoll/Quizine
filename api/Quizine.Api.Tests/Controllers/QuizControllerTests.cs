@@ -10,6 +10,7 @@ using Quizine.Api.Services;
 using Quizine.Api.Tests.Stubs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Quizine.Api.Tests.Controllers
@@ -92,6 +93,38 @@ namespace Quizine.Api.Tests.Controllers
             Assert.That((result as OkObjectResult).Value, Is.TypeOf<string>());
             Assert.That((result as OkObjectResult).Value as string, Is.Not.Empty);
             Assert.That(_sessionRepository.SessionExists(((result as OkObjectResult).Value as string).Trim('"')));
+        }
+
+        [Test]
+        public async Task ShouldCreateIdenticalRematch()
+        {
+            // Arrange
+            var parameters = Utils.TestData.GetRandomSessionParameters();
+
+            string oldSessionId = ((await _controller.Create(parameters)) as OkObjectResult).Value.ToString().Trim('"');
+            var oldSession = _sessionRepository.GetSessionBySessionId(oldSessionId);
+
+            // Act
+            string newSessionId = ((await _controller.Create(oldSessionId)) as OkObjectResult).Value.ToString().Trim('"');
+            var newSession = _sessionRepository.GetSessionBySessionId(newSessionId);
+
+            // Assert
+            Assert.That(string.IsNullOrEmpty(newSessionId), Is.False);
+            Assert.That(_sessionRepository.SessionExists(newSessionId), Is.True);
+            Assert.That(newSession.MemberProgressList.Count(), Is.EqualTo(0));
+            Assert.That(newSession.IsCompleted, Is.False);
+            Assert.That(newSession.IsStarted, Is.False);
+
+            Assert.That(newSession.QuestionCount, Is.EqualTo(oldSession.QuestionCount));
+            Assert.That(newSession.Ruleset.Title, Is.EqualTo(oldSession.Ruleset.Title));
+            Assert.That(newSession.SessionParameters.Category, Is.EqualTo(oldSession.SessionParameters.Category));
+            Assert.That(newSession.SessionParameters.Difficulty, Is.EqualTo(oldSession.SessionParameters.Difficulty));
+            Assert.That(newSession.SessionParameters.PlayerCount, Is.EqualTo(oldSession.SessionParameters.PlayerCount));
+            Assert.That(newSession.SessionParameters.QuestionTimeout, Is.EqualTo(oldSession.SessionParameters.QuestionTimeout));
+            Assert.That(newSession.SessionParameters.Rule, Is.EqualTo(oldSession.SessionParameters.Rule));
+            Assert.That(newSession.SessionParameters.Title, Is.EqualTo(oldSession.SessionParameters.Title));
+            Assert.That(newSession.SessionParameters.SessionID, Is.Not.EqualTo(oldSession.SessionParameters.SessionID));
+            Assert.That(newSession.Questions.First().Question, Is.Not.EqualTo(oldSession.Questions.First().Question));
         }
     }
 }

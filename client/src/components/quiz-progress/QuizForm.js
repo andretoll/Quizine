@@ -111,7 +111,7 @@ function QuizForm(props) {
                         color={props.lastQuestion ? 'primary' : 'secondary'}
                         endIcon={<ArrowRightIcon />}
                         onClick={props.lastQuestion ? props.onFinal : props.onNext}>
-                        {props.lastQuestion ? 'See results' : 'Next question'}
+                        {props.lastQuestion ? 'Finish' : 'Next question'}
                     </Button>
                 }
             </div>

@@ -1,20 +1,22 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import { v4 as uuid } from 'uuid';
+import { useConfirm } from 'material-ui-confirm';
 import { useConnection } from '../../contexts/HubConnectionContext';
 import { sendNotification } from '../../services/NotificationService';
-import { useHistory } from 'react-router';
+import { Join, PromptRematch, Rematch } from '../../services/QuizService';
 import { useErrorModal } from '../../contexts/ErrorModalContext';
 import ConfettiWrapper from '../wrappers/ConfettiWrapper';
 import GoHome from '../GoHome';
-import CheatSheet from '../CheatSheet';
+import CheatSheet from '../quiz-results/CheatSheet';
 import TrophyIcon from '@material-ui/icons/EmojiEvents';
 import MenuIcon from '@material-ui/icons/MoreVert';
+import RematchIcon from '@material-ui/icons/FlashOn';
+import ListIcon from '@material-ui/icons/ListAlt';
+import AddIcon from '@material-ui/icons/AddBox';
 import {
     makeStyles,
-    Grid,
     Paper,
-    Tabs,
-    Tab,
     Table,
     TableBody,
     TableCell,
@@ -24,130 +26,67 @@ import {
     Typography,
     IconButton,
     Container,
-    CircularProgress,
     AppBar,
     Toolbar,
     Tooltip,
     Menu,
     MenuItem,
-    Switch,
     FormControlLabel,
     FormGroup,
     Divider,
+    Checkbox,
+    ListItemIcon,
+    ListItemText,
 } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
 
     container: {
-        height: '100vh',
+        minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
     },
 
-    tabs: {
-        margin: '20px auto',
-
-        [theme.breakpoints.down('xs')]: {
-            margin: '10px auto',
-        }
-    },
-
-    tabItemContainer: {
+    header: {
         display: 'flex',
         flex: '1',
         justifyContent: 'center',
         alignItems: 'flex-start',
         position: 'relative',
-
-        [theme.breakpoints.up('md')]: {
-            marginTop: '50px',
-        }
     },
 
-    cardsContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-
-        [theme.breakpoints.down('sm')]: {
-            flexDirection: 'column',
-        },
-    },
-
-    cardWrapper: {
-        flex: '0 0 auto',
-
-        '&.active': {
-            zIndex: '3',
-
-            '& .spinning': {
-                '-webkit-animation': '$spinning 2s infinite linear ease-in',
-                '-moz-animation': '$spinning 2s linear infinite',
-                '-o-animation': '$spinning 2s linear infinite',
-                animation: '$spinning 2s linear infinite',
-            }
-        },
-    },
-
-    card: {
-        padding: '30px 15px',
-        textAlign: 'center',
-        width: '300px',
+    tableContainer: {
         background: theme.palette.gradient.main,
-
-        [theme.breakpoints.down('sm')]: {
-            padding: '15px',
-        },
-
-        '&.active': {
-            boxShadow: '-5px 5px 10px 0 rgba(0 0 0 / 30%)',
-
-            [theme.breakpoints.up('xs')]: {
-                '-webkit-animation': '$float 1s ease-in-out infinite',
-                '-moz-animation': '$float 1s ease-in-out infinite',
-                '-o-animation': '$float 1s ease-in-out infinite',
-                animation: '$float 1s ease-in-out infinite',
-            }
-        },
+        margin: '50px 0'
     },
 
     trophyWrapper: {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        width: '75px',
-        height: '75px',
-        margin: '10px auto',
-        border: '5px double transparent',
         color: 'transparent',
-        borderRadius: '50%',
+        position: 'relative',
 
-        '& svg': {
-            fontSize: '3em',
-
-            [theme.breakpoints.down('xs')]: {
-                fontSize: '1.5em',
-            },
+        '&.spinning': {
+            '-webkit-animation': '$spinning 2s infinite linear ease-in',
+            '-moz-animation': '$spinning 2s linear infinite',
+            '-o-animation': '$spinning 2s linear infinite',
+            animation: '$spinning 2s linear infinite',
         },
 
-        [theme.breakpoints.down('xs')]: {
-            width: '50px',
-            height: '50px',
-            margin: '5px auto',
+        '& svg': {
+            fontSize: '1.7em',
         },
     },
 
     gold: {
         color: '#ffd700',
-        borderColor: '#ffd700',
     },
     silver: {
         color: '#c0c0c0',
-        borderColor: '#c0c0c0',
     },
     bronze: {
         color: '#cd7f32',
-        borderColor: '#cd7f32',
     },
 
     "@keyframes spinning": {
@@ -160,54 +99,67 @@ const useStyles = makeStyles(theme => ({
             transform: 'rotateY(360deg)',
         }
     },
-
-    "@keyframes float": {
-        "0%": {
-            transform: "translatey(0px)",
-        },
-        "50%": {
-            transform: "translatey(-5px)",
-        },
-        "100%": {
-            transform: "translatey(0px)",
-        }
-    },
-
-    "@-webkit-keyframes float": {
-        "0%": {
-            transform: "translatey(0px)",
-        },
-        "50%": {
-            transform: "translatey(-5px)",
-        },
-        "100%": {
-            transform: "translatey(0px)",
-        }
-    },
 }));
 
 function QuizResults(props) {
 
     const username = props.username;
     const maxScore = props.maxScore;
-    const expectedPlayers = props.expectedPlayers;
     const sessionId = props.sessionId;
 
     const classes = useStyles();
 
     const { connection } = useConnection();
-    const { openModal, closeModal } = useErrorModal();
+    const { openModal } = useErrorModal();
+    const confirm = useConfirm();
 
     const [quizCompleted, setQuizCompleted] = useState(false);
     const [finalScore, setFinalScore] = useState([]);
     const [cheatSheet, setCheatSheet] = useState(null);
 
-    const [tabValue, setTabValue] = useState(0);
     const [anchorEl, setAnchorEl] = useState(null);
     const [confetti, setConfetti] = useState(true);
     const [cheatSheetModalOpen, setCheatSheetModalOpen] = useState(false);
 
     const history = useHistory();
+
+    const joinRematch = useCallback((data) => {
+
+        confirm({
+            title: <Typography><span className="primary-color">{data?.username}</span> wants a rematch!</Typography>,
+            description: 'Do you accept?',
+            confirmationText: 'Yes',
+            cancellationText: 'No',
+            dialogProps: { PaperProps: { className: "secondary-background" } }
+        }).then(() => {
+
+            // Join session
+            Join({ sessionId: data.sessionId, username: username })
+                .then(response => {
+
+                    if (response.status === 200) {
+                        history.push(`/quiz/${data.sessionId}`, { sessionId: data.sessionId, username: username });
+                        history.go();
+                    } else {
+                        console.error("Join failed. Status: ", response.status);
+                        openModal({
+                            title: 'Join failed',
+                            message: "Failed to join.",
+                            actionText: "Ok"
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    openModal({
+                        title: 'Join failed',
+                        message: "Failed to join.",
+                        actionText: "Ok",
+                    });
+                })
+
+        }).catch(() => { });
+    }, [confirm, history, openModal, username]);
 
     useEffect(() => {
 
@@ -221,8 +173,12 @@ function QuizResults(props) {
                 console.debug("Quiz completed");
                 setQuizCompleted(true);
             });
+            connection.on('RematchPrompted', (data) => {
+                console.debug("Rematch prompted");
+                joinRematch(data);
+            });
         }
-    }, [connection]);
+    }, [connection, joinRematch]);
 
     // When quiz has completed
     useEffect(() => {
@@ -233,10 +189,6 @@ function QuizResults(props) {
             });
         }
     }, [quizCompleted])
-
-    function handleTabChange(_, newValue) {
-        setTabValue(newValue);
-    }
 
     function getTrophyStyle(score) {
 
@@ -302,10 +254,7 @@ function QuizResults(props) {
                 openModal({
                     title: `Error code ${response.status}`,
                     message: "Failed to retreive cheat sheet",
-                    actionText: "Ok",
-                    action: () => {
-                        closeModal();
-                    }
+                    actionText: "Ok"
                 });
             }
         }).catch((error) => {
@@ -315,16 +264,78 @@ function QuizResults(props) {
         });
     }
 
+    function createNew() {
+
+        confirm({
+            title: 'New quiz',
+            description: 'The current session will be abandoned. Are you sure?',
+            confirmationText: 'Yes',
+            cancellationText: 'No',
+            dialogProps: { PaperProps: { className: "secondary-background" } }
+        }).then(async () => {
+            history.push("/create");
+        }).catch(() => { })
+    }
+
+    async function rematch() {
+
+        // Create new session
+        handleMenuClose();
+
+        confirm({
+            title: 'Rematch',
+            description: 'The current session will be abandoned. Are you sure?',
+            confirmationText: 'Yes',
+            cancellationText: 'No',
+            dialogProps: { PaperProps: { className: "secondary-background" } }
+        }).then(async () => {
+
+            await Rematch(sessionId)
+                .then(response => {
+
+                    if (response.status === 200) {
+
+                        response.json().then(result => {
+
+                            // Join session
+                            Join({ sessionId: result, username: username })
+                                .then(response => {
+
+                                    if (response.status === 200) {
+
+                                        // Prompt others to join
+                                        PromptRematch(connection, sessionId, result)
+                                            .then(() => {
+                                                handleMenuClose();
+
+                                                // Navigate to new session
+                                                history.push(`/quiz/${result}`, { sessionId: result, username: username });
+                                                history.go();
+                                            })
+                                    }
+                                })
+                        })
+                    }
+
+                }).catch(error => {
+                    console.error(error);
+                    openModal({
+                        title: 'Rematch failed',
+                        message: "Failed to initiate rematch.",
+                        actionText: "Ok"
+                    });
+                });
+
+        }).catch(() => { });
+    }
+
     return (
         <div className={classes.container}>
-            <AppBar position="relative" color="secondary">
+            <AppBar position="relative" color="secondary" style={{ padding: '15px 0' }}>
                 <Container maxWidth="md">
                     <Toolbar>
                         <GoHome />
-                        <Tabs value={tabValue} onChange={handleTabChange} indicatorColor="primary" className={classes.tabs}>
-                            <Tab tabIndex={0} label="Top 3" />
-                            <Tab tabIndex={1} label="Standings" />
-                        </Tabs>
+                        <Typography variant="h2" color="primary" className={classes.header}>Results</Typography>
                         <Tooltip title="Menu" arrow>
                             <IconButton onClick={handleMenuOpen}>
                                 <MenuIcon />
@@ -338,19 +349,44 @@ function QuizResults(props) {
                             keepMounted
                             open={Boolean(anchorEl)}
                             onClose={handleMenuClose}
-                            PaperProps={{ className: "secondary-background-light" }}
+                            PaperProps={{ className: "secondary-background" }}
                         >
-                            <MenuItem onClick={openCheatSheet}>Cheat Sheet</MenuItem>
-                            <MenuItem onClick={() => history.push("/create")}>New Quiz</MenuItem>
-                            <Divider />
-                            <MenuItem disabled={!quizCompleted}>
-                                <FormGroup row>
-                                    <FormControlLabel label="Confetti" control={
-                                        <Switch color="primary" checked={confetti} onChange={(event) => setConfetti(event.target.checked)} />
-                                    }>
-                                    </FormControlLabel>
-                                </FormGroup>
+                            <MenuItem onClick={rematch} disabled={!quizCompleted}>
+                                <ListItemIcon>
+                                    <RematchIcon />
+                                </ListItemIcon>
+                                <ListItemText>
+                                    Rematch
+                                </ListItemText>
                             </MenuItem>
+                            <MenuItem onClick={createNew}>
+                                <ListItemIcon>
+                                    <AddIcon />
+                                </ListItemIcon>
+                                <ListItemText>
+                                    New quiz
+                                </ListItemText>
+                            </MenuItem>
+                            <Divider />
+                            <MenuItem onClick={openCheatSheet}>
+                                <ListItemIcon>
+                                    <ListIcon />
+                                </ListItemIcon>
+                                <ListItemText>
+                                    Cheat sheet
+                                </ListItemText>
+                            </MenuItem>
+                            <Divider />
+                            {isPlayerTopThree() &&
+                                <MenuItem disabled={!quizCompleted}>
+                                    <FormGroup row>
+                                        <FormControlLabel label="Confetti" control={
+                                            <Checkbox color="primary" checked={confetti} onChange={(event) => setConfetti(event.target.checked)} />
+                                        }>
+                                        </FormControlLabel>
+                                    </FormGroup>
+                                </MenuItem>
+                            }
                         </Menu>
                     </Toolbar>
                 </Container>
@@ -360,41 +396,13 @@ function QuizResults(props) {
                 open={cheatSheetModalOpen}
                 onClose={() => setCheatSheetModalOpen(false)}
             />
-            <Typography style={{ textAlign: 'center', margin: '20px 0' }} variant="h2">{quizCompleted ? 'Final Results' : `Awaiting ${expectedPlayers - finalScore.length} player(s)...`}</Typography>
-            <div className={classes.tabItemContainer}>
+            <div style={{ height: '100%', display: 'flex', flex: '1' }}>
                 {quizCompleted && isPlayerTopThree() && confetti &&
                     <ConfettiWrapper colors={getConfettiColors()} />
                 }
-                {tabValue === 0 &&
-                    <Container>
-
-                        <Grid container className={classes.cardsContainer} spacing={1}>
-                            {finalScore.slice(0, 3).map((score) => {
-
-                                return (
-                                    <Grid key={uuid()} item className={`${classes.cardWrapper} ${score.username === username && 'active'}`} xs={12} sm={12} md={4}>
-                                        <Paper
-                                            className={`${classes.card} ${score.username === username && 'active'}`}
-                                            variant="elevation"
-                                        >
-                                            <div className={`${getTrophyStyle(score)} ${classes.trophyWrapper}`}>
-                                                {quizCompleted ? <TrophyIcon className="spinning" /> : <CircularProgress color="inherit" />}
-                                            </div>
-                                            <Typography variant="h4" color={score.username === username ? 'primary' : 'inherit'} noWrap>{score.username}</Typography>
-                                            <div>
-                                                <Typography variant="h4">{score.points} pts</Typography>
-                                            </div>
-                                        </Paper>
-                                    </Grid>
-                                )
-                            })}
-                        </Grid>
-                    </Container>
-
-                }
-                {tabValue === 1 &&
+                {quizCompleted ?
                     <Container maxWidth="sm">
-                        <Paper className="secondary-background" elevation={10}>
+                        <Paper elevation={10} className={classes.tableContainer}>
                             <TableContainer>
                                 <Table>
                                     <TableHead>
@@ -406,12 +414,19 @@ function QuizResults(props) {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {finalScore.map((score) => {
-
+                                        {finalScore.map((score, index) => {
                                             return (
                                                 <TableRow key={uuid()}>
                                                     <TableCell className={score.username === username ? 'primary-color' : ''} align="center">
-                                                        {finalScore.indexOf(score) + 1}
+                                                        {index < 3 ?
+                                                            <div className={`${classes.trophyWrapper} ${getTrophyStyle(score)} ${score.username === username && 'spinning'}`}>
+                                                                <TrophyIcon />
+                                                            </div>
+                                                            :
+                                                            <Fragment>
+                                                                {index + 1}
+                                                            </Fragment>
+                                                        }
                                                     </TableCell>
                                                     <TableCell className={score.username === username ? 'primary-color' : ''} align="left">
                                                         {score.username}
@@ -430,6 +445,10 @@ function QuizResults(props) {
                             </TableContainer>
                         </Paper>
                     </Container>
+                    :
+                    <div style={{ display: 'flex', height: '100%', margin: 'auto' }}>
+                        <Typography variant="overline" className="loadingAnimation" style={{ minWidth: '250px' }}>Waiting for all players</Typography>
+                    </div>
                 }
             </div>
 

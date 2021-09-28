@@ -13,5 +13,8 @@ namespace Quizine.Api.Interfaces
         Task SubmitAnswer(string sessionId, string questionId, string answerId);
         Task NextQuestion(string sessionId);
         Task GetResults(string sessionId);
+
+        // Rematch
+        Task PromptRematch(string sessionId, string newSessionId);
     }
 }

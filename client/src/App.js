@@ -84,10 +84,6 @@ const GlobalCss = withStyles(theme => ({
     '.secondary-background': {
       background: theme.palette.secondary.main
     },
-    
-    '.secondary-background-light': {
-      background: theme.palette.secondary.light
-    },
 
     '.loadingAnimation': {
 

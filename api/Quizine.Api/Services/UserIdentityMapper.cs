@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Quizine.Api.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Quizine.Api.Services
 {
@@ -82,6 +83,16 @@ namespace Quizine.Api.Services
             _logger.LogDebug($"User still connected: {containsKey}");
 
             return containsKey;
+        }
+
+        public string[] GetUserConnections(T userIdentity)
+        {
+            if (_connections.TryGetValue(userIdentity, out HashSet<string> connections))
+            {
+                return connections.ToArray();
+            }
+
+            return null;
         }
     }
 }
