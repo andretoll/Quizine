@@ -264,46 +264,69 @@ function QuizResults(props) {
         });
     }
 
-    async function openRematchDialog() {
+    function createNew() {
+
+        confirm({
+            title: 'New quiz',
+            description: 'The current session will be abandoned. Are you sure?',
+            confirmationText: 'Yes',
+            cancellationText: 'No',
+            dialogProps: { PaperProps: { className: "secondary-background" } }
+        }).then(async () => {
+            history.push("/create");
+        }).catch(() => { })
+    }
+
+    async function rematch() {
 
         // Create new session
         handleMenuClose();
-        
-        await Rematch(sessionId)
-            .then(response => {
 
-                if (response.status === 200) {
+        confirm({
+            title: 'Rematch',
+            description: 'The current session will be abandoned. Are you sure?',
+            confirmationText: 'Yes',
+            cancellationText: 'No',
+            dialogProps: { PaperProps: { className: "secondary-background" } }
+        }).then(async () => {
 
-                    response.json().then(result => {
+            await Rematch(sessionId)
+                .then(response => {
 
-                        // Join session
-                        Join({ sessionId: result, username: username })
-                            .then(response => {
+                    if (response.status === 200) {
 
-                                if (response.status === 200) {
+                        response.json().then(result => {
 
-                                    // Prompt others to join
-                                    PromptRematch(connection, sessionId, result)
-                                        .then(() => {
-                                            handleMenuClose();
+                            // Join session
+                            Join({ sessionId: result, username: username })
+                                .then(response => {
 
-                                            // Navigate to new session
-                                            history.push(`/quiz/${result}`, { sessionId: result, username: username });
-                                            history.go();
-                                        })
-                                }
-                            })
-                    })
-                }
+                                    if (response.status === 200) {
 
-            }).catch(error => {
-                console.error(error);
-                openModal({
-                    title: 'Rematch failed',
-                    message: "Failed to initiate rematch.",
-                    actionText: "Ok"
+                                        // Prompt others to join
+                                        PromptRematch(connection, sessionId, result)
+                                            .then(() => {
+                                                handleMenuClose();
+
+                                                // Navigate to new session
+                                                history.push(`/quiz/${result}`, { sessionId: result, username: username });
+                                                history.go();
+                                            })
+                                    }
+                                })
+                        })
+                    }
+
+                }).catch(error => {
+                    console.error(error);
+                    openModal({
+                        title: 'Rematch failed',
+                        message: "Failed to initiate rematch.",
+                        actionText: "Ok"
+                    });
                 });
-            });
+
+        }).catch(() => { });
     }
 
     return (
@@ -328,7 +351,7 @@ function QuizResults(props) {
                             onClose={handleMenuClose}
                             PaperProps={{ className: "secondary-background" }}
                         >
-                            <MenuItem onClick={openRematchDialog} disabled={!quizCompleted}>
+                            <MenuItem onClick={rematch} disabled={!quizCompleted}>
                                 <ListItemIcon>
                                     <RematchIcon />
                                 </ListItemIcon>
@@ -336,7 +359,7 @@ function QuizResults(props) {
                                     Rematch
                                 </ListItemText>
                             </MenuItem>
-                            <MenuItem onClick={() => history.push("/create")}>
+                            <MenuItem onClick={createNew}>
                                 <ListItemIcon>
                                     <AddIcon />
                                 </ListItemIcon>
