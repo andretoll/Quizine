@@ -16,7 +16,7 @@ export const ErrorModalProvider = ({ children }) => {
     const [title, setTitle] = useState();
     const [message, setMessage] = useState();
     const [actionText, setActionText] = useState();
-    const [action, setAction] = useState();
+    const [action, setAction] = useState(null);
 
     function openModal(param) {
 
@@ -40,7 +40,10 @@ export const ErrorModalProvider = ({ children }) => {
 
         console.trace("Triggering modal action...");
 
-        action();
+        if (action !== null)
+            action();
+            
+        closeModal();
     }
 
     return <ErrorModalContext.Provider value={{ openModal, closeModal }}>

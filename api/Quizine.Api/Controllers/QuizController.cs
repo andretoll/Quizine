@@ -69,6 +69,31 @@ namespace Quizine.Api.Controllers
             return Ok(JsonSerializer.Serialize(sessionId));
         }
 
+        [HttpPost("rematch")]
+        public async Task<ActionResult> Create([FromBody] string sessionId)
+        {
+            _logger.LogTrace($"Called (Rematch) '{ControllerContext.ActionDescriptor.ActionName}' endpoint");
+
+            var session = _sessionRepository.GetSessionBySessionId(sessionId);
+
+            if (session == null)
+            {
+                _logger.LogError("Session does not exist");
+                return BadRequest("Session does not exist");
+            }
+
+            var result = await Create(JsonSerializer.Deserialize<SessionParameters>(JsonSerializer.Serialize(session.SessionParameters)));
+
+            if (result.GetType() == typeof(OkObjectResult))
+            {
+                string newSessionId = (result as OkObjectResult).Value.ToString();
+                _logger.LogDebug($"Returning session ID: {newSessionId}");
+                return Ok(newSessionId);
+            }
+
+            return BadRequest((result as ObjectResult).Value.ToString());
+        }
+
         [HttpPost("join")]
         public async Task<ActionResult> Join([FromBody] JoinDto dto)
         {

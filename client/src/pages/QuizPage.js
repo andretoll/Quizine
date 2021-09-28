@@ -318,7 +318,7 @@ function QuizPage() {
 
     return (
         <div className={classes.container}>
-            {content !== contentStates.ERROR && content !== contentStates.CONNECTING ?
+            {content === contentStates.WAITING || content === contentStates.IN_PROGRESS ?
                 <PromptWrapper
                     title="Progress will be lost."
                     message="Leaving this page will result in a disconnect and all progress will be lost. Continue?"

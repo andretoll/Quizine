@@ -1,12 +1,14 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import { v4 as uuid } from 'uuid';
+import { useConfirm } from 'material-ui-confirm';
 import { useConnection } from '../../contexts/HubConnectionContext';
 import { sendNotification } from '../../services/NotificationService';
-import { useHistory } from 'react-router';
+import { Join, PromptRematch, Rematch } from '../../services/QuizService';
 import { useErrorModal } from '../../contexts/ErrorModalContext';
 import ConfettiWrapper from '../wrappers/ConfettiWrapper';
 import GoHome from '../GoHome';
-import CheatSheet from '../CheatSheet';
+import CheatSheet from '../quiz-results/CheatSheet';
 import TrophyIcon from '@material-ui/icons/EmojiEvents';
 import MenuIcon from '@material-ui/icons/MoreVert';
 import RematchIcon from '@material-ui/icons/FlashOn';
@@ -108,7 +110,8 @@ function QuizResults(props) {
     const classes = useStyles();
 
     const { connection } = useConnection();
-    const { openModal, closeModal } = useErrorModal();
+    const { openModal } = useErrorModal();
+    const confirm = useConfirm();
 
     const [quizCompleted, setQuizCompleted] = useState(false);
     const [finalScore, setFinalScore] = useState([]);
@@ -119,6 +122,44 @@ function QuizResults(props) {
     const [cheatSheetModalOpen, setCheatSheetModalOpen] = useState(false);
 
     const history = useHistory();
+
+    const joinRematch = useCallback((data) => {
+
+        confirm({
+            title: <Typography><span className="primary-color">{data?.username}</span> wants a rematch!</Typography>,
+            description: 'Do you accept?',
+            confirmationText: 'Yes',
+            cancellationText: 'No',
+            dialogProps: { PaperProps: { className: "secondary-background" } }
+        }).then(() => {
+
+            // Join session
+            Join({ sessionId: data.sessionId, username: username })
+                .then(response => {
+
+                    if (response.status === 200) {
+                        history.push(`/quiz/${data.sessionId}`, { sessionId: data.sessionId, username: username });
+                        history.go();
+                    } else {
+                        console.error("Join failed. Status: ", response.status);
+                        openModal({
+                            title: 'Join failed',
+                            message: "Failed to join.",
+                            actionText: "Ok"
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    openModal({
+                        title: 'Join failed',
+                        message: "Failed to join.",
+                        actionText: "Ok",
+                    });
+                })
+
+        }).catch(() => { });
+    }, [confirm, history, openModal, username]);
 
     useEffect(() => {
 
@@ -132,8 +173,12 @@ function QuizResults(props) {
                 console.debug("Quiz completed");
                 setQuizCompleted(true);
             });
+            connection.on('RematchPrompted', (data) => {
+                console.debug("Rematch prompted");
+                joinRematch(data);
+            });
         }
-    }, [connection]);
+    }, [connection, joinRematch]);
 
     // When quiz has completed
     useEffect(() => {
@@ -209,10 +254,7 @@ function QuizResults(props) {
                 openModal({
                     title: `Error code ${response.status}`,
                     message: "Failed to retreive cheat sheet",
-                    actionText: "Ok",
-                    action: () => {
-                        closeModal();
-                    }
+                    actionText: "Ok"
                 });
             }
         }).catch((error) => {
@@ -220,6 +262,48 @@ function QuizResults(props) {
         }).finally(() => {
             handleMenuClose();
         });
+    }
+
+    async function openRematchDialog() {
+
+        // Create new session
+        handleMenuClose();
+        
+        await Rematch(sessionId)
+            .then(response => {
+
+                if (response.status === 200) {
+
+                    response.json().then(result => {
+
+                        // Join session
+                        Join({ sessionId: result, username: username })
+                            .then(response => {
+
+                                if (response.status === 200) {
+
+                                    // Prompt others to join
+                                    PromptRematch(connection, sessionId, result)
+                                        .then(() => {
+                                            handleMenuClose();
+
+                                            // Navigate to new session
+                                            history.push(`/quiz/${result}`, { sessionId: result, username: username });
+                                            history.go();
+                                        })
+                                }
+                            })
+                    })
+                }
+
+            }).catch(error => {
+                console.error(error);
+                openModal({
+                    title: 'Rematch failed',
+                    message: "Failed to initiate rematch.",
+                    actionText: "Ok"
+                });
+            });
     }
 
     return (
@@ -244,7 +328,7 @@ function QuizResults(props) {
                             onClose={handleMenuClose}
                             PaperProps={{ className: "secondary-background" }}
                         >
-                            <MenuItem onClick={() => history.push("/create")}>
+                            <MenuItem onClick={openRematchDialog} disabled={!quizCompleted}>
                                 <ListItemIcon>
                                     <RematchIcon />
                                 </ListItemIcon>
@@ -289,7 +373,7 @@ function QuizResults(props) {
                 open={cheatSheetModalOpen}
                 onClose={() => setCheatSheetModalOpen(false)}
             />
-            <div style={{ height: '100%' }}>
+            <div style={{ height: '100%', display: 'flex', flex: '1' }}>
                 {quizCompleted && isPlayerTopThree() && confetti &&
                     <ConfettiWrapper colors={getConfettiColors()} />
                 }
@@ -339,7 +423,7 @@ function QuizResults(props) {
                         </Paper>
                     </Container>
                     :
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                    <div style={{ display: 'flex', height: '100%', margin: 'auto' }}>
                         <Typography variant="overline" className="loadingAnimation" style={{ minWidth: '250px' }}>Waiting for all players</Typography>
                     </div>
                 }

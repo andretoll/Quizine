@@ -281,6 +281,22 @@ namespace Quizine.Api.Hubs
             }
         }
 
+        public async Task PromptRematch(string sessionId, string newSessionId)
+        {
+            _logger.LogTrace($"({Context.ConnectionId}) Called '{nameof(PromptRematch)}' endpoint");
+
+            var session = _sessionRepository.GetSessionBySessionId(sessionId);
+
+            if (session == null)
+            {
+                _logger.LogError("Session does not exist");
+                return;
+            }
+
+            string username = session.GetUser(Context.UserIdentifier).Username;
+            await Clients.GroupExcept(sessionId, _identityMapper.GetUserConnections(Context.UserIdentifier)).RematchPrompted(new RematchDto(newSessionId, username));
+        }
+
         #endregion
     }
 }

@@ -21,5 +21,8 @@ namespace Quizine.Api.Interfaces
         // Race game mode
         Task NextQuestionIncoming(int delay);
         Task TriggerResults();
+
+        // Rematch
+        Task RematchPrompted(RematchDto dto);
     }
 }
