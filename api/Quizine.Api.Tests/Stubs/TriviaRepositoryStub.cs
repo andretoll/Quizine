@@ -1,5 +1,6 @@
 ﻿using Quizine.Api.Interfaces;
 using Quizine.Api.Models;
+using Quizine.Api.Tests.Utils;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -19,7 +20,7 @@ namespace Quizine.Api.Tests.Stubs
 
             for (int i = 0; i < questionCount; i++)
             {
-                quizItems.Add(new QuizItem(category.ToString(), difficulty, "type", "question", i, "correctAnswer", new string[] { "incorrectAnswer" }));
+                quizItems.Add(new QuizItem(category.ToString(), difficulty, "type", TestData.GetRandomString(20), i, "correctAnswer", new string[] { "incorrectAnswer" }));
             }
 
             return Task.FromResult(quizItems as IEnumerable<QuizItem>);
