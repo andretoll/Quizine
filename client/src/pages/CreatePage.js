@@ -2,7 +2,7 @@ import { useState, useEffect, Fragment } from 'react';
 import { useHistory } from 'react-router';
 import { DataProvider } from '../contexts/CreateFormDataContext';
 import useTitle from '../hooks/useTitle';
-import { Join } from '../services/QuizService';
+import { Create, FetchCategories, FetchRules, FetchSessionLifetime, Join } from '../services/QuizService';
 import ShareQuiz from '../components/ShareQuiz';
 import CreateForm from '../components/CreateForm';
 import GoHome from '../components/GoHome';
@@ -100,13 +100,7 @@ function CreatePage() {
 
         console.info("Fetching categories...");
 
-        await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/categories`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
-            }
-        }).then(response => {
+        await FetchCategories().then(response => {
             response.json().then(result => {
 
                 console.info("Successfully fetched categories.");
@@ -126,13 +120,7 @@ function CreatePage() {
 
         console.info("Fetching rules...");
 
-        await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/rules`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
-            }
-        }).then(response => {
+        await FetchRules().then(response => {
             response.json().then(result => {
 
                 console.info("Successfully fetched rules.");
@@ -150,13 +138,7 @@ function CreatePage() {
 
         console.info("Fetching session lifetime...");
 
-        await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/session-lifetime`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
-            }
-        }).then(response => {
+        await FetchSessionLifetime().then(response => {
             response.json().then(result => {
 
                 console.info("Successfully fetched session lifetime.");
@@ -178,14 +160,7 @@ function CreatePage() {
         setContent(contentStates.IN_PROGRESS);
 
         // Create session and accept sessionID
-        await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/create`, {
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers: {
-                'Content-Type': 'application/json',
-                'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
-            }
-        }).then(response => {
+        await Create(data).then(response => {
             if (response.status === 200) {
                 response.json().then(result => {
 

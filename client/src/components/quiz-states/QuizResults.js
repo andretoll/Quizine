@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid';
 import { useConfirm } from 'material-ui-confirm';
 import { useConnection } from '../../contexts/HubConnectionContext';
 import { sendNotification } from '../../services/NotificationService';
-import { Join, PromptRematch, Rematch } from '../../services/QuizService';
+import { FetchAnswers, Join, PromptRematch, Rematch } from '../../services/QuizService';
 import { useErrorModal } from '../../contexts/ErrorModalContext';
 import ConfettiWrapper from '../wrappers/ConfettiWrapper';
 import GoHome from '../GoHome';
@@ -235,15 +235,8 @@ function QuizResults(props) {
         setAnchorEl(null);
     };
 
-    function openCheatSheet() {
-        fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/answers`, {
-            method: 'POST',
-            body: JSON.stringify(sessionId),
-            headers: {
-                'Content-Type': 'application/json',
-                'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
-            }
-        }).then((response) => {
+    async function openCheatSheet() {
+        await FetchAnswers(sessionId).then((response) => {
 
             if (response.status === 200) {
                 response.json().then(result => {
