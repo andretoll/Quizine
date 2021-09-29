@@ -1,14 +1,14 @@
-import { makeStyles } from '@material-ui/core';
+import { v4 as uuid } from 'uuid';
 import CheckIcon from '@material-ui/icons/CheckCircle';
 import Typography from '@material-ui/core/Typography';
-import { v4 as uuid } from 'uuid';
+import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(_ => ({
 
     root: {
         display: 'flex',
     },
-}))
+}));
 
 function PlayerList(props) {
 
