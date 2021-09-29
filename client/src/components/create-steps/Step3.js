@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { useData } from '../../contexts/CreateFormDataContext';
 import { v4 as uuid } from 'uuid';
+import { useData } from '../../contexts/CreateFormDataContext';
 import StepperNavigationActions from '../StepperNavigationActions';
 import {
     makeStyles,
@@ -39,7 +39,6 @@ function Step3(props) {
     const classes = useStyles();
 
     const rules = props.rules;
-    const previousStep = props.onPreviousStep;
 
     const { setValues, data } = useData();
     const { handleSubmit, setValue, watch, control, formState: { isValid } } = useForm({ mode: 'onChange' });
@@ -108,7 +107,7 @@ function Step3(props) {
                     </FormControl>
                 </div>
             </Fade>
-            <StepperNavigationActions onPreviousStep={previousStep} nextActionDisabled={!isValid} nextActionText="Next" />
+            <StepperNavigationActions onPreviousStep={props.onPreviousStep} nextActionDisabled={!isValid} nextActionText="Next" />
         </form>
     )
 }

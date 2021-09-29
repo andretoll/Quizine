@@ -45,24 +45,24 @@ const useStyles = makeStyles(theme => ({
 
         '& svg': {
             color: theme.palette.primary.main,
-            fontSize: '5em'
+            fontSize: '5em',
         },
     }
-}))
+}));
 
 const contentStates = Object.freeze({
     LOADING: 0,
     FORM: 1,
     IN_PROGRESS: 2,
     SUCCESS: 3
-})
+});
 
 const difficulties = [
     "Any",
     "Easy",
     "Medium",
     "Hard",
-]
+];
 
 function CreatePage() {
 
@@ -71,13 +71,14 @@ function CreatePage() {
     const [categories, setCategories] = useState([]);
     const [rules, setRules] = useState([]);
     const [sessionLifetime, setSessionLifetime] = useState(0);
-    const [errorMessage, setErrorMessage] = useState();
+    const [errorMessage, setErrorMessage] = useState(null);
     const [content, setContent] = useState(contentStates.LOADING);
-    const [sessionId, setSessionId] = useState();
-    const [hostname, setHostname] = useState();
+    const [sessionId, setSessionId] = useState(null);
+    const [hostname, setHostname] = useState(null);
     const [inProgress, setInProgress] = useState(false);
 
     const history = useHistory();
+
     useTitle("Create");
 
     // On first render
@@ -174,15 +175,19 @@ function CreatePage() {
                 setErrorMessage(`Error ${response.status}: Server rejected request.`);
                 setContent(contentStates.FORM);
             }
-        }).catch(_ => {
+        }).catch(error => {
+            console.error(error);
             setErrorMessage("Could not connect to the server. Please try again later.");
             setContent(contentStates.FORM);
         });
     }
 
     async function joinSession() {
+
+        console.info("Joining quiz...");
         setInProgress(true);
 
+        // Join quiz and navigate to session
         await Join({ sessionId: sessionId, username: hostname }).then(response => {
             if (response.status === 200) {
                 history.push(`/quiz/${sessionId}`, { sessionId: sessionId, username: hostname });
@@ -194,6 +199,7 @@ function CreatePage() {
         }).catch(error => {
             console.error(error);
             setErrorMessage("Failed to connect to the server.");
+            setContent(contentStates.FORM);
         }).finally(_ => {
             setInProgress(false);
         });
@@ -216,7 +222,13 @@ function CreatePage() {
                 )
             case contentStates.FORM:
                 return (
-                    <CreateForm onSubmit={handleOnSubmit} categories={categories} difficulties={difficulties} rules={rules} sessionLifetime={sessionLifetime} />
+                    <CreateForm
+                        onSubmit={handleOnSubmit}
+                        categories={categories}
+                        difficulties={difficulties}
+                        rules={rules}
+                        sessionLifetime={sessionLifetime}
+                    />
                 )
             case contentStates.IN_PROGRESS:
                 return (

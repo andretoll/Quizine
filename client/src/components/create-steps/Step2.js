@@ -39,7 +39,6 @@ function Step2(props) {
 
     const categories = props.categories;
     const difficulties = props.difficulties;
-    const previousStep = props.onPreviousStep;
 
     const { setValues, data } = useData();
     const { handleSubmit, setValue, control, formState: { isValid } } = useForm({ mode: 'onChange' });
@@ -47,7 +46,8 @@ function Step2(props) {
     const [questionCount, setQuestionCount] = useState(data.questionCount ? data.questionCount : 10);
 
     useEffect(() => {
-        setValue("questionCount", questionCount);
+        if (questionCount)
+            setValue("questionCount", questionCount);
     }, [questionCount, setValue]);
 
     function onSubmit(formData) {
@@ -55,7 +55,7 @@ function Step2(props) {
         // Append category name
         const categoryName = categories.find(x => x.id === formData.category).name;
         formData = { ...formData, categoryName };
-        
+
         setValues(formData);
         props.onNextStep();
     }
@@ -65,7 +65,7 @@ function Step2(props) {
             <Fade in>
                 <div style={{ width: '100%' }}>
                     <FormControl fullWidth className={classes.formControl}>
-                        <FormLabel style={{marginBottom: '5px'}}>
+                        <FormLabel style={{ marginBottom: '5px' }}>
                             Questions: {questionCount}
                         </FormLabel>
                         <Controller
@@ -124,7 +124,7 @@ function Step2(props) {
                     </FormControl>
                 </div>
             </Fade>
-            <StepperNavigationActions onPreviousStep={previousStep} nextActionDisabled={!isValid} nextActionText="Next" />
+            <StepperNavigationActions onPreviousStep={props.onPreviousStep} nextActionDisabled={!isValid} nextActionText="Next" />
         </form>
     )
 }

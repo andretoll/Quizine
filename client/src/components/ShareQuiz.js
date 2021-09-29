@@ -32,8 +32,6 @@ const useStyles = makeStyles(_ => ({
 
 function ClickTooltipWrapper(props) {
 
-    const action = props.action;
-
     const [open, setOpen] = useState(false);
 
     const handleTooltipClose = () => {
@@ -41,7 +39,7 @@ function ClickTooltipWrapper(props) {
     };
 
     const handleTooltipOpen = () => {
-        action();
+        props.action();
         setOpen(true);
     };
 

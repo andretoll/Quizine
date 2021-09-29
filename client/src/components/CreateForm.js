@@ -4,18 +4,18 @@ import { v4 as uuid } from 'uuid';
 import Step1 from './create-steps/Step1';
 import Step2 from './create-steps/Step2';
 import Step3 from './create-steps/Step3';
+import ConfirmStep from './create-steps/ConfirmStep';
 import {
     Stepper,
     Step,
     StepLabel
 } from '@material-ui/core';
-import ConfirmStep from './create-steps/ConfirmStep';
 
 const steps = [
     "General",
     "Questions",
     "Rules"
-]
+];
 
 function CreateForm(props) {
 
@@ -76,7 +76,6 @@ function CreateForm(props) {
                         </Step>
                     )
                 })}
-
             </Stepper>
             <div style={{ margin: '0 20px', display: 'flex', flex: '1' }}>
                 {getStepContent(activeStep)}
