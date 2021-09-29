@@ -40,7 +40,7 @@ function Introduction() {
                                         <Typography variant="h2" color="primary" gutterBottom>Quizine</Typography>
                                     </Badge>
                                 </div>
-                                <Typography variant="overline">A modern and sophisticated quiz game.</Typography>
+                                <Typography variant="h5" gutterBottom>A modern and sophisticated quiz game.</Typography>
                                 <div style={{ maxWidth: '500px' }}>
                                     <img src={Image} alt="screenshot" style={{ margin: '20px 0', maxWidth: '100%', maxHeight: '100%' }} />
                                 </div>
@@ -54,6 +54,7 @@ function Introduction() {
                     </div>
                 )}
             </VisibilitySensor>
+            
         </Container>
     )
 }

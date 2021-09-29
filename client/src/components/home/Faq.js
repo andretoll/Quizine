@@ -10,15 +10,15 @@ import {
 const content = [
     {
         "question": "What is Quizine?",
-        "answer": "A modern take on the classic quiz game"
-    },
-    {
-        "question": "How many players can play at the same time?",
-        "answer": "8 players"
+        "answer": "A modern take on the classic quiz game."
     },
     {
         "question": "How do I register?",
         "answer": "You don't. Just jump right in!"
+    },
+    {
+        "question": "How many players can play at the same time?",
+        "answer": "8 players."
     },
 ]
 

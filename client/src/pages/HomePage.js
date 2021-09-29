@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     },
 
     section: {
-        padding: '100px 0',
+        padding: '150px 0',
         position: 'relative',
     },
 
@@ -56,7 +56,7 @@ function HomePage() {
 
     return (
         <div className={classes.root}>
-            <Navbar>Home!</Navbar>
+            <Navbar />
             <Hero />
             <section className={`${classes.section} ${classes.evenSection}`}>
                 <Introduction />

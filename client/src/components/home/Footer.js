@@ -5,7 +5,6 @@ import {
     Container,
     Typography,
     Grid,
-    Button,
     List,
     ListItem,
     ListItemIcon,
@@ -14,24 +13,21 @@ import {
 
 const useStyles = makeStyles((theme) => ({
 
-    container: {
-    },
-
     primary: {
         background: theme.palette.secondary.main,
-        padding: '30px',
+        padding: '70px 0',
     },
 
     secondary: {
         background: theme.palette.secondary.dark,
-        padding: '5px',
+        padding: '15px',
         textAlign: 'center',
     },
 
     header: {
         display: 'block',
-        borderLeft: `5px solid ${theme.palette.primary.main}`,
-        paddingLeft: '10px',
+        marginBottom: '5px',
+        fontSize: '1.2rem',
     },
 }));
 
@@ -47,17 +43,17 @@ function Footer() {
                         <Grid item xs={12} sm={6}>
                             <Typography className={classes.header} variant="overline" gutterBottom>Play the game</Typography>
                             <Link to="/start">
-                                <Button variant="outlined">Open in web</Button>
+                                Open in web
                             </Link>
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <Typography className={classes.header} variant="overline">Contact</Typography>
                             <List disablePadding>
-                                <ListItem>
+                                <ListItem style={{padding: '0'}}>
                                     <ListItemIcon>
                                         <EmailIcon />
                                     </ListItemIcon>
-                                    <ListItemText primary="andretoll@outlook.com" />
+                                    <ListItemText primaryTypographyProps={{variant: "body2"}} primary="andretoll@outlook.com" />
                                 </ListItem>
                             </List>
                         </Grid>
