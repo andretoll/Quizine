@@ -178,10 +178,7 @@ function QuizPage() {
                 } else {
                     console.warn("Connection rejected: ", response.errorMessage);
 
-                    if (location.state.url)
-                        history.replace(`${location.state.url}`, { errorMessage: response.errorMessage });
-                    else
-                        history.push('/join', { errorMessage: response.errorMessage });
+                    //TODO: Show error message
                 }
             });
             connection.on('UserConnected', (response) => {

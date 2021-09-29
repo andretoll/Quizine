@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory } from 'react-router';
 import { useForm, Controller } from 'react-hook-form';
 import { useTitle } from '../hooks/useTitle';
 import { useSnackbar } from '../contexts/SnackbarContext';
@@ -46,24 +46,21 @@ const useStyles = makeStyles(theme => ({
 
     formControl: {
         margin: '15px 0',
-    }
+    },
 }))
 
 function JoinPage() {
 
     const classes = useStyles();
+    
     const history = useHistory();
-    const location = useLocation();
     const { notifyError } = useSnackbar();
-
-    // Show error message if state contains one
-    const [errorMessage, setErrorMessage] = useState(location.state?.errorMessage);
 
     const [inProgress, setInProgress] = useState(false);
 
     const hash = history.location.hash.replace('#', '');
-
-    const { register, handleSubmit, control, formState: { errors, isValid } } = useForm({
+    
+    const { register, handleSubmit, control, setValue, formState: { errors, isValid } } = useForm({
         mode: 'onChange', defaultValues: {
             "sessionId": hash,
             "username": '',
@@ -73,18 +70,13 @@ function JoinPage() {
     useTitle("Join");
 
     useEffect(() => {
+        setValue("sessionId", hash);
+    }, [hash, setValue]);
+
+    useEffect(() => {
         register("sessionId", { required: true });
         register("username", { required: true, maxLength: 15, validate: isOnlyWhitespace });
     }, [register]);
-
-    useEffect(() => {
-
-        if (errorMessage)
-            notifyError(errorMessage);
-
-        setErrorMessage(null);
-        window.history.replaceState({}, document.title)
-    }, [notifyError, errorMessage]);
 
     function isOnlyWhitespace(value) {
         return !!value.trim();
@@ -96,20 +88,18 @@ function JoinPage() {
         setInProgress(true);
         console.info("Joining quiz...");
 
-        setErrorMessage(null);
-
         await Join(data).then(response => {
             if (response.status === 200) {
                 console.info("Successfully joined quiz.");
-                history.push(`/quiz/${data.sessionId}`, { sessionId: data.sessionId, username: data.username, url: location.pathname + location.hash });
+                history.push(`/quiz/${data.sessionId}`, { sessionId: data.sessionId, username: data.username });
             } else {
-                response.text().then(result => {
-                    setErrorMessage(result);
+                response.text().then(error => {
+                    notifyError(error);
                 });
             }
         }).catch(error => {
             console.error(error);
-            setErrorMessage("Failed to connect to the server.");
+            notifyError("Failed to connect to the server.");
         }).finally(_ => {
             setInProgress(false);
         });
