@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     },
 
     section: {
-        padding: '150px 0',
+        padding: '100px 0',
         position: 'relative',
     },
 

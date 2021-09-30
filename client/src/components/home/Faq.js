@@ -1,10 +1,12 @@
+import VisibilitySensor from 'react-visibility-sensor';
 import { v4 as uuid } from 'uuid';
 import {
     Container,
     List,
     ListItem,
     ListItemText,
-    Typography
+    Typography,
+    Grow,
 } from '@material-ui/core';
 
 const content = [
@@ -26,20 +28,31 @@ function Faq() {
 
     return (
         <Container maxWidth="md">
-            <Typography variant="h2" align="center">FAQ</Typography>
-            <hr />
-            <List>
-                {content.map((item) => (
-                    <ListItem key={uuid()}>
-                        <ListItemText
-                            primary={item.question}
-                            secondary={item.answer}
-                            secondaryTypographyProps={{ color: 'primary' }}
-                            style={{ textAlign: 'center' }}
-                        />
-                    </ListItem>
-                ))}
-            </List>
+            <VisibilitySensor partialVisibility>
+                {({ isVisible }) => (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Grow in={isVisible} timeout={2000}>
+                            <div>
+                                <Typography variant="h2" align="center">FAQ</Typography>
+                                <hr />
+                                <List>
+                                    {content.map((item) => (
+                                        <ListItem key={uuid()}>
+                                            <ListItemText
+                                                primary={item.question}
+                                                secondary={item.answer}
+                                                secondaryTypographyProps={{ color: 'primary' }}
+                                                style={{ textAlign: 'center' }}
+                                            />
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </div>
+                        </Grow>
+                    </div>
+                )}
+            </VisibilitySensor>
+
         </Container>
     )
 }
