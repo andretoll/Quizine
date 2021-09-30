@@ -18,7 +18,7 @@ import {
     makeStyles,
 } from '@material-ui/core';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(_ => ({
 
     container: {
         background: 'rgba(0 0 0 / 25%)',
@@ -53,18 +53,18 @@ function QuizPage() {
 
     // Quiz state
     const [eventsSubscribedTo, setEventsSubscribedTo] = useState(false);
-    const [sessionId, setSessionId] = useState();
-    const [username, setUsername] = useState();
-    const [quizTitle, setQuizTitle] = useState();
-    const [expectedPlayers, setExpectedPlayers] = useState();
+    const [sessionId, setSessionId] = useState(null);
+    const [username, setUsername] = useState(null);
+    const [quizTitle, setQuizTitle] = useState(null);
+    const [expectedPlayers, setExpectedPlayers] = useState(0);
     const [players, setPlayers] = useState([]);
-    const [questionTimeout, setQuestionTimeout] = useState();
-    const [questionCount, setQuestionCount] = useState();
-    const [maxScore, setMaxScore] = useState();
-    const [enableSkip, setEnableSkip] = useState();
-    const [ruleset, setRuleset] = useState();
-    const [category, setCategory] = useState();
-    const [difficulty, setDifficulty] = useState();
+    const [questionTimeout, setQuestionTimeout] = useState(0);
+    const [questionCount, setQuestionCount] = useState(0);
+    const [maxScore, setMaxScore] = useState(0);
+    const [enableSkip, setEnableSkip] = useState(false);
+    const [ruleset, setRuleset] = useState(null);
+    const [category, setCategory] = useState(null);
+    const [difficulty, setDifficulty] = useState(null);
 
     // UI state
     const [content, setContent] = useState(contentStates.CONNECTING);
@@ -118,6 +118,9 @@ function QuizPage() {
     useEffect(() => {
 
         if (connection && !eventsSubscribedTo) {
+            
+            setEventsSubscribedTo(true);
+
             // When connection is lost
             connection.onreconnecting(error => {
                 console.error(error);
@@ -131,7 +134,7 @@ function QuizPage() {
                 });
             });
             // When connection is restored
-            connection.onreconnected(response => {
+            connection.onreconnected(_ => {
                 console.info("Successfully reconnected to server");
                 closeModal();
                 notifySuccess("Reconnected to the server.");
@@ -177,11 +180,7 @@ function QuizPage() {
 
                 } else {
                     console.warn("Connection rejected: ", response.errorMessage);
-
-                    if (location.state.url)
-                        history.replace(`${location.state.url}`, { errorMessage: response.errorMessage });
-                    else
-                        history.push('/join', { errorMessage: response.errorMessage });
+                    reportError(response.errorMessage);
                 }
             });
             connection.on('UserConnected', (response) => {
@@ -212,8 +211,6 @@ function QuizPage() {
                 Disconnect(connection);
                 reportError("Session has expired.");
             });
-
-            setEventsSubscribedTo(true);
         }
 
     }, [connection, 

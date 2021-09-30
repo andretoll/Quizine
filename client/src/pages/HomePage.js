@@ -56,7 +56,7 @@ function HomePage() {
 
     return (
         <div className={classes.root}>
-            <Navbar>Home!</Navbar>
+            <Navbar />
             <Hero />
             <section className={`${classes.section} ${classes.evenSection}`}>
                 <Introduction />

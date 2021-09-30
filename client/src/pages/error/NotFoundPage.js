@@ -1,7 +1,7 @@
-import React from 'react'
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button, makeStyles, Typography } from '@material-ui/core'
-import HomeIcon from '@material-ui/icons/Home'
+import HomeIcon from '@material-ui/icons/Home';
+import { Button, makeStyles, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
 
@@ -14,15 +14,9 @@ const useStyles = makeStyles(theme => ({
 
         "& button": {
             marginTop: '20px',
-            background: theme.palette.primary.main,
-            color: '#fff',
         },
     },
-    header: {
-        color: theme.palette.primary.main,
-        textTransform: 'uppercase',
-    },
-}))
+}));
 
 function NotFoundPage() {
 
@@ -31,10 +25,10 @@ function NotFoundPage() {
     return (
         <div className={classes.container}>
             <div style={{ margin: 'auto' }}>
-                <Typography variant="h2" gutterBottom className={classes.header}>
+                <Typography variant="h2" color="primary" gutterBottom>
                     Page not found (404)
                 </Typography>
-                <Typography variant="subtitle1" gutterBottom>
+                <Typography variant="body1" gutterBottom>
                     Sorry, the page you're looking for does not exist. Make sure you've typed in the correct URL.
                 </Typography>
                 <Link to="/">
@@ -47,4 +41,4 @@ function NotFoundPage() {
     )
 }
 
-export default NotFoundPage
+export default NotFoundPage;

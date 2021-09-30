@@ -48,8 +48,6 @@ const useStyles = makeStyles(theme => ({
 
 function ConfirmStep(props) {
 
-    const previousStep = props.onPreviousStep;
-    const finishStep = props.onNextStep;
     const rules = props.rules;
     const categories = props.categories;
 
@@ -67,7 +65,7 @@ function ConfirmStep(props) {
     }
 
     return (
-        <form onSubmit={handleSubmit(finishStep)} className={classes.form}>
+        <form onSubmit={handleSubmit(props.onNextStep)} className={classes.form}>
             <div style={{ marginBottom: '15px' }}>
                 <Fade in>
                     <div className={classes.summaryContainer}>
@@ -85,11 +83,11 @@ function ConfirmStep(props) {
                     </div>
                 </Fade>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                 <WarningIcon color="primary" style={{ marginRight: '10px' }} />
                 <Typography variant="body2" color="primary">Sessions expire after {props.sessionLifetime} minutes.</Typography>
             </div>
-            <StepperNavigationActions onPreviousStep={previousStep} nextActionText="Finish" />
+            <StepperNavigationActions onPreviousStep={props.onPreviousStep} nextActionText="Finish" />
         </form>
     )
 }

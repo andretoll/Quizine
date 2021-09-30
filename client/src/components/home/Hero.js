@@ -30,12 +30,12 @@ const useStyles = makeStyles((theme) => ({
     },
 
     content: {
-        margin: '200px auto',
+        margin: 'auto',
         textAlign: 'center',
     },
 
     buttonsContainer: {
-        margin: '50px 0',
+        marginTop: '50px',
     },
 
     startButton: {
@@ -97,7 +97,6 @@ function Hero() {
                 />
             </div>
             <div className={classes.content}>
-
                 <Typography variant="h4" style={{ fontWeight: 100, textTransform: 'uppercase' }}>A modern approach to the classic quiz game</Typography>
                 <div className={classes.buttonsContainer}>
                     <Link to="/start">

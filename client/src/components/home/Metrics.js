@@ -19,7 +19,7 @@ function CountUpWrapper(props) {
         >
             {({ countUpRef }) => (
                 <div style={{ textAlign: 'center' }}>
-                    <Typography ref={countUpRef} variant="h2" color="primary"></Typography>
+                    <Typography ref={countUpRef} variant="h2" color="primary" />
                     <Typography variant="h4">{props.suffix}</Typography>
                 </div>
             )}

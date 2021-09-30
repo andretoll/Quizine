@@ -29,7 +29,7 @@ function PromptWrapper(props) {
             }
         }
 
-        return function cleanup() {
+        return () => {
             console.debug("Removing eventlistener for 'beforeunload' event.");
             window.removeEventListener("beforeunload", handleBeforeUnload);
         }

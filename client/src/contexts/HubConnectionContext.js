@@ -1,10 +1,16 @@
+/* 
+This is a context that is used to initialize and store the SignalR connection object. 
+It exposes the connection. 
+*/
+
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { HubConnectionBuilder, LogLevel, HttpTransportType } from '@microsoft/signalr';
 import { Disconnect } from '../services/QuizService';
-import React, { createContext, useState, useContext, useEffect } from 'react';
 
 export const HubConnectionContext = createContext();
 
 export const ConnectionProvider = ({ children }) => {
+
     const [connection, setConnection] = useState(null);
 
     useEffect(() => {
@@ -35,7 +41,7 @@ export const ConnectionProvider = ({ children }) => {
 
         requestWakeLock();
 
-        return function cleanup() {
+        return () => {
             console.info("Releasing wakelock...");
             wakeLock?.release();
             wakeLock = null;
@@ -46,18 +52,21 @@ export const ConnectionProvider = ({ children }) => {
     useEffect(() => {
 
         // Disconnect when unmounting context
-        return function cleanup() {
+        return () => {
 
             if (connection && connection.connectionState === "Connected") {
                 console.info("Disconnecting...");
                 Disconnect(connection);
+                setConnection(null);
             }
         }
     }, [connection]);
 
-    return <HubConnectionContext.Provider value={{ connection }}>
-        {children}
-    </HubConnectionContext.Provider>
+    return (
+        <HubConnectionContext.Provider value={{ connection }}>
+            {children}
+        </HubConnectionContext.Provider>
+    )
 }
 
-export const useConnection = () => useContext(HubConnectionContext)
+export const useConnection = () => useContext(HubConnectionContext);

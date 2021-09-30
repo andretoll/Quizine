@@ -1,8 +1,13 @@
-import { useState } from 'react'
+/* 
+This is a hook that is used to cache remaining timeout by using the localStorage API. 
+It exposes the cached value and a function to set the value. 
+*/
 
-const key = 'timeRemaining';
+import { useState } from 'react';
 
 export function useTimeoutCache(initialValue) {
+
+    const key = 'timeRemaining';
 
     const [cachedValue, setCachedValue] = useState(() => {
 

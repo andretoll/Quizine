@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
+import { ReactComponent as Logo } from '../../assets/logo/logo.svg';
 import MenuIcon from '@material-ui/icons/Menu';
 import CloseIcon from '@material-ui/icons/Close';
-import { ReactComponent as Logo } from '../../assets/logo/logo.svg';
 import {
     makeStyles,
     AppBar,
@@ -13,7 +13,6 @@ import {
     ListItem,
     ListItemText
 } from '@material-ui/core';
-import { Fragment } from 'react';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -127,14 +126,14 @@ function Navbar() {
         return (
             <Fragment>
                 <ListItem>
-                            <ListItemText primary="ListItem 1" />
-                        </ListItem>
-                        <ListItem>
-                            <ListItemText primary="ListItem 2" />
-                        </ListItem>
-                        <ListItem>
-                            <ListItemText primary="ListItem 3" />
-                        </ListItem>
+                    <ListItemText primary="ListItem 1" />
+                </ListItem>
+                <ListItem>
+                    <ListItemText primary="ListItem 2" />
+                </ListItem>
+                <ListItem>
+                    <ListItemText primary="ListItem 3" />
+                </ListItem>
             </Fragment>
         )
     }

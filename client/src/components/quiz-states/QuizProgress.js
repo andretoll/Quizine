@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useConnection } from '../../contexts/HubConnectionContext';
-import { NextQuestion, SubmitAnswer } from '../../services/QuizService';
-import QuizForm from '../quiz-progress/QuizForm';
-import CountdownTimerWrapper from '../wrappers/CountdownTimerWrapper';
 import { useTimeoutCache } from '../../hooks/useTimeoutCache';
+import { NextQuestion, SubmitAnswer } from '../../services/QuizService';
+import CountdownTimerWrapper from '../wrappers/CountdownTimerWrapper';
+import QuizForm from '../quiz-progress/QuizForm';
+import QuizCardHeader from '../quiz-progress/QuizCardHeader';
 import {
     makeStyles,
     Typography,
@@ -11,7 +12,6 @@ import {
     Paper,
     Container,
 } from '@material-ui/core';
-import QuizCardHeader from '../quiz-progress/QuizCardHeader';
 
 const useStyles = makeStyles(theme => ({
 
@@ -120,13 +120,15 @@ function QuizProgress(props) {
 
     useEffect(() => {
         if (connection && !eventsSubscribedTo) {
+            setEventsSubscribedTo(true);
+
             connection.on('NextQuestion', (response) => {
                 console.debug("Received next question");
                 setCorrectAnswer(null);
                 setPointsGained(null);
-                setSlide(true);         // Trigger slide animation (in)
-                setTimerPlaying(false);  // Disable timer (reset)
-                setTimerPlaying(true);  // Enable timer (reset)
+                setSlide(true);             // Trigger slide animation (in)
+                setTimerPlaying(false);     // Disable timer (reset)
+                setTimerPlaying(true);      // Enable timer (reset)
                 setQuizContent(response);
             });
             connection.on('ValidateAnswer', (response) => {
@@ -135,8 +137,6 @@ function QuizProgress(props) {
                 setPointsGained(response.points);
                 setTimeoutCache(questionTimeout); // Reset timer despite cache
             });
-            setEventsSubscribedTo(true);
-
         }
     }, [connection, questionTimeout, setTimeoutCache, eventsSubscribedTo]);
 
@@ -156,9 +156,10 @@ function QuizProgress(props) {
         // Trigger slide animation (out)
         setSlide(false);
 
+        // Request next question with timeout
         setTimeout(() => {
             console.debug("Requesting next question...");
-            NextQuestion(connection, sessionId); // Request next question
+            NextQuestion(connection, sessionId); 
         }, 1000);
     }
 
@@ -166,13 +167,13 @@ function QuizProgress(props) {
 
         if (pointsGained < 0) {
             return (
-                <Typography variant="h4" color="error">
+                <Typography variant="h3" color="error">
                     {pointsGained}
                 </Typography>
             )
         } else if (pointsGained > 0) {
             return (
-                <Typography variant="h4" color="primary">
+                <Typography variant="h3" color="primary">
                     +{pointsGained}
                 </Typography>
             )

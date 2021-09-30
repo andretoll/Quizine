@@ -1,3 +1,8 @@
+/* 
+This is a service that is used to request and retrieve Push Notifications permission as well as to send notifications if browser supports it. 
+It exposes functions to request and retrieve Push Notifications permission as well as to send notifications. 
+*/
+
 const isSupported = () =>
 'Notification' in window &&
 'serviceWorker' in navigator &&
@@ -9,7 +14,7 @@ export function getNotificationsPermission() {
 
         // Check if browser supports it
         if (!isSupported) {
-            console.info("Notifications not supported");
+            console.warn("Notifications not supported");
         }
 
         else {
@@ -29,7 +34,7 @@ export function requestNotificationsPermission() {
 
         // Check if browser supports it
         if (!isSupported) {
-            console.info("Notifications not supported");
+            console.warn("Notifications not supported");
         }
 
         else {
@@ -50,7 +55,7 @@ export function sendNotification(title, message, onClick) {
 
         // Check if browser supports it
         if (!isSupported) {
-            console.info("Notifications not supported");
+            console.warn("Notifications not supported");
         }
 
         else {

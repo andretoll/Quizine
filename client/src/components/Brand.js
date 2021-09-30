@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
         textTransform: 'uppercase',
         marginTop: '10px',
     }
-}))
+}));
 
 function Brand(props) {
 

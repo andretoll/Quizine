@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTitle } from '../hooks/useTitle';
+import Particles from 'react-particles-js';
 import Brand from '../components/Brand';
 import {
     makeStyles,
@@ -9,7 +10,6 @@ import {
     Container,
     Button
 } from '@material-ui/core';
-import Particles from 'react-particles-js';
 
 const useStyles = makeStyles(theme => ({
 

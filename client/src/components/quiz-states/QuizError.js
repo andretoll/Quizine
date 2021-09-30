@@ -29,8 +29,6 @@ const useStyles = makeStyles(theme => ({
 
 function QuizError(props) {
 
-    const errorMessage = props.errorMessage;
-
     const classes = useStyles();
 
     return (
@@ -38,7 +36,7 @@ function QuizError(props) {
             <div>
                 <ErrorIcon color="error" />
             </div>
-            <Typography variant="overline" gutterBottom>{errorMessage}</Typography>
+            <Typography variant="overline" gutterBottom>{props.errorMessage}</Typography>
             <Link to="/start">
                 <Button variant="outlined" color="primary" size="large">Exit</Button>
             </Link>

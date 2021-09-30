@@ -2,7 +2,7 @@ import { useState, useEffect, Fragment } from 'react';
 import { useHistory } from 'react-router';
 import { DataProvider } from '../contexts/CreateFormDataContext';
 import useTitle from '../hooks/useTitle';
-import { Join } from '../services/QuizService';
+import { Create, FetchCategories, FetchRules, FetchSessionLifetime, Join } from '../services/QuizService';
 import ShareQuiz from '../components/ShareQuiz';
 import CreateForm from '../components/CreateForm';
 import GoHome from '../components/GoHome';
@@ -45,24 +45,24 @@ const useStyles = makeStyles(theme => ({
 
         '& svg': {
             color: theme.palette.primary.main,
-            fontSize: '5em'
+            fontSize: '5em',
         },
     }
-}))
+}));
 
 const contentStates = Object.freeze({
     LOADING: 0,
     FORM: 1,
     IN_PROGRESS: 2,
     SUCCESS: 3
-})
+});
 
 const difficulties = [
     "Any",
     "Easy",
     "Medium",
     "Hard",
-]
+];
 
 function CreatePage() {
 
@@ -71,13 +71,14 @@ function CreatePage() {
     const [categories, setCategories] = useState([]);
     const [rules, setRules] = useState([]);
     const [sessionLifetime, setSessionLifetime] = useState(0);
-    const [errorMessage, setErrorMessage] = useState();
+    const [errorMessage, setErrorMessage] = useState(null);
     const [content, setContent] = useState(contentStates.LOADING);
-    const [sessionId, setSessionId] = useState();
-    const [hostname, setHostname] = useState();
+    const [sessionId, setSessionId] = useState(null);
+    const [hostname, setHostname] = useState(null);
     const [inProgress, setInProgress] = useState(false);
 
     const history = useHistory();
+
     useTitle("Create");
 
     // On first render
@@ -100,13 +101,7 @@ function CreatePage() {
 
         console.info("Fetching categories...");
 
-        await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/categories`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
-            }
-        }).then(response => {
+        await FetchCategories().then(response => {
             response.json().then(result => {
 
                 console.info("Successfully fetched categories.");
@@ -126,13 +121,7 @@ function CreatePage() {
 
         console.info("Fetching rules...");
 
-        await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/rules`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
-            }
-        }).then(response => {
+        await FetchRules().then(response => {
             response.json().then(result => {
 
                 console.info("Successfully fetched rules.");
@@ -150,13 +139,7 @@ function CreatePage() {
 
         console.info("Fetching session lifetime...");
 
-        await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/session-lifetime`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
-            }
-        }).then(response => {
+        await FetchSessionLifetime().then(response => {
             response.json().then(result => {
 
                 console.info("Successfully fetched session lifetime.");
@@ -178,14 +161,7 @@ function CreatePage() {
         setContent(contentStates.IN_PROGRESS);
 
         // Create session and accept sessionID
-        await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/create`, {
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers: {
-                'Content-Type': 'application/json',
-                'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
-            }
-        }).then(response => {
+        await Create(data).then(response => {
             if (response.status === 200) {
                 response.json().then(result => {
 
@@ -199,15 +175,19 @@ function CreatePage() {
                 setErrorMessage(`Error ${response.status}: Server rejected request.`);
                 setContent(contentStates.FORM);
             }
-        }).catch(_ => {
+        }).catch(error => {
+            console.error(error);
             setErrorMessage("Could not connect to the server. Please try again later.");
             setContent(contentStates.FORM);
         });
     }
 
     async function joinSession() {
+
+        console.info("Joining quiz...");
         setInProgress(true);
 
+        // Join quiz and navigate to session
         await Join({ sessionId: sessionId, username: hostname }).then(response => {
             if (response.status === 200) {
                 history.push(`/quiz/${sessionId}`, { sessionId: sessionId, username: hostname });
@@ -219,6 +199,7 @@ function CreatePage() {
         }).catch(error => {
             console.error(error);
             setErrorMessage("Failed to connect to the server.");
+            setContent(contentStates.FORM);
         }).finally(_ => {
             setInProgress(false);
         });
@@ -241,7 +222,13 @@ function CreatePage() {
                 )
             case contentStates.FORM:
                 return (
-                    <CreateForm onSubmit={handleOnSubmit} categories={categories} difficulties={difficulties} rules={rules} sessionLifetime={sessionLifetime} />
+                    <CreateForm
+                        onSubmit={handleOnSubmit}
+                        categories={categories}
+                        difficulties={difficulties}
+                        rules={rules}
+                        sessionLifetime={sessionLifetime}
+                    />
                 )
             case contentStates.IN_PROGRESS:
                 return (

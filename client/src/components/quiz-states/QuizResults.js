@@ -1,28 +1,20 @@
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
-import { v4 as uuid } from 'uuid';
 import { useConfirm } from 'material-ui-confirm';
 import { useConnection } from '../../contexts/HubConnectionContext';
 import { sendNotification } from '../../services/NotificationService';
-import { Join, PromptRematch, Rematch } from '../../services/QuizService';
+import { FetchAnswers, Join, PromptRematch, Rematch } from '../../services/QuizService';
 import { useErrorModal } from '../../contexts/ErrorModalContext';
 import ConfettiWrapper from '../wrappers/ConfettiWrapper';
 import GoHome from '../GoHome';
 import CheatSheet from '../quiz-results/CheatSheet';
-import TrophyIcon from '@material-ui/icons/EmojiEvents';
+import ResultsTable from '../quiz-results/ResultsTable';
 import MenuIcon from '@material-ui/icons/MoreVert';
 import RematchIcon from '@material-ui/icons/FlashOn';
 import ListIcon from '@material-ui/icons/ListAlt';
 import AddIcon from '@material-ui/icons/AddBox';
 import {
     makeStyles,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
     Typography,
     IconButton,
     Container,
@@ -53,51 +45,6 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
         alignItems: 'flex-start',
         position: 'relative',
-    },
-
-    tableContainer: {
-        background: theme.palette.gradient.main,
-        margin: '50px 0'
-    },
-
-    trophyWrapper: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: 'transparent',
-        position: 'relative',
-
-        '&.spinning': {
-            '-webkit-animation': '$spinning 2s infinite linear ease-in',
-            '-moz-animation': '$spinning 2s linear infinite',
-            '-o-animation': '$spinning 2s linear infinite',
-            animation: '$spinning 2s linear infinite',
-        },
-
-        '& svg': {
-            fontSize: '1.7em',
-        },
-    },
-
-    gold: {
-        color: '#ffd700',
-    },
-    silver: {
-        color: '#c0c0c0',
-    },
-    bronze: {
-        color: '#cd7f32',
-    },
-
-    "@keyframes spinning": {
-        "to": {
-            transform: 'rotateY(360deg)',
-        },
-    },
-    "@-webkit-keyframes spinning": {
-        "to": {
-            transform: 'rotateY(360deg)',
-        }
     },
 }));
 
@@ -190,21 +137,6 @@ function QuizResults(props) {
         }
     }, [quizCompleted])
 
-    function getTrophyStyle(score) {
-
-        const index = finalScore.indexOf(score);
-        switch (index) {
-            case 0:
-                return classes.gold;
-            case 1:
-                return classes.silver;
-            case 2:
-                return classes.bronze;
-            default:
-                break;
-        }
-    }
-
     function getConfettiColors() {
 
         if (finalScore[0]?.username === username) {
@@ -235,15 +167,8 @@ function QuizResults(props) {
         setAnchorEl(null);
     };
 
-    function openCheatSheet() {
-        fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/answers`, {
-            method: 'POST',
-            body: JSON.stringify(sessionId),
-            headers: {
-                'Content-Type': 'application/json',
-                'ApiKey': process.env.REACT_APP_QUIZINE_API_KEY
-            }
-        }).then((response) => {
+    async function openCheatSheet() {
+        await FetchAnswers(sessionId).then((response) => {
 
             if (response.status === 200) {
                 response.json().then(result => {
@@ -279,7 +204,6 @@ function QuizResults(props) {
 
     async function rematch() {
 
-        // Create new session
         handleMenuClose();
 
         confirm({
@@ -290,14 +214,16 @@ function QuizResults(props) {
             dialogProps: { PaperProps: { className: "secondary-background" } }
         }).then(async () => {
 
+            // Create rematch session
             await Rematch(sessionId)
                 .then(response => {
 
                     if (response.status === 200) {
 
+                        // Accept session ID
                         response.json().then(result => {
 
-                            // Join session
+                            // Join session with ID
                             Join({ sessionId: result, username: username })
                                 .then(response => {
 
@@ -311,9 +237,9 @@ function QuizResults(props) {
                                                 // Navigate to new session
                                                 history.push(`/quiz/${result}`, { sessionId: result, username: username });
                                                 history.go();
-                                            })
+                                            });
                                     }
-                                })
+                                });
                         })
                     }
 
@@ -402,48 +328,7 @@ function QuizResults(props) {
                 }
                 {quizCompleted ?
                     <Container maxWidth="sm">
-                        <Paper elevation={10} className={classes.tableContainer}>
-                            <TableContainer>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell align="center" width="10%">Place</TableCell>
-                                            <TableCell align="left">Player</TableCell>
-                                            <TableCell align="center" width="10%">Points</TableCell>
-                                            <TableCell align="center" width="30%">Max. points</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {finalScore.map((score, index) => {
-                                            return (
-                                                <TableRow key={uuid()}>
-                                                    <TableCell className={score.username === username ? 'primary-color' : ''} align="center">
-                                                        {index < 3 ?
-                                                            <div className={`${classes.trophyWrapper} ${getTrophyStyle(score)} ${score.username === username && 'spinning'}`}>
-                                                                <TrophyIcon />
-                                                            </div>
-                                                            :
-                                                            <Fragment>
-                                                                {index + 1}
-                                                            </Fragment>
-                                                        }
-                                                    </TableCell>
-                                                    <TableCell className={score.username === username ? 'primary-color' : ''} align="left">
-                                                        {score.username}
-                                                    </TableCell>
-                                                    <TableCell className={score.username === username ? 'primary-color' : ''} align="center">
-                                                        {score.points}
-                                                    </TableCell>
-                                                    <TableCell className={score.username === username ? 'primary-color' : ''} align="center">
-                                                        {maxScore}
-                                                    </TableCell>
-                                                </TableRow>
-                                            )
-                                        })}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </Paper>
+                        <ResultsTable finalScore={finalScore} username={username} maxScore={maxScore} />
                     </Container>
                     :
                     <div style={{ display: 'flex', height: '100%', margin: 'auto' }}>
