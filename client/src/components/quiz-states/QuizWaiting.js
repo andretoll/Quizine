@@ -18,7 +18,6 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
-    DialogContentText,
     Button,
     Tooltip
 } from '@material-ui/core';
@@ -56,6 +55,7 @@ function QuizWaiting(props) {
     // When any new player joins
     useEffect(() => {
 
+        // When all players have joined, send notifications
         if (expectedPlayers > 1 && players.length === expectedPlayers) {
             sendNotification("Quizine", "All players are ready to go!", () => {
                 window.focus();
@@ -84,6 +84,8 @@ function QuizWaiting(props) {
         const allReady = expectedPlayers === players.length;
 
         if (connection) {
+
+            // Not all players have joined
             if (!allReady) {
                 confirm({
                     title: 'Confirm?',
@@ -98,7 +100,9 @@ function QuizWaiting(props) {
                         reportError("Failed to start session (Error code 2).")
                     });
                 }).catch(() => { });
-            } else {
+            }
+            // All players have joined
+            else {
                 console.info("Starting session...");
                 Start(connection, sessionId).catch((error) => {
                     console.error(error);
@@ -123,8 +127,8 @@ function QuizWaiting(props) {
 
         if (players[0] !== username && expectedPlayers === players.length) {
             return (
-                <Typography variant="h6" className="loadingAnimation">
-                    Waiting for Player 1 to start
+                <Typography variant="h6" className="loadingAnimation" style={{ marginTop: '15px' }}>
+                    Waiting for <span className="primary-color">{players[0]}</span> to start
                 </Typography>
             )
         }
@@ -153,7 +157,7 @@ function QuizWaiting(props) {
                         <div>
                             <Tooltip title={getNotificationsTooltipText()} arrow>
                                 <span>
-                                    <IconButton onClick={handleNotificationsPermission} className={notificationsPermission === 'granted' && classes.notificationsActive} disabled={notificationsPermission === 'denied'}>
+                                    <IconButton onClick={handleNotificationsPermission} className={notificationsPermission === 'granted' ? classes.notificationsActive : ''} disabled={notificationsPermission === 'denied'}>
                                         {notificationsPermission === 'granted' ?
                                             <NotificationsActiveIcon />
                                             :
@@ -171,14 +175,11 @@ function QuizWaiting(props) {
                         <Dialog open={shareDialogOpen} onClose={handleOnCloseShareDialog} PaperProps={{ className: 'secondary-background' }}>
                             <DialogTitle>Share Quiz</DialogTitle>
                             <DialogContent dividers style={{ padding: '50px' }}>
-                                <DialogContentText>
-                                    Share the quiz with your friends (or rivals).
-                                </DialogContentText>
                                 <ShareQuiz sessionId={sessionId} />
                             </DialogContent>
                         </Dialog>
                     </div>
-                    <div style={{ margin: '10px 0 20px 0' }}>
+                    <div>
                         <QuizParametersList
                             questionCount={questionCount}
                             questionTimeout={questionTimeout}

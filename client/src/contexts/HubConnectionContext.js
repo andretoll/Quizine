@@ -41,7 +41,7 @@ export const ConnectionProvider = ({ children }) => {
 
         requestWakeLock();
 
-        return function cleanup() {
+        return () => {
             console.info("Releasing wakelock...");
             wakeLock?.release();
             wakeLock = null;
@@ -52,11 +52,12 @@ export const ConnectionProvider = ({ children }) => {
     useEffect(() => {
 
         // Disconnect when unmounting context
-        return function cleanup() {
+        return () => {
 
             if (connection && connection.connectionState === "Connected") {
                 console.info("Disconnecting...");
                 Disconnect(connection);
+                setConnection(null);
             }
         }
     }, [connection]);
