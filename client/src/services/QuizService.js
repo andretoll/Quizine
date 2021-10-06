@@ -75,7 +75,6 @@ export async function Create(data) {
 export async function Join(data) {
     return await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/join`, {
         method: 'POST',
-        credentials: 'include',
         body: JSON.stringify(data),
         headers: {
             'Content-Type': 'application/json',
@@ -87,7 +86,6 @@ export async function Join(data) {
 export async function Rematch(data) {
     return await fetch(`${process.env.REACT_APP_QUIZINE_API_BASE_URL}quiz/rematch`, {
         method: 'POST',
-        credentials: 'include',
         body: JSON.stringify(data),
         headers: {
             'Content-Type': 'application/json',

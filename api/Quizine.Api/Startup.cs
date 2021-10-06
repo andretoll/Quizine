@@ -45,7 +45,12 @@ namespace Quizine.Api
                     opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
             services.AddCors();
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme);
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(opt =>
+                {
+                    opt.Cookie.SameSite = SameSiteMode.None;
+                    opt.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                });
             services.AddSignalR().AddAzureSignalR();
             services.AddSingleton<ISessionRepository, SessionRepository>();
             services.AddSingleton<ITriviaRespository, TriviaRepository>();
@@ -74,6 +79,7 @@ namespace Quizine.Api
 
             app.UseRouting();
 
+            app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseAuthorization();
 
