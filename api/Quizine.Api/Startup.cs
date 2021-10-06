@@ -46,11 +46,7 @@ namespace Quizine.Api
                 });
             services.AddCors();
             services.AddSignalR().AddAzureSignalR();
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(opt =>
-                {
-                    opt.Cookie.SameSite = SameSiteMode.Lax;
-                });
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme);
             services.AddSingleton<ISessionRepository, SessionRepository>();
             services.AddSingleton<ITriviaRespository, TriviaRepository>();
             services.AddSingleton<IResourceManagerParameters, ResourceManagerParameters>();
