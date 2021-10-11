@@ -11,7 +11,8 @@ import {
     Drawer,
     List,
     ListItem,
-    ListItemText
+    ListItemText,
+    Container
 } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
@@ -140,33 +141,35 @@ function Navbar() {
 
     return (
         <AppBar elevation={navbarSolid ? 10 : 0} color="secondary" className={`${classes.appbar} ${navbarSolid ? 'solid' : ''}`}>
-            <Toolbar variant="regular">
-                <IconButton edge="start" className={classes.menuButton} onClick={openMenu}>
-                    <MenuIcon fontSize="large" />
-                </IconButton>
-                <Drawer
-                    anchor='top'
-                    open={menuAnchor !== null}
-                    onClose={closeMenu}
-                    PaperProps={{ className: classes.drawer }}
-                >
-                    <Toolbar>
-                        <IconButton edge="start" className={classes.menuButton} onClick={closeMenu}>
-                            <CloseIcon fontSize="large" />
-                        </IconButton>
-                    </Toolbar>
-                    <List>
+            <Container>
+                <Toolbar variant="regular">
+                    <IconButton edge="start" className={classes.menuButton} onClick={openMenu}>
+                        <MenuIcon fontSize="large" />
+                    </IconButton>
+                    <Drawer
+                        anchor='top'
+                        open={menuAnchor !== null}
+                        onClose={closeMenu}
+                        PaperProps={{ className: classes.drawer }}
+                    >
+                        <Toolbar>
+                            <IconButton edge="start" className={classes.menuButton} onClick={closeMenu}>
+                                <CloseIcon fontSize="large" />
+                            </IconButton>
+                        </Toolbar>
+                        <List>
+                            {/* getLinks() */}
+                        </List>
+                    </Drawer>
+                    <div className="title">
+                        <Logo />
+                        <Typography variant="h2" color="textPrimary">Quizine</Typography>
+                    </div>
+                    <List className="navLinks">
                         {/* getLinks() */}
                     </List>
-                </Drawer>
-                <div className="title">
-                    <Logo />
-                    <Typography variant="h2" color="textPrimary">Quizine</Typography>
-                </div>
-                <List className="navLinks">
-                    {/* getLinks() */}
-                </List>
-            </Toolbar>
+                </Toolbar>
+            </Container>
         </AppBar>
     )
 }

@@ -1,13 +1,32 @@
 import { useState } from 'react';
 import QRCode from 'qrcode.react';
 import {
+    FacebookShareButton,
+    FacebookIcon,
+    FacebookMessengerShareButton,
+    FacebookMessengerIcon,
+    TwitterShareButton,
+    TwitterIcon
+} from 'react-share';
+import {
     makeStyles,
     Button,
     ClickAwayListener,
-    Tooltip
+    Tooltip,
+    Fab
 } from '@material-ui/core';
 
 const useStyles = makeStyles(_ => ({
+
+    socialMediaIconWrapper: {
+        background: 'transparent',
+        transition: 'transform 0.5s',
+
+        '&:hover': {
+            background: 'transparent',
+            transform: 'translateY(-5px)',
+        },
+    },
 
     linksContainer: {
         textAlign: 'center',
@@ -71,6 +90,29 @@ function ShareQuiz(props) {
 
     return (
         <div>
+            <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+                <FacebookShareButton url={getLink()} quote="Join my quiz!">
+                    <Tooltip title="Share on Facebook" arrow placement="top">
+                        <Fab className={classes.socialMediaIconWrapper}>
+                            <FacebookIcon round size={50} />
+                        </Fab>
+                    </Tooltip>
+                </FacebookShareButton>
+                <FacebookMessengerShareButton url={getLink()} appId="352855076618818">
+                    <Tooltip title="Share on Messenger" arrow placement="top">
+                        <Fab className={classes.socialMediaIconWrapper}>
+                            <FacebookMessengerIcon round size={50} />
+                        </Fab>
+                    </Tooltip>
+                </FacebookMessengerShareButton>
+                <TwitterShareButton url={getLink()} title="Join my quiz!">
+                    <Tooltip title="Share on Twitter" arrow placement="top">
+                        <Fab className={classes.socialMediaIconWrapper}>
+                            <TwitterIcon round size={50} />
+                        </Fab>
+                    </Tooltip>
+                </TwitterShareButton>
+            </div>
             <div className={classes.linksContainer}>
                 <ClickTooltipWrapper tooltipTitle="Copied!" actionTitle="Copy code" action={() => navigator.clipboard.writeText(props.sessionId)} />
                 <ClickTooltipWrapper tooltipTitle="Copied!" actionTitle="Copy link" action={() => navigator.clipboard.writeText(getLink())} />
