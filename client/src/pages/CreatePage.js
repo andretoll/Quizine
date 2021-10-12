@@ -40,12 +40,12 @@ const useStyles = makeStyles(theme => ({
         alignItems: 'center',
         border: `10px double ${theme.palette.primary.main}`,
         borderRadius: '50%',
-        height: '100px',
-        width: '100px',
+        height: '90px',
+        width: '90px',
 
         '& svg': {
             color: theme.palette.primary.main,
-            fontSize: '5em',
+            fontSize: '4.5em',
         },
     }
 }));
