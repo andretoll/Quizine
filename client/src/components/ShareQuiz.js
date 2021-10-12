@@ -21,6 +21,7 @@ const useStyles = makeStyles(_ => ({
     socialMediaIconWrapper: {
         background: 'transparent',
         transition: 'transform 0.5s',
+        margin: '0 5px',
 
         '&:hover': {
             background: 'transparent',
@@ -33,8 +34,8 @@ const useStyles = makeStyles(_ => ({
         marginBottom: '30px',
 
         '& button': {
-            width: '150px',
-            margin: '10px',
+            width: '120px',
+            margin: '5px',
         },
     },
 
@@ -68,7 +69,7 @@ function ClickTooltipWrapper(props) {
                 title={props.tooltipTitle}
                 open={open}
                 onClose={handleTooltipClose}
-                placement="right"
+                placement="bottom"
                 arrow
                 disableFocusListener
                 disableHoverListener
